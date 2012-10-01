@@ -1,0 +1,36 @@
+{
+  "name": "pseudw-util",
+  "preferGlobal": "false",
+  "version": "0.0.1",
+  "author": "Nick Kallen",
+  "description": "",
+  "contributors": [ 
+    {
+      "name": "Nick Kallen",
+      "email": ""
+    }
+  ],
+  "scripts": {
+    "test": "jasmine-node --coffee src/spec"
+  },
+  "main": "./src/main/coffee/index.coffee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nkallen/pseudw.git"
+  },
+  "keywords": [
+    "greek",
+    "attic",
+    "ancient"
+  ],
+  "dependencies" : {},
+  "analyze": true,
+  "devDependencies": {
+    "jasmine-node"    :  "1.0.x"
+  },
+  "bundleDependencies": [],  
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.8"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "pseudw-site",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.coffee",
+  "scripts": {
+    "start": "coffee ./src/main/coffee/server.coffee",
+    "test": "",
+    "import": "./src/scripts/coffee/import.coffee"
+  },
+  "dependencies": {
+    "libxmljs"    : "0.6.x",
+    "mysql"       : "2.0.0-alpha3",
+    "express"     : "3.0.x",
+    "unorm"       : "1.0.x",
+    "hercules"    : "0.0.6",
+    "pseudw-module1"     : "0.0.0",
+    "psuedw-util" : "0.0.1"
+  },
+  "repository": "",
+  "author": "Nick Kallen",
+  "license": "MIT"
+}
