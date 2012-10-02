@@ -36,6 +36,9 @@ In index.html
       }, false);
     </script>
 
+Note that, for now, this uses the server's paths in the filesystem to index the compiled cache --
+a security leak. I will fix this shortly.
+
 ###
 
 class Bundler
