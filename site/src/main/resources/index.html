@@ -11,23 +11,50 @@
   <body>
     <div class="container">
       <h1>The Participle Game</h1>
-      <div class="game hero-unit">
-        <a data-toggle="modal" href="#config" class="btn btn-primary btn-large">Options</a>
-        <div class="card">
-          <div class="row">
-            <div class="span12">
-              <div class="morpheme"></div>
+      <div class="game hero-unit clearfix">
+        <div class="modal hide fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="configLabel">Options</h3>
+          </div>
+          <div class="modal-body">
+            <div class="config">
+              <h4>Lemmas</h4>
+              <p>Use these greek lemmas to generate participles.</p>
+              <textarea name="lemmas">τιμάω, λέγω3</textarea>
+              <h4>Ask for</h4>
+              <p>Vary the game by having the player only indicate one or more of the tense/voice/etc.</p>
+              <p>Because both speed and accuracy are important components of fluency, by limiting the game to only one attribute at a time (e.g. just, <em>tense</em>) the user can spend less time thinking about data entry and more time recognizing forms.<p>
+              <div class="btn-group" data-toggle="buttons-checkbox">
+                <button class="btn active">Tense</button>
+                <button class="btn">Voice</button>
+                <button class="btn">Gender</button>
+                <button class="btn">Number</button>
+                <button class="btn">Case</button>
+              </div>
             </div>
           </div>
-          <div class="row">
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+        <a data-toggle="modal" href="#config" class="btn btn-primary btn-large">Options</a>
+        <div class="card">
+          <div class="row-fluid">
+            <div class="span12">
+              <div class="morpheme" style="text-align: center; font-size: 18pt"></div>
+            </div>
+          </div>
+          <div class="row-fluid">
             <div class="span12">
               <div class="dictionary-entry"></div>
               <div class="principal-parts"></div>
               <div class="definition"></div>
             </div>
           </div>
-          <div class="row">
-            <div class="span2 ">
+          <div class="row-fluid">
+            <div class="span2 offset2">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-radio">
                 <button class="btn"><u>P</u>resent</button>
                 <button class="btn"><u>F</u>uture</button>
@@ -66,8 +93,8 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            <button class="btn">Next</button>
+          <div class="row-fluid">
+            <button class="btn next">Next</button>
           </div>
         </div>
         <div class="state">
@@ -79,44 +106,15 @@
       <div class="row">
         <div class="span8">
           <h2>Tips</h2>
-          <p>Try using the keyboard to answer. For example, type "P" to indicate "Present tense" and then hit "enter"</p>
+          <p>Try using the keyboard to answer. For example, type <span class="label label-info">p</span> to indicate <span class="label label-info">Present tense</span> and then hit <span class="label label-info">Enter</span> to submit your answer.</p>
         </div>
         <div class="span4">
           <h2>Heading</h2>
           <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
         </div>
       </div>
-      <div class="modal hide fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h3 id="configLabel">Options</h3>
-        </div>
-        <div class="modal-body">
-          <div class="config">
-            <h4>Lemmas</h4>
-            <p>Use these greek lemmas to generate participles.</p>
-            <textarea name="lemmas">τιμάω, λέγω3</textarea>
-            <h4>Ask for</h4>
-            <p>Vary the game by having the player only indicate one or more of the tense/voice/etc.</p>
-            <p>Because both speed and accuracy are important components of fluency, by limiting the game to only one attribute at a time (e.g. just, <em>tense</em>) the user can spend less time thinking about data entry and more time recognizing forms.<p>
-            <div class="btn-group" data-toggle="buttons-checkbox">
-              <button class="btn active">Tense</button>
-              <button class="btn">Voice</button>
-              <button class="btn">Gender</button>
-              <button class="btn">Number</button>
-              <button class="btn">Case</button>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-          <button class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
       <script src="/bootstrap/js/bootstrap.min.js"></script>
-          <script src="assets/js/bootstrap-transition.js"></script>
-
       <script src="/application.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
         $(function() {

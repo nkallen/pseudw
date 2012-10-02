@@ -23,6 +23,12 @@ class Game
     @$totalTurns     = @$div.find(".totalTurns")
     @$principalParts = @$div.find(".principalParts")
     @$definition     = @$div.find(".definition")
+    @$nextButton     = @$div.find("button.next")
+
+    console.log(@$nextButton)
+    @$nextButton.click(=>
+      @nextTurn()
+    )
 
     @state = new GameState
 
