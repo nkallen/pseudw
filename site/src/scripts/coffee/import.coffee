@@ -61,7 +61,7 @@ class AnalysisParser
   state = State.skip
   analyses = []
   analysis = null
-  skip = () ->
+  skip = ->
     analysis = null
     state = State.skip
   handleAnalysis = {

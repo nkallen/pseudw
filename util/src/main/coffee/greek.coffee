@@ -1,46 +1,17 @@
 Trie = require('./trie')
 Preconditions = require('./preconditions')
+Enum = require('./enum')
 
 ###
 An object model for Greek Grammar and some utilities for character encoding.
 ###
 
-class Tense
-  @present:     new Tense
-  @future:      new Tense
-  @perfect:     new Tense
-  @pluperfect:  new Tense
-  @imperfect:   new Tense
-  @aorist:      new Tense
-
-class Gender
-  @masculine:   new Gender
-  @feminine:    new Gender
-  @neuter:      new Gender
-
-class Number
-  @singular:    new Number
-  @dual:        new Number
-  @plural:      new Number
-
-class Case
-  @nominative:  new Case
-  @genitive:    new Case
-  @dative:      new Case
-  @accusative:  new Case
-  @vocative:    new Case
-
-class Voice
-  @active:      new Voice
-  @middle:      new Voice
-  @passive:     new Voice
-  @middlePassive: new Voice
-
-class Mood
-  @indicative:  new Mood
-  @optatitive:  new Mood
-  @imperative:  new Mood
-  @subjunctive: new Mood
+Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist')
+Gender = Enum('Gender', 'masculine', 'feminine', 'neuter')
+Number = Enum('Number', 'singular', 'dual', 'plural')
+Case = Enum('Case', 'nominative', 'genitive', 'dative', 'accusative', 'vocative')
+Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
+Mood = Enum('Mood', 'indicative', 'optatitive', 'imperative', 'subjunctive')
 
 class Verb
   constructor: (@lemma, @principleParts, @definition) ->

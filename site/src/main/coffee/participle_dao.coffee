@@ -18,7 +18,19 @@ class ParticipleHttpDao
     Preconditions.assertDefined(@getJson)
 
   findAllByLemma: (lemmas, onSuccess, onFailure) ->
-    @getJson("#{@uri}/#{lemmas.join(";")}/participles", {}, onSuccess)
+    Preconditions.assertDefined(lemmas)
+    Preconditions.assertDefined(onSuccess)
+
+    @getJson("#{@uri}/#{lemmas.join(";")}/participles", {}, (jsons) ->
+      participles = for json in jsons
+        new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.definition),
+          new ParticipleDesc(Tense[json.participleDesc.tense], Voice[json.participleDesc.voice],
+            new SubstantiveDesc(
+              Case[json.participleDesc.substantiveDesc.case],
+              Gender[json.participleDesc.substantiveDesc.gender],
+              Number[json.participleDesc.substantiveDesc.number])))
+      onSuccess(participles)
+    )
 
 class ParticipleSqlDao
   constructor: (@connection) ->

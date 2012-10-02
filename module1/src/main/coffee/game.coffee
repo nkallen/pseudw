@@ -3,7 +3,7 @@ class Game
     constructor: (@showDictionaryEntry, @askFor, @showRuleOnError, @participles) ->
 
   class GameState
-    constructor: () ->
+    constructor: ->
       @startTime = new Date
     currentTurn: null
     totalTurns: 0
@@ -26,10 +26,10 @@ class Game
 
     @state = new GameState
 
-  start: () ->
+  start: ->
     @nextTurn()
 
-  nextTurn: () ->
+  nextTurn: ->
     if @state.currentTurn
       answer = getAnswer()
       @gameState.correctTurns++ if isAnswerCorrect(answer)
@@ -46,11 +46,11 @@ class Game
     @showParticiple(participle)
     @showState()
 
-  chooseParticiple: () -> @gameDesc.participles[Math.floor(Math.random() * @gameDesc.participles.length)]
+  chooseParticiple: -> @gameDesc.participles[Math.floor(Math.random() * @gameDesc.participles.length)]
 
-  hasRemaining: () -> true
+  hasRemaining: -> true
 
-  showCard: () ->
+  showCard: ->
     @$card.toggleClass("show-dictionary-entry", @showDictionaryEntry)
 
   showParticiple: (participle) ->
@@ -58,7 +58,7 @@ class Game
     @$principalParts.html(participle.verb.principalParts)
     @$definition.html(participle.verb.definition)
 
-  showState: () ->
+  showState: ->
     @$correctTurns.html(@state.correctTurns)
     @$totalTurns.html(@state.correctTurns)
 

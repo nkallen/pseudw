@@ -9,9 +9,9 @@ class Trie
       if next = @state[char]
         new Node(next)
       else null
-    value: () -> @state.value
-    isLeaf: () -> false
-    isBranch: () -> true
+    value: -> @state.value
+    isLeaf: -> false
+    isBranch: -> true
 
   root = {}
  
@@ -22,6 +22,6 @@ class Trie
 
     branch.value = value
 
-  traverse: () -> new Node(root)
+  traverse: -> new Node(root)
 
   module.exports = Trie
