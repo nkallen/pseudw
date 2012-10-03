@@ -18,6 +18,8 @@ class Game
 
   constructor: (@gameDesc, @$div) ->
     @$card           = @$div.find(".card")
+    @$cardPrototype  = @$card.find(".prototype")
+    @$carouselInner  = @$div.find(".carousel-inner")
     @$correctTurns   = @$div.find(".correctTurns")
     @$morpheme       = @$div.find(".morpheme")
     @$totalTurns     = @$div.find(".totalTurns")
@@ -25,9 +27,9 @@ class Game
     @$definition     = @$div.find(".definition")
     @$nextButton     = @$div.find("button.next")
 
-    console.log(@$nextButton)
-    @$nextButton.click(=>
+    @$card.on('click.carousel', '[data-move]', (e) =>
       @nextTurn()
+      e.preventDefault()
     )
 
     @state = new GameState
@@ -48,16 +50,23 @@ class Game
       showEnd()
 
   showTurn: (participle) ->
-    @showCard()
-    @showParticiple(participle)
+    turn = @$cardPrototype
+      .clone()
+      .removeClass('prototype')
+      .addClass('item')
+      .removeAttr('aria-hidden')
+    turn.find(".morpheme").html(participle.morpheme)
+    turn.find(".principalParts").html(participle.verb.principalParts)
+    turn.find(".definition").html(participle.verb.defintion)
+    turn.appendTo(@$carouselInner)
     @showState()
+    @$card.carousel('next')
 
   chooseParticiple: -> @gameDesc.participles[Math.floor(Math.random() * @gameDesc.participles.length)]
 
   hasRemaining: -> true
 
   showCard: ->
-    @$card.toggleClass("show-dictionary-entry", @showDictionaryEntry)
 
   showParticiple: (participle) ->
     @$morpheme.html(participle.morpheme)

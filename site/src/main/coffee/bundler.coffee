@@ -68,7 +68,7 @@ class Bundler
 
   dependency: (name, rename = name) ->
     resolved = @require.resolve(name)
-    richModule = new RichModule(rename, resolved, @parent, @require)
+    richModule = new RichModule(rename, resolved, @parent)
     richModule.load(resolved)
     @modules.push(richModule)
     this
