@@ -39,9 +39,8 @@
             <button class="btn btn-primary">Save changes</button>
           </div>
         </div>
-        <a data-toggle="modal" href="#config" class="btn btn-primary btn-large">Options</a>
         <div class="carousel slide card" id="card" data-interval="">
-          <div class="carousel-inner">
+          <div class="carousel-inner" style="height: 230px">
             <div class="prototype hide" aria-hidden="true">
               <div class="row-fluid">
                 <div class="span12">
@@ -56,51 +55,43 @@
                 </div>
               </div>
               <div class="row-fluid">
-                <div class="span2 offset1">
-                  <div class="btn-group btn-group-vertical" data-toggle="buttons-radio">
-                    <button class="btn"><u>P</u>resent</button>
-                    <button class="btn"><u>F</u>uture</button>
-                    <button class="btn"><u>A</u>orist</button>
-                    <button class="btn">Pe<u>r</u>fect</button>
-                    <button class="btn">P<u>l</u>uperfect</button>
+                <div class="offset1 span2 tense">
+                  <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-radio">
+                    <button class="btn present"><u>P</u>resent</button>
+                    <button class="btn future"><u>F</u>uture</button>
+                    <button class="btn aorist"><u>A</u>orist</button>
+                    <button class="btn perfect">Pe<u>r</u>fect</button>
                   </div>
                 </div>
-                <div class="span2">
-                  <div class="btn-group btn-group-vertical" data-toggle="buttons-radio">
-                    <button class="btn"><u>A</u>ctive</button>
-                    <button class="btn"><u>M</u>iddle</button>
-                    <button class="btn"><u>P</u>assive</button>
+                <div class="span2 voice">
+                  <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-radio">
+                    <button class="btn active"><u>A</u>ctive</button>
+                    <button class="btn middle"><u>M</u>iddle</button>
+                    <button class="btn middlePassive"><u>M</u>iddle Passive</button>
+                    <button class="btn passive"><u>P</u>assive</button>
                   </div>
                 </div>
-                <div class="span2">
-                  <div class="btn-group btn-group-vertical" data-toggle="buttons-radio">
-                    <button class="btn"><u>N</u>ominative</button>
-                    <button class="btn"><u>G</u>enitive</button>
-                    <button class="btn"><u>D</u>ative</button>
-                    <button class="btn"><u>A</u>ccusative</button>
-                    <button class="btn"><u>V</u>ocative</button>
+                <div class="span2 case">
+                  <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-radio">
+                    <button class="btn nominative"><u>N</u>ominative</button>
+                    <button class="btn genitive"><u>G</u>enitive</button>
+                    <button class="btn dative"><u>D</u>ative</button>
+                    <button class="btn accusative"><u>A</u>ccusative</button>
+                    <button class="btn vocative"><u>V</u>ocative</button>
                   </div>
                 </div>
-                <div class="span2">
-                  <div class="btn-group btn-group-vertical" data-toggle="buttons-radio">
-                    <button class="btn"><u>M</u>asculine</button>
-                    <button class="btn"><u>F</u>eminine</button>
-                    <button class="btn"><u>N</u>euter</button>
+                <div class="span2 gender">
+                  <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-radio">
+                    <button class="btn masculine"><u>M</u>asculine</button>
+                    <button class="btn feminine"><u>F</u>eminine</button>
+                    <button class="btn neuter"><u>N</u>euter</button>
                   </div>
                 </div>
-                <div class="span2">
-                  <div class="btn-group btn-group-vertical" data-toggle="buttons-radio">
-                    <button class="btn"><u>S</u>ingle</button>
-                    <button class="btn"><u>D</u>ual</button>
-                    <button class="btn"><u>P</u>lural</button>
-                  </div>
-                </div>
-                <div class="span2" data-toggle="buttons-radio">
-                  <div class="btn-group btn-group-vertical">
-                    <option name="nominative">nominative</option>
-                    <option name="vocative">vocative</option>
-                    <option name="accusative">accusative</option>
-                    <option name="dative">dative</option>
+                <div class="span2 number">
+                  <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-radio">
+                    <button class="btn singular"><u>S</u>ingular</button>
+                    <button class="btn dual"><u>D</u>ual</button>
+                    <button class="btn plural"><u>P</u>lural</button>
                   </div>
                 </div>
               </div>
@@ -109,20 +100,29 @@
           <!-- a class="carousel-control left" href="#card" data-move="prev">&lsaquo;</a -->
           <a class="carousel-control right" href="#card" data-move="next">&rsaquo;</a>
         </div>
-        <div class="state">
-          <div class="correct-turns"></div>
-          <div class="total-turns"></div>
-          <div class="time"></div>
+        <div class="state" style="text-align: right">
+          <p><span class="correct-turns"></span> correct / <span class="total-turns"></span> total</p>
+          <span class="time"></span>
         </div>
       </div>
       <div class="row">
+        <div class="span4">
+          <h2>Intro</h2>
+          <p>This game is designed to improve your Greek participle recognition, both in accuracy and in speed. It works like this: the computer presents an inflected participle, and you identify its tense, number, and so forth. You will be timed, so try hard not only to be correct but also fast. The computer will learn which types of forms you have trouble with and focus on them so as to improve your skills. For example, if you consistently mistake aorist forms, the computer will present those more often so you get more practice with them.</p>
+        </div>
         <div class="span8">
           <h2>Tips</h2>
-          <p>Try using the keyboard to answer. For example, type <span class="label label-info">p</span> to indicate <span class="label label-info">Present tense</span> and then hit <span class="label label-info">Enter</span> to submit your answer.</p>
-        </div>
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Brooklyn odd future readymade, synth craft beer raw denim pinterest authentic leggings stumptown kogi direct trade ethnic viral williamsburg. Banksy tofu kale chips, VHS four loko banh mi photo booth pickled raw denim cray. Carles brunch kogi, brooklyn photo booth helvetica banh mi authentic high life tofu seitan. Farm-to-table bespoke you probably haven't heard of them aesthetic banh mi pour-over. Ethnic art party gluten-free, sriracha beard bespoke butcher narwhal ethical yr shoreditch cray. Ennui street art fap fixie put a bird on it. Squid put a bird on it mcsweeney's master cleanse.</p>
+          <ul>
+            <li>
+              <p>Try using the keyboard to answer. For example, type <span class="label label-info">p</span> to indicate <span class="label label-info">Present tense</span> and then hit <span class="label label-info">Enter</span> to submit your answer.</p>
+            </li>
+            <li>
+              <p>You can <a data-toggle="modal" href="#config">configure the game</a> to select from a specific list of Greek verbs or only ask for specific parts of the inflection (e.g., only "tense").</p>
+            </li>
+            <li>
+              <p>You can share your game configurations with friends just by copying and pasting the URL from your browser's location bar. If the URL is too long, consider using a url shortener like <a href="http://bit.ly/">bit.ly</a>
+            </li>
+          </ul>
         </div>
       </div>
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>

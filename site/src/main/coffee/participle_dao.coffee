@@ -5,7 +5,6 @@ Preconditions = util.preconditions
 Participle = greek.Participle
 Verb = greek.Verb
 ParticipleDesc = greek.ParticipleDesc
-SubstantiveDesc = greek.SubstantiveDesc
 Case = greek.Case
 Gender = greek.Gender
 Number = greek.Number
@@ -21,14 +20,16 @@ class ParticipleHttpDao
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
+    console.log("#{@uri}/#{lemmas.join(";")}/participles")
     @getJson("#{@uri}/#{lemmas.join(";")}/participles", {}, (jsons) ->
       participles = for json in jsons
         new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.definition),
-          new ParticipleDesc(Tense[json.participleDesc.tense], Voice[json.participleDesc.voice],
-            new SubstantiveDesc(
-              Case[json.participleDesc.substantiveDesc.case],
-              Gender[json.participleDesc.substantiveDesc.gender],
-              Number[json.participleDesc.substantiveDesc.number])))
+          new ParticipleDesc(
+              Tense[json.participleDesc.tense],
+              Voice[json.participleDesc.voice],
+              Case[json.participleDesc.case],
+              Gender[json.participleDesc.gender],
+              Number[json.participleDesc.number]))
       onSuccess(participles)
     )
 
@@ -49,7 +50,7 @@ class ParticipleSqlDao
           voice = Voice[row.voice]
 
         new Participle(row.form, new Verb(row.lemma, [], ""),
-            new ParticipleDesc(Tense[row.tense], voice, new SubstantiveDesc(Case[row.case], Gender[row.gender], Number[row.number])))
+            new ParticipleDesc(Tense[row.tense], voice, Case[row.case], Gender[row.gender], Number[row.number]))
 
       onSuccess(participles)
     )

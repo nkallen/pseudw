@@ -16,17 +16,13 @@ Mood = Enum('Mood', 'indicative', 'optatitive', 'imperative', 'subjunctive')
 class Verb
   constructor: (@lemma, @principleParts, @definition) ->
 
-class SubstantiveDesc
-  constructor: (@case, @gender, @number) ->
+class ParticipleDesc
+  constructor: (@tense, @voice, @case, @gender, @number) ->
+    Preconditions.assertType(@tense, Tense)
+    Preconditions.assertType(@voice, Voice)
     Preconditions.assertType(@case, Case)
     Preconditions.assertType(@gender, Gender)
     Preconditions.assertType(@number, Number)
-    
-class ParticipleDesc
-  constructor: (@tense, @voice, @substantiveDesc) ->
-    Preconditions.assertType(@tense, Tense)
-    Preconditions.assertType(@voice, Voice)
-    Preconditions.assertType(@substantiveDesc, SubstantiveDesc)
 
 class Participle
   constructor: (@morpheme, @verb, @participleDesc) ->
@@ -171,7 +167,6 @@ module.exports = {
   Voice: Voice,
   Mood: Mood,
   Verb: Verb,
-  SubstantiveDesc: SubstantiveDesc,
   ParticipleDesc: ParticipleDesc,
   Participle: Participle,
   betacode2unicode: betacode2unicode,

@@ -20,12 +20,12 @@ class Game
     @$card           = @$div.find(".card")
     @$cardPrototype  = @$card.find(".prototype")
     @$carouselInner  = @$div.find(".carousel-inner")
-    @$correctTurns   = @$div.find(".correctTurns")
+    @$correctTurns   = @$div.find(".correct-turns")
     @$morpheme       = @$div.find(".morpheme")
-    @$totalTurns     = @$div.find(".totalTurns")
+    @$totalTurns     = @$div.find(".total-turns")
     @$principalParts = @$div.find(".principalParts")
     @$definition     = @$div.find(".definition")
-    @$nextButton     = @$div.find("button.next")
+    @$state          = @$div.find(".state")
 
     @$card.on('click.carousel', '[data-move]', (e) =>
       @nextTurn()
@@ -39,26 +39,37 @@ class Game
 
   nextTurn: ->
     if @state.currentTurn
-      answer = getAnswer()
-      @gameState.correctTurns++ if isAnswerCorrect(answer)
-      @gameState.totalTurns++
+      $turn = @$card.find(".item.active")
+      madeMistake = false
+      for inflection in ['tense', 'voice', 'case', 'gender', 'number']
+        $inflection = $turn.find(".#{inflection} .#{@state.currentTurn.participleDesc[inflection]}")
+        if $inflection.hasClass('active')
+          $inflection.addClass('btn-success')
+        else
+          madeMistake = true
+          $inflection.addClass('btn-danger')
+
+      @state.totalTurns++
+      @state.correctTurns++ unless madeMistake
 
     if @hasRemaining()
       participle = @chooseParticiple()
+      @state.currentTurn = participle
       @showTurn(participle)
     else
+      @state.currentTurn = null
       showEnd()
 
   showTurn: (participle) ->
-    turn = @$cardPrototype
+    $turn = @$cardPrototype
       .clone()
       .removeClass('prototype')
       .addClass('item')
       .removeAttr('aria-hidden')
-    turn.find(".morpheme").html(participle.morpheme)
-    turn.find(".principalParts").html(participle.verb.principalParts)
-    turn.find(".definition").html(participle.verb.defintion)
-    turn.appendTo(@$carouselInner)
+    $turn.find(".morpheme").text(participle.morpheme)
+    $turn.find(".principalParts").text(participle.verb.principalParts)
+    $turn.find(".definition").text(participle.verb.defintion)
+    $turn.appendTo(@$carouselInner)
     @showState()
     @$card.carousel('next')
 
@@ -66,15 +77,9 @@ class Game
 
   hasRemaining: -> true
 
-  showCard: ->
-
-  showParticiple: (participle) ->
-    @$morpheme.html(participle.morpheme)
-    @$principalParts.html(participle.verb.principalParts)
-    @$definition.html(participle.verb.definition)
-
   showState: ->
-    @$correctTurns.html(@state.correctTurns)
-    @$totalTurns.html(@state.correctTurns)
+    console.log(@state)
+    @$correctTurns.text(@state.correctTurns)
+    @$totalTurns.text(@state.totalTurns)
 
 module.exports = Game

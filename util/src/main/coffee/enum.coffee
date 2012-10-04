@@ -2,6 +2,7 @@ Enum = (typeName, names...) ->
   class anon
     constructor: (@name) ->
     toJSON: -> @name
+    toString: -> @name
 
   for name in names
     anon[name] = new anon(name)

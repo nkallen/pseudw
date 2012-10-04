@@ -30,7 +30,7 @@ app.get('/application.js', (req, res) ->
 app.use(express.static(__dirname + '/../resources'))
 
 app.get('/lemmas/:lemmas/participles', (req, res, next) ->
-  lemmas = unorm.nfc(lemma) for lemma in req.params.lemmas.split(/[;,]/)
+  lemmas = (unorm.nfc(lemma) for lemma in req.params.lemmas.split(/[;,]/))
   Participle.findAllByLemma(lemmas,
     (participles) ->
       return res.status(404).end() if participles.length == 0
