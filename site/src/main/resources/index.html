@@ -21,7 +21,7 @@
             <div class="config">
               <h4>Lemmas</h4>
               <p>Use these greek lemmas to generate participles.</p>
-              <textarea name="lemmas">τιμάω, λέγω3</textarea>
+              <input type="text" name="lemmas" value="τιμάω, λέγω3" />
               <h4>Ask for</h4>
               <p>Vary the game by having the player only indicate one or more of the tense/voice/etc.</p>
               <p>Because both speed and accuracy are important components of fluency, by limiting the game to only one attribute at a time (e.g. just, <em>tense</em>) the user can spend less time thinking about data entry and more time recognizing forms.<p>
@@ -31,6 +31,12 @@
                 <button class="btn">Gender</button>
                 <button class="btn">Number</button>
                 <button class="btn">Case</button>
+              </div>
+              <h4>Dual?</h4>
+              <p>The dual and vocative are not tested by defeault. But if you'd like to make things a little bit more interesting, add these in!</p>
+              <div class="btn-group" data-toggle="buttons-checkbox">
+                <button class="btn">Include Dual</button>
+                <button class="btn">Include Vocative</button>
               </div>
             </div>
           </div>
@@ -56,42 +62,42 @@
               </div>
               <div class="row-fluid">
                 <div class="offset1 span2 tense">
-                  <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-radio">
-                    <button class="btn present"><u>P</u>resent</button>
-                    <button class="btn future"><u>F</u>uture</button>
-                    <button class="btn aorist"><u>A</u>orist</button>
-                    <button class="btn perfect">Pe<u>r</u>fect</button>
+                  <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-checkbox">
+                    <button class="btn present" tabindex="-1"><u>P</u>resent</button>
+                    <button class="btn future" tabindex="-1"><u>F</u>uture</button>
+                    <button class="btn aorist" tabindex="-1"><u>A</u>orist</button>
+                    <button class="btn perfect" tabindex="-1">Pe<u>r</u>fect</button>
                   </div>
                 </div>
                 <div class="span2 voice">
-                  <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-radio">
-                    <button class="btn active"><u>A</u>ctive</button>
-                    <button class="btn middle"><u>M</u>iddle</button>
-                    <button class="btn middlePassive"><u>M</u>iddle Passive</button>
-                    <button class="btn passive"><u>P</u>assive</button>
+                  <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-checkbox">
+                    <button class="btn active" tabindex="-1"><u>A</u>ctive</button>
+                    <button class="btn middle" tabindex="-1"><u>M</u>iddle</button>
+                    <button class="btn middlePassive" tabindex="-1"><u>M</u>iddle Passive</button>
+                    <button class="btn passive" tabindex="-1"><u>P</u>assive</button>
                   </div>
                 </div>
                 <div class="span2 case">
-                  <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-radio">
-                    <button class="btn nominative"><u>N</u>ominative</button>
-                    <button class="btn genitive"><u>G</u>enitive</button>
-                    <button class="btn dative"><u>D</u>ative</button>
-                    <button class="btn accusative"><u>A</u>ccusative</button>
-                    <button class="btn vocative"><u>V</u>ocative</button>
+                  <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-checkbox">
+                    <button class="btn nominative" tabindex="-1"><u>N</u>ominative</button>
+                    <button class="btn genitive" tabindex="-1"><u>G</u>enitive</button>
+                    <button class="btn dative" tabindex="-1"><u>D</u>ative</button>
+                    <button class="btn accusative" tabindex="-1"><u>A</u>ccusative</button>
+                    <button class="btn vocative" tabindex="-1"><u>V</u>ocative</button>
                   </div>
                 </div>
                 <div class="span2 gender">
-                  <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-radio">
-                    <button class="btn masculine"><u>M</u>asculine</button>
-                    <button class="btn feminine"><u>F</u>eminine</button>
-                    <button class="btn neuter"><u>N</u>euter</button>
+                  <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-checkbox">
+                    <button class="btn masculine" tabindex="-1"><u>M</u>asculine</button>
+                    <button class="btn feminine" tabindex="-1"><u>F</u>eminine</button>
+                    <button class="btn neuter" tabindex="-1"><u>N</u>euter</button>
                   </div>
                 </div>
                 <div class="span2 number">
-                  <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-radio">
-                    <button class="btn singular"><u>S</u>ingular</button>
-                    <button class="btn dual"><u>D</u>ual</button>
-                    <button class="btn plural"><u>P</u>lural</button>
+                  <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-checkbox">
+                    <button class="btn singular" tabindex="-1"><u>S</u>ingular</button>
+                    <button class="btn dual" tabindex="-1"><u>D</u>ual</button>
+                    <button class="btn plural" tabindex="-1"><u>P</u>lural</button>
                   </div>
                 </div>
               </div>
