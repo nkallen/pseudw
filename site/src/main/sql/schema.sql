@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS morphemes (
   gender ENUM('masculine', 'feminine', 'neuter'),
   `number` ENUM('singular', 'dual', 'plural'),
   `case` ENUM('nominative', 'vocative', 'genitive', 'dative', 'accusative'),
-  tense ENUM('present', 'imperfect', 'future', 'aorist', 'perfect', 'pluperfect', 'future-perfect', 'infinitive'),
-  voice ENUM('active', 'middle', 'passive', 'middle-passive'),
+  tense ENUM('present', 'imperfect', 'future', 'aorist', 'perfect', 'pluperfect', 'futurePerfect', 'infinitive'),
+  voice ENUM('active', 'middle', 'passive', 'middlePassive'),
   mood ENUM('indicative', 'imperative', 'optative', 'subjunctive'),
   person ENUM('1st', '2nd', '3rd'),
   UNIQUE (`lemma`, `part_of_speech`, `tense`, `voice`, `person`, `mood`, `gender`, `number`, `case`, `form`), -- useful for verb lookup

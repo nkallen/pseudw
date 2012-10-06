@@ -222,7 +222,7 @@ class MysqlStream extends stream.Stream
         when "fut" then "future"
         when "perf" then "perfect"
         when "plup" then "pluperfect"
-        when "futperf" then "future-perfect"
+        when "futperf" then "futurePerfect"
         when tense?
           throw new TypeError("Invalid tense '#{tense}'")
 
@@ -266,7 +266,7 @@ class MysqlStream extends stream.Stream
       switch voice
         when "act" then "active"
         when "mid" then "middle"
-        when "mp" then "middle-passive"
+        when "mp" then "middlePassive"
         when "pass" then "passive"
         when voice?
           throw new TypeError("Invalid Voice '#{voice}'")
