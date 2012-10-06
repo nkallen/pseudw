@@ -2,7 +2,6 @@ util = require('pseudw-util')
 
 # todo
 #
-# load definitions
 # extract view class
 # fix centering when hiding inflections
 
@@ -24,7 +23,6 @@ Participle = greek.Participle
 class Game
   class GameDesc
     lemmas: ['τιμάω', 'λέγω3']
-    showDictionaryEntry: true
     inflections: Participle.allInflections
     tenses: [Tense.present, Tense.future, Tense.aorist, Tense.perfect]
     voices: [Voice.active, Voice.middle, Voice.middlePassive, Voice.passive]
@@ -70,8 +68,6 @@ class Game
     @$correctTurns   = @$div.find(".correct-turns")
     @$morpheme       = @$div.find(".morpheme")
     @$totalTurns     = @$div.find(".total-turns")
-    @$principalParts = @$div.find(".principalParts")
-    @$definition     = @$div.find(".definition")
     @$state          = @$div.find(".state")
 
     @participlesByForm = {}
@@ -169,7 +165,8 @@ class Game
     else
       $card.find(".morpheme").text("#{participles[0].morpheme}")
     $card.find(".principalParts").text(participles[0].verb.principalParts)
-    $card.find(".definition").text(participles[0].verb.defintion)
+    console.log(participles[0].verb)
+    $card.find(".translation").text(participles[0].verb.translation)
     $card.appendTo(@$carouselInner)
     @showState()
     @$carousel.carousel('next')

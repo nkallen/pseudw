@@ -15,7 +15,7 @@ Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
 Mood = Enum('Mood', 'indicative', 'optatitive', 'imperative', 'subjunctive')
 
 class Verb
-  constructor: (@lemma, @principleParts, @definition) ->
+  constructor: (@lemma, @principleParts, @translation) ->
 
 class ParticipleDesc
   constructor: (@tense, @voice, @case, @gender, @number) ->

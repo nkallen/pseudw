@@ -27,7 +27,7 @@ class ParticipleHttpDao
 
     @getJson("#{@uri}/#{lemmas.join(";")}/participles", queryStringOptions, (jsons) ->
       participles = for json in jsons
-        new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.definition),
+        new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.translation),
           new ParticipleDesc(
               Tense[json.participleDesc.tense],
               Voice[json.participleDesc.voice],
@@ -44,7 +44,7 @@ class ParticipleSqlDao
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
-    query = "SELECT * FROM morphemes WHERE lemma IN (?) AND part_of_speech = 'participle'"
+    query = "SELECT * FROM morphemes LEFT OUTER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE morphemes.lemma IN (?) AND part_of_speech = 'participle'"
     bindParameters = [lemmas]
     for inflection, attributes of options
       query += " AND `#{inflection.toString().toLowerCase()}` IN (?)"
@@ -59,7 +59,7 @@ class ParticipleSqlDao
         else
           voice = Voice[row.voice]
 
-        new Participle(row.form, new Verb(row.lemma, [], ""),
+        new Participle(row.form, new Verb(row.lemma, [], row.translation),
             new ParticipleDesc(Tense[row.tense], voice, Case[row.case], Gender[row.gender], Number[row.number]))
 
       onSuccess(participles)
