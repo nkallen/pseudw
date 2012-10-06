@@ -2,11 +2,13 @@ util = require('pseudw-util')
 
 # todo
 #
-# make going backwards possible
 # lines
 # load definitions
 # extract view class
 # fix centering when hiding inflections
+
+# blocked on internet access
+#
 # keybindings
 # tab behavior
 # config populated from url
@@ -63,8 +65,8 @@ class Game
       onSuccess(new Game(gameDesc, $div)))
 
   constructor: (@gameDesc, @$div) ->
-    @$card           = @$div.find(".card")
-    @$cardPrototype  = @$card.find(".prototype") # XXX two things called card -- clarify
+    @$carousel       = @$div.find(".carousel")
+    @$cardPrototype  = @$carousel.find(".prototype")
     @$carouselInner  = @$div.find(".carousel-inner")
     @$correctTurns   = @$div.find(".correct-turns")
     @$morpheme       = @$div.find(".morpheme")
@@ -81,12 +83,12 @@ class Game
 
     @forms.sort(() -> Math.floor(Math.random() * 3) - 1)
 
-    @$card.on('click.carousel', '[data-move=next]', (e) =>
+    @$carousel.on('click.carousel', '[data-move=next]', (e) =>
       @nextTurn()
       e.preventDefault()
     )
 
-    @$card.on('click.carousel', '[data-move=prev]', (e) =>
+    @$carousel.on('click.carousel', '[data-move=prev]', (e) =>
       @prevTurn()
       e.preventDefault()
     )
@@ -104,7 +106,7 @@ class Game
 
   nextTurn: ->
     if @state.currentTurn
-      $turn = @$card.find(".item.active")
+      $turn = @$carousel.find(".item.active")
       madeMistake = false
       for inflection in @gameDesc.inflections
         inflectionLowerCase = inflection.toString().toLowerCase()
@@ -141,17 +143,17 @@ class Game
 
     if @hasRemaining()
       unless madeMistake
-        @$card.find('[data-move=prev]').removeClass("hide") if @state.totalTurns == 1
+        @$carousel.find('[data-move=prev]').removeClass("hide") if @state.totalTurns == 1
         participles = @chooseParticiples()
         @state.currentTurn = participles
         @showTurn(participles)
     else
       @state.currentTurn = null
-      @$card.find('[data-move=next]').addClass("hide")
+      @$carousel.find('[data-move=next]').addClass("hide")
       showEnd()
 
   showTurn: (participles) ->
-    $turn = @$cardPrototype # XXX rename $turn to question? or card?
+    $card = @$cardPrototype
       .clone()
       .removeClass('prototype')
       .addClass('item')
@@ -164,14 +166,14 @@ class Game
         .end()
 
     if participles.length > 1
-      $turn.find(".morpheme").text("#{participles[0].morpheme} (#{participles.length} variants)")
+      $card.find(".morpheme").text("#{participles[0].morpheme} (#{participles.length} variants)")
     else
-      $turn.find(".morpheme").text("#{participles[0].morpheme}")
-    $turn.find(".principalParts").text(participles[0].verb.principalParts)
-    $turn.find(".definition").text(participles[0].verb.defintion)
-    $turn.appendTo(@$carouselInner)
+      $card.find(".morpheme").text("#{participles[0].morpheme}")
+    $card.find(".principalParts").text(participles[0].verb.principalParts)
+    $card.find(".definition").text(participles[0].verb.defintion)
+    $card.appendTo(@$carouselInner)
     @showState()
-    @$card.carousel('next')
+    @$carousel.carousel('next')
 
   chooseParticiples: ->
     form = @forms.shift()
