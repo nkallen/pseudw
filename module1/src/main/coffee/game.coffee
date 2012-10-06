@@ -1,10 +1,16 @@
 util = require('pseudw-util')
 
-# keybindings
-# hide irrelevant buttons
-# config populated from url
+# todo
+#
+# fix multiselect bug
+# support server side filter of inflections
+# use inflections when making rpc
+# track user mistakes
 # tab behavior
 # lines
+# keybindings
+# config populated from url
+# fix centering when hiding inflections
 
 greek = util.greek
 Case = greek.Case
@@ -39,7 +45,7 @@ class Game
       inflectionLowerCase = inflection.toString().toLowerCase()
       $div.find(".config [data-option-inflection=#{inflectionLowerCase}]").addClass("active")
 
-    for inflection in [Tense, Voice, Gender, Number, Case]
+    for inflection in [Tense, Voice, Gender, Number, Case] # XXX extract const
       inflectionLowerCase = inflection.toString().toLowerCase()
       for activeAttribute in gameDesc["#{inflectionLowerCase}s"]
         $div.find(".config [data-option-#{inflectionLowerCase}=#{activeAttribute}]").addClass("active")
@@ -73,6 +79,11 @@ class Game
       e.preventDefault()
     )
 
+    for inflection in [Tense, Voice, Case, Gender, Number]
+      inflectionLowerCase = inflection.toString().toLowerCase() # XXX DRY
+      if inflection not in gameDesc.inflections
+        @$cardPrototype.find("[data-inflection=#{inflectionLowerCase}]").addClass("hide")
+
     @state = new GameState
 
   start: ->
@@ -82,7 +93,7 @@ class Game
     if @state.currentTurn
       $turn = @$card.find(".item.active")
       madeMistake = false
-      for inflection in [Tense, Voice, Case, Gender, Number]
+      for inflection in @gameDesc.inflections
         for participle in @state.currentTurn
           inflectionLowerCase = inflection.toString().toLowerCase()
           $inflection = $turn.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
