@@ -81,41 +81,41 @@
               <div class="row-fluid">
                 <div class="offset1 span2 tense">
                   <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-tense="present"><u>P</u>resent</button>
-                    <button class="btn" tabindex="-1" data-tense="future"><u>F</u>uture</button>
-                    <button class="btn" tabindex="-1" data-tense="aorist"><u>A</u>orist</button>
-                    <button class="btn" tabindex="-1" data-tense="perfect">Pe<u>r</u>fect</button>
+                    <button class="btn" tabindex="-1" data-tense="present" data-keybinding="p"><u>P</u>resent</button>
+                    <button class="btn" tabindex="-1" data-tense="future" data-keybinding="f"><u>F</u>uture</button>
+                    <button class="btn" tabindex="-1" data-tense="aorist" data-keybinding="a"><u>A</u>orist</button>
+                    <button class="btn" tabindex="-1" data-tense="perfect" data-keybinding="r">Pe<u>r</u>fect</button>
                   </div>
                 </div>
                 <div class="span2 voice">
                   <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-voice="active"><u>A</u>ctive</button>
-                    <button class="btn" tabindex="-1" data-voice="middle"><u>M</u>iddle</button>
-                    <button class="btn" tabindex="-1" data-voice="middlePassive"><u>M</u>iddle Passive</button>
-                    <button class="btn" tabindex="-1" data-voice="passive"><u>P</u>assive</button>
+                    <button class="btn" tabindex="-1" data-voice="active" data-keybinding="a"><u>A</u>ctive</button>
+                    <button class="btn" tabindex="-1" data-voice="middle" data-keybinding="m"><u>M</u>iddle</button>
+                    <button class="btn" tabindex="-1" data-voice="middlePassive" data-keybinding="i">M<u>i</u>ddle Passive</button>
+                    <button class="btn" tabindex="-1" data-voice="passive" data-keybinding="p"><u>P</u>assive</button>
                   </div>
                 </div>
                 <div class="span2 case">
                   <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-case="nominative"><u>N</u>ominative</button>
-                    <button class="btn" tabindex="-1" data-case="genitive"><u>G</u>enitive</button>
-                    <button class="btn" tabindex="-1" data-case="dative"><u>D</u>ative</button>
-                    <button class="btn" tabindex="-1" data-case="accusative"><u>A</u>ccusative</button>
-                    <button class="btn" tabindex="-1" data-case="vocative"><u>V</u>ocative</button>
+                    <button class="btn" tabindex="-1" data-case="nominative" data-keybinding="n"><u>N</u>ominative</button>
+                    <button class="btn" tabindex="-1" data-case="genitive" data-keybinding="g"><u>G</u>enitive</button>
+                    <button class="btn" tabindex="-1" data-case="dative" data-keybinding="d"><u>D</u>ative</button>
+                    <button class="btn" tabindex="-1" data-case="accusative" data-keybinding="a"><u>A</u>ccusative</button>
+                    <button class="btn" tabindex="-1" data-case="vocative" data-keybinding="v"><u>V</u>ocative</button>
                   </div>
                 </div>
                 <div class="span2 gender">
                   <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-gender="masculine"><u>M</u>asculine</button>
-                    <button class="btn" tabindex="-1" data-gender="feminine"><u>F</u>eminine</button>
-                    <button class="btn" tabindex="-1" data-gender="neuter"><u>N</u>euter</button>
+                    <button class="btn" tabindex="-1" data-gender="masculine" data-keybinding="m"><u>M</u>asculine</button>
+                    <button class="btn" tabindex="-1" data-gender="feminine" data-keybinding="f"><u>F</u>eminine</button>
+                    <button class="btn" tabindex="-1" data-gender="neuter" data-keybinding="n"><u>N</u>euter</button>
                   </div>
                 </div>
                 <div class="span2 number">
                   <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-checkbox">
-                    <button class="btn singular" tabindex="-1" data-number="singular"><u>S</u>ingular</button>
-                    <button class="btn dual" tabindex="-1" data-number="dual"><u>D</u>ual</button>
-                    <button class="btn plural" tabindex="-1" data-number="plural"><u>P</u>lural</button>
+                    <button class="btn singular" tabindex="-1" data-number="singular" data-keybinding="s"><u>S</u>ingular</button>
+                    <button class="btn dual" tabindex="-1" data-number="dual" data-keybinding="d"><u>D</u>ual</button>
+                    <button class="btn plural" tabindex="-1" data-number="plural" data-keybinding="p"><u>P</u>lural</button>
                   </div>
                 </div>
               </div>
@@ -141,10 +141,10 @@
               <p>Try using the keyboard to answer. For example, type <span class="label label-info">p</span> to indicate <span class="label label-info">Present tense</span> and then hit <span class="label label-info">Enter</span> to submit your answer.</p>
             </li>
             <li>
-              <p>You can <a data-toggle="modal" href="#config">configure the game</a> to select from a specific list of Greek verbs or only ask for specific parts of the inflection (e.g., only "tense").</p>
+              <p>You can <a data-toggle="modal" href="#config" tabindex="-1">configure the game</a> to select from a specific list of Greek verbs or only ask for specific parts of the inflection (e.g., only "tense").</p>
             </li>
             <li>
-              <p>You can share your game configurations with friends just by copying and pasting the URL from your browser's location bar. If the URL is too long, consider using a url shortener like <a href="http://bit.ly/">bit.ly</a>
+              <p>You can share your game configurations with friends just by copying and pasting the URL from your browser's location bar. If the URL is too long, consider using a url shortener like <a href="http://bit.ly/" tabindex="-1">bit.ly</a>
             </li>
           </ul>
         </div>

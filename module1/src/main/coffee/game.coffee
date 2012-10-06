@@ -1,5 +1,11 @@
 util = require('pseudw-util')
 
+# keybindings
+# hide irrelevant buttons
+# config populated from url
+# tab behavior
+# lines
+
 greek = util.greek
 Case = greek.Case
 Gender = greek.Gender
@@ -29,9 +35,6 @@ class Game
 
   @make: ($div, Participle, onSuccess) ->
     gameDesc = new GameDesc
-    # readDescFromQueryString
-
-    # makeViewReflectDesc
     for inflection in gameDesc.inflections
       inflectionLowerCase = inflection.toString().toLowerCase()
       $div.find(".config [data-option-inflection=#{inflectionLowerCase}]").addClass("active")
@@ -110,6 +113,13 @@ class Game
       .removeClass('prototype')
       .addClass('item')
       .removeAttr('aria-hidden')
+      .find('.btn-group')
+        .keypress((event) ->
+          key = "p" # f(event.charCode) # XXX
+          $(this).find("[data-keybinding=#{key}]").click()
+        )
+        .end()
+
     if participles.length > 1
       $turn.find(".morpheme").text("#{participles[0].morpheme} (#{participles.length} variants)")
     else
