@@ -2,10 +2,10 @@ util = require('pseudw-util')
 
 # todo
 #
-# track user mistakes
-# lines
 # make going backwards possible
+# lines
 # load definitions
+# extract view class
 # fix centering when hiding inflections
 # keybindings
 # tab behavior
@@ -64,7 +64,7 @@ class Game
 
   constructor: (@gameDesc, @$div) ->
     @$card           = @$div.find(".card")
-    @$cardPrototype  = @$card.find(".prototype")
+    @$cardPrototype  = @$card.find(".prototype") # XXX two things called card -- clarify
     @$carouselInner  = @$div.find(".carousel-inner")
     @$correctTurns   = @$div.find(".correct-turns")
     @$morpheme       = @$div.find(".morpheme")
@@ -81,8 +81,13 @@ class Game
 
     @forms.sort(() -> Math.floor(Math.random() * 3) - 1)
 
-    @$card.on('click.carousel', '[data-move]', (e) =>
+    @$card.on('click.carousel', '[data-move=next]', (e) =>
       @nextTurn()
+      e.preventDefault()
+    )
+
+    @$card.on('click.carousel', '[data-move=prev]', (e) =>
+      @prevTurn()
       e.preventDefault()
     )
 
@@ -98,8 +103,6 @@ class Game
     @nextTurn()
 
   nextTurn: ->
-    console.log(@state.accuracy)
-
     if @state.currentTurn
       $turn = @$card.find(".item.active")
       madeMistake = false
@@ -138,15 +141,17 @@ class Game
 
     if @hasRemaining()
       unless madeMistake
+        @$card.find('[data-move=prev]').removeClass("hide") if @state.totalTurns == 1
         participles = @chooseParticiples()
         @state.currentTurn = participles
         @showTurn(participles)
     else
       @state.currentTurn = null
+      @$card.find('[data-move=next]').addClass("hide")
       showEnd()
 
   showTurn: (participles) ->
-    $turn = @$cardPrototype
+    $turn = @$cardPrototype # XXX rename $turn to question? or card?
       .clone()
       .removeClass('prototype')
       .addClass('item')
