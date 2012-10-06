@@ -106,12 +106,13 @@ class Game
             $inflection
               .addClass('btn-success')
               .removeClass('active')
+              .data("correct", true)
           else
             madeMistake = true
             $inflection.addClass('btn-danger')
         mistakes =
-          $turn.find("[data-#{inflectionLowerCase}].active")
-          .addClass('btn-danger')
+          $turn.find("[data-#{inflectionLowerCase}].active").filter("[data-correct]")
+            .addClass('btn-danger')
         madeMistake = true if mistakes.length > 0
         $turn.find("[data-#{inflectionLowerCase}]")
           .addClass("disabled")
