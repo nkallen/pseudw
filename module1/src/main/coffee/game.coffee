@@ -2,7 +2,6 @@ util = require('pseudw-util')
 
 # todo
 #
-# lines
 # load definitions
 # extract view class
 # fix centering when hiding inflections

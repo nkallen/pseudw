@@ -1,6 +1,7 @@
 Trie = require('./trie')
 Preconditions = require('./preconditions')
 Enum = require('./enum')
+unorm = require('unorm')
 
 ###
 An object model for Greek Grammar and some utilities for character encoding.
@@ -36,29 +37,29 @@ betacode2unicode = do ->
   raw =
     "a)/ ἄ
     a(/ ἅ
-    a(= ἆ
-    a)= ἇ
+    a(= ἇ
+    a)= ἆ
     a|( ᾁ
     a|) ᾀ
     a/| ᾴ
     a=| ᾷ
-    a|\ ᾲ
+    a| ᾲ
     a|/ ᾴ
     a) ἀ
     a( ἁ
     a/ ά
-    a\ ὰ
+    a ὰ
     a= ᾶ
     a| ᾳ
     a α
     c ξ
     d δ
     e)/ ἔ
-    e(/ ἔ
+    e(/ ἕ
     e) ἐ
     e( ἑ
     e/ έ
-    e\ ὲ
+    e ὲ
     e ε
     b β
     f φ
@@ -66,17 +67,17 @@ betacode2unicode = do ->
     h)/ ἤ
     h(/ ἥ
     h)= ἦ
-    h(= ῆ
+    h(= ἧ
     h)| ᾐ
     h(| ᾑ
     h/| ῄ
     h=| ῇ
-    h|\ ῂ
+    h| ῂ
     h|/ ῄ
     h) ἠ
     h( ἡ
     h/ ή
-    h\ ὴ
+    h ὴ
     h= ἠ
     h| ῃ
     h η
@@ -87,7 +88,7 @@ betacode2unicode = do ->
     i) ἰ
     i( ἱ
     i/ ί
-    i\ ὶ
+    i ὶ
     i= ῖ
     i ι
     k κ
@@ -99,7 +100,7 @@ betacode2unicode = do ->
     o) ὀ
     o( ὁ
     o/ ό
-    o\ ὸ
+    o ὸ
     o ο
     p π
     q θ
@@ -114,23 +115,23 @@ betacode2unicode = do ->
     u) ὐ
     u( ὑ
     u/ ύ
-    u\ ὺ
+    u ὺ
     u= ῦ
     u υ
     w)/ ὤ
     w(/ ὥ
     w|( ᾡ
     w|) ᾠ
-    w)= ὧ
-    w(= ὦ
+    w)= ὦ
+    w(= ὧ
     w/| ώ
     w=| ῷ
-    w|\ ῲ
+    w| ῲ
     w|/ ώ
     w) ὠ
     w( ὡ
     w/ ώ
-    w\ ὼ
+    w ὼ
     w= ῶ
     w| ῳ
     w ω
