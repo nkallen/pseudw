@@ -20,7 +20,12 @@ class ParticipleHttpDao
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
-    @getJson("#{@uri}/#{lemmas.join(";")}/participles", {}, (jsons) ->
+    queryStringOptions = {}
+    for inflection, attributes of options
+      queryStringOptions[inflection.toString().toLowerCase()] =
+        (attribute.toString() for attribute in attributes)
+
+    @getJson("#{@uri}/#{lemmas.join(";")}/participles", queryStringOptions, (jsons) ->
       participles = for json in jsons
         new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.definition),
           new ParticipleDesc(
@@ -42,7 +47,7 @@ class ParticipleSqlDao
     query = "SELECT * FROM morphemes WHERE lemma IN (?) AND part_of_speech = 'participle'"
     bindParameters = [lemmas]
     for inflection, attributes of options
-      query += " AND #{inflection.toString().toLowerCase()} IN (?)"
+      query += " AND `#{inflection.toString().toLowerCase()}` IN (?)"
       bindParameters.push(attribute.toString() for attribute in attributes)
 
     @connection.query(query, bindParameters, (err, rows, fields) ->

@@ -2,8 +2,6 @@ util = require('pseudw-util')
 
 # todo
 #
-# rename "inflections" to "attributes"
-# use inflections when making rpc
 # track user mistakes
 # tab behavior
 # lines
@@ -49,13 +47,16 @@ class Game
       $div.find(".config [data-option-inflection=#{inflectionLowerCase}]")
         .addClass("active")
 
+    options = {}
     for inflection in Participle.allInflections
       inflectionLowerCase = inflection.toString().toLowerCase()
+      options[inflection] = []
       for activeAttribute in gameDesc["#{inflectionLowerCase}s"]
+        options[inflection].push(activeAttribute)
         $div.find(".config [data-option-#{inflectionLowerCase}=#{activeAttribute}]").addClass("active")
     $div.find(".config [name=lemmas]").val(gameDesc.lemmas.join(", "))
 
-    participleDao.findAllByLemma(gameDesc.lemmas, {}, (participles) ->
+    participleDao.findAllByLemma(gameDesc.lemmas, options, (participles) ->
       gameDesc.participles = participles
       onSuccess(new Game(gameDesc, $div)))
 
