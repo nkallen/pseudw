@@ -3,14 +3,14 @@ util = require('pseudw-util')
 # todo
 #
 # track user mistakes
-# tab behavior
 # lines
 # make going backwards possible
-# keybindings
-# config populated from url
-# fix centering when hiding inflections
-# show paradigm
 # load definitions
+# fix centering when hiding inflections
+# keybindings
+# tab behavior
+# config populated from url
+# show paradigm
 
 greek = util.greek
 Case = greek.Case
@@ -38,7 +38,9 @@ class Game
     showingMistake: false
     totalTurns: 0
     correctTurns: 0
-    turns: {} # mapping of participle to correct/incorrect count
+    accuracy:
+      mistakes: {}
+      total: {}
 
   @make: ($div, participleDao, onSuccess) ->
     gameDesc = new GameDesc
@@ -96,21 +98,27 @@ class Game
     @nextTurn()
 
   nextTurn: ->
+    console.log(@state.accuracy)
+
     if @state.currentTurn
       $turn = @$card.find(".item.active")
       madeMistake = false
       for inflection in @gameDesc.inflections
         inflectionLowerCase = inflection.toString().toLowerCase()
         for participle in @state.currentTurn
-          $inflection = $turn.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
-          if $inflection.hasClass('active')
-            $inflection
+          $attribute = $turn.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
+          attribute = participle.participleDesc[inflectionLowerCase]
+          if $attribute.hasClass('active')
+            $attribute
               .addClass('btn-success')
-              .removeClass('active')
               .data("correct", true)
           else
             madeMistake = true
-            $inflection.addClass('btn-danger')
+            @state.accuracy.mistakes[attribute] ||= 0
+            @state.accuracy.mistakes[attribute] += 1
+            $attribute.addClass('btn-danger')
+          @state.accuracy.total[attribute] ||= 0
+          @state.accuracy.total[attribute] += 1
         mistakes =
           $turn.find("[data-#{inflectionLowerCase}].active").filter("[data-correct]")
             .addClass('btn-danger')
@@ -121,8 +129,12 @@ class Game
       @state.totalTurns++
       if madeMistake
         @state.currentTurn = null
+        @state.accuracy.mistakes[participle] ||= 0
+        @state.accuracy.mistakes[participle] += 1
       else
         @state.correctTurns++
+      @state.accuracy.total[participle] ||= 0
+      @state.accuracy.total[participle] += 1
 
     if @hasRemaining()
       unless madeMistake
