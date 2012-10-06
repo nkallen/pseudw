@@ -1,11 +1,22 @@
+util = require('pseudw-util')
+
+greek = util.greek
+Case = greek.Case
+Gender = greek.Gender
+Number = greek.Number
+Tense = greek.Tense
+Voice = greek.Voice
+
 class Game
   class GameDesc
-    constructor: (@showDictionaryEntry, @askFor, @showRuleOnError, @participles) ->
-      @byForm = {}
-      @forms = []
-      for participle in @participles
-        (@byForm[participle.morpheme] ?= []).push(participle)
-        @forms.push(participle.morpheme)
+    lemmas: ['τιμάω', 'λέγω3']
+    showDictionaryEntry: true
+    inflections: [Tense, Voice, Gender, Number, Case]
+    tenses: [Tense.present, Tense.future, Tense.aorist, Tense.perfect]
+    voices: [Voice.active, Voice.middle, Voice.middlePassive, Voice.passive]
+    numbers: [Number.singular, Number.plural] # dual absent by default
+    genders: [Gender.masculine, Gender.feminine, Gender.neuter]
+    cases: [Case.nominative, Case.genitive, Case.dative, Case.accusative] # vocative absent by default
 
   class GameState
     constructor: ->
@@ -17,9 +28,22 @@ class Game
     turns: {} # mapping of participle to correct/incorrect count
 
   @make: ($div, Participle, onSuccess) ->
-    lemmas = $div.find(".config [name=lemmas]").val().split(/,\s*/)
-    Participle.findAllByLemma(lemmas, (participles) ->
-      gameDesc = new GameDesc(true, [], true, participles)
+    gameDesc = new GameDesc
+    # readDescFromQueryString
+
+    # makeViewReflectDesc
+    for inflection in gameDesc.inflections
+      inflectionLowerCase = inflection.toString().toLowerCase()
+      $div.find(".config [data-option-inflection=#{inflectionLowerCase}]").addClass("active")
+
+    for inflection in [Tense, Voice, Gender, Number, Case]
+      inflectionLowerCase = inflection.toString().toLowerCase()
+      for activeAttribute in gameDesc["#{inflectionLowerCase}s"]
+        $div.find(".config [data-option-#{inflectionLowerCase}=#{activeAttribute}]").addClass("active")
+    $div.find(".config [name=lemmas]").val(gameDesc.lemmas.join(", "))
+
+    Participle.findAllByLemma(gameDesc.lemmas, (participles) ->
+      gameDesc.participles = participles
       onSuccess(new Game(gameDesc, $div)))
 
   constructor: (@gameDesc, @$div) ->
@@ -32,6 +56,14 @@ class Game
     @$principalParts = @$div.find(".principalParts")
     @$definition     = @$div.find(".definition")
     @$state          = @$div.find(".state")
+
+    @participlesByForm = {}
+    @forms = []
+    for participle in gameDesc.participles
+      (@participlesByForm[participle.morpheme] ?= []).push(participle)
+      @forms.push(participle.morpheme)
+
+    @forms.sort(() -> Math.floor(Math.random() * 3) - 1)
 
     @$card.on('click.carousel', '[data-move]', (e) =>
       @nextTurn()
@@ -47,9 +79,10 @@ class Game
     if @state.currentTurn
       $turn = @$card.find(".item.active")
       madeMistake = false
-      for inflection in ['tense', 'voice', 'case', 'gender', 'number']
+      for inflection in [Tense, Voice, Case, Gender, Number]
         for participle in @state.currentTurn
-          $inflection = $turn.find(".#{inflection} .#{participle.participleDesc[inflection]}")
+          inflectionLowerCase = inflection.toString().toLowerCase()
+          $inflection = $turn.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
           if $inflection.hasClass('active')
             $inflection.addClass('btn-success')
           else
@@ -88,8 +121,8 @@ class Game
     @$card.carousel('next')
 
   chooseParticiples: ->
-    randomForm = @gameDesc.forms[Math.floor(Math.random() * @gameDesc.participles.length)]
-    @gameDesc.byForm[randomForm]
+    form = @forms.shift()
+    @participlesByForm[form]
 
   hasRemaining: -> true
 
