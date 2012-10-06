@@ -20,7 +20,6 @@ class ParticipleHttpDao
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
-    console.log("#{@uri}/#{lemmas.join(";")}/participles")
     @getJson("#{@uri}/#{lemmas.join(";")}/participles", {}, (jsons) ->
       participles = for json in jsons
         new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.definition),

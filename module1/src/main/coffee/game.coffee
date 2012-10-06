@@ -2,15 +2,17 @@ util = require('pseudw-util')
 
 # todo
 #
-# fix multiselect bug
 # support server side filter of inflections
 # use inflections when making rpc
 # track user mistakes
 # tab behavior
 # lines
+# make going backwards possible
 # keybindings
 # config populated from url
 # fix centering when hiding inflections
+# show paradigm
+# load definitions
 
 greek = util.greek
 Case = greek.Case
@@ -18,12 +20,13 @@ Gender = greek.Gender
 Number = greek.Number
 Tense = greek.Tense
 Voice = greek.Voice
+Participle = greek.Participle
 
 class Game
   class GameDesc
     lemmas: ['τιμάω', 'λέγω3']
     showDictionaryEntry: true
-    inflections: [Tense, Voice, Gender, Number, Case]
+    inflections: Participle.allInflections
     tenses: [Tense.present, Tense.future, Tense.aorist, Tense.perfect]
     voices: [Voice.active, Voice.middle, Voice.middlePassive, Voice.passive]
     numbers: [Number.singular, Number.plural] # dual absent by default
@@ -39,19 +42,20 @@ class Game
     correctTurns: 0
     turns: {} # mapping of participle to correct/incorrect count
 
-  @make: ($div, Participle, onSuccess) ->
+  @make: ($div, participleDao, onSuccess) ->
     gameDesc = new GameDesc
     for inflection in gameDesc.inflections
       inflectionLowerCase = inflection.toString().toLowerCase()
-      $div.find(".config [data-option-inflection=#{inflectionLowerCase}]").addClass("active")
+      $div.find(".config [data-option-inflection=#{inflectionLowerCase}]")
+        .addClass("active")
 
-    for inflection in [Tense, Voice, Gender, Number, Case] # XXX extract const
+    for inflection in Participle.allInflections
       inflectionLowerCase = inflection.toString().toLowerCase()
       for activeAttribute in gameDesc["#{inflectionLowerCase}s"]
         $div.find(".config [data-option-#{inflectionLowerCase}=#{activeAttribute}]").addClass("active")
     $div.find(".config [name=lemmas]").val(gameDesc.lemmas.join(", "))
 
-    Participle.findAllByLemma(gameDesc.lemmas, (participles) ->
+    participleDao.findAllByLemma(gameDesc.lemmas, (participles) ->
       gameDesc.participles = participles
       onSuccess(new Game(gameDesc, $div)))
 
@@ -79,10 +83,11 @@ class Game
       e.preventDefault()
     )
 
-    for inflection in [Tense, Voice, Case, Gender, Number]
+    for inflection in Participle.allInflections
       inflectionLowerCase = inflection.toString().toLowerCase() # XXX DRY
       if inflection not in gameDesc.inflections
-        @$cardPrototype.find("[data-inflection=#{inflectionLowerCase}]").addClass("hide")
+        @$cardPrototype.find("[data-inflection=#{inflectionLowerCase}]")
+          .addClass("hide")
 
     @state = new GameState
 
@@ -94,14 +99,22 @@ class Game
       $turn = @$card.find(".item.active")
       madeMistake = false
       for inflection in @gameDesc.inflections
+        inflectionLowerCase = inflection.toString().toLowerCase()
         for participle in @state.currentTurn
-          inflectionLowerCase = inflection.toString().toLowerCase()
           $inflection = $turn.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
           if $inflection.hasClass('active')
-            $inflection.addClass('btn-success')
+            $inflection
+              .addClass('btn-success')
+              .removeClass('active')
           else
             madeMistake = true
             $inflection.addClass('btn-danger')
+        mistakes =
+          $turn.find("[data-#{inflectionLowerCase}].active")
+          .addClass('btn-danger')
+        madeMistake = true if mistakes.length > 0
+        $turn.find("[data-#{inflectionLowerCase}]")
+          .addClass("disabled")
 
       @state.totalTurns++
       if madeMistake

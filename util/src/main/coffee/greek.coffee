@@ -29,6 +29,8 @@ class Participle
     Preconditions.assertType(@verb, Verb)
     Preconditions.assertType(@participleDesc, ParticipleDesc)
 
+  @allInflections: [Tense, Voice, Gender, Number, Case]
+
 betacode2unicode = do ->
   # The following is unicorn normalized to NFC
   raw =
