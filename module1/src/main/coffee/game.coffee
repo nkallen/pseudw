@@ -131,36 +131,6 @@ class Game
         $currentCard.find("[data-#{inflectionLowerCase}]")
           .addClass("disabled")
 
-      for participle in @state.currentTurn
-        line = []
-        for inflection in @gameDesc.inflections
-          inflectionLowerCase = inflection.toString().toLowerCase()
-          $attribute = $currentCard.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
-          line.push($attribute)
-          if line.length == 2
-            [p1, p2] = line
-            [w1, h1] = [window.Number(p1.css("width").substr(0, p1.css("width").length - 2)), window.Number(p1.css("height").substr(0, p1.css("height").length - 2))]
-            [w2, h2] = [window.Number(p2.css("width").substr(0, p2.css("width").length - 2)), window.Number(p2.css("height").substr(0, p2.css("height").length - 2))]
-            [x1, y1] = [p1.offset().left + w1, p1.offset().top + h1 / 2]
-            [x2, y2] = [p2.offset().left, p2.offset().top + h2 / 2]
-            length = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
-            angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI
-            transform = 'rotate(' + angle + 'deg)'
-            x = $('<div>')
-              .appendTo($('body'))
-              .addClass('line')
-              .css(
-                position: 'absolute',
-                transform: transform
-              )
-              .width(length)
-              .offset({
-                left: x1
-                top: y1})
-            line = []
-            line.push($attribute)
-
-
       @state.totalTurns++
       if madeMistake
         @state.currentTurn = null
