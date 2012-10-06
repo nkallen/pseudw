@@ -16,7 +16,7 @@ class ParticipleHttpDao
     Preconditions.assertDefined(@uri)
     Preconditions.assertDefined(@getJson)
 
-  findAllByLemma: (lemmas, onSuccess, onFailure) ->
+  findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
@@ -35,11 +35,17 @@ class ParticipleHttpDao
 class ParticipleSqlDao
   constructor: (@connection) ->
 
-  findAllByLemma: (lemmas, onSuccess, onFailure) ->
+  findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
-    @connection.query("select * from morphemes where lemma in (?) and part_of_speech = 'participle'", [lemmas], (err, rows, fields) ->
+    query = "SELECT * FROM morphemes WHERE lemma IN (?) AND part_of_speech = 'participle'"
+    bindParameters = [lemmas]
+    for inflection, attributes of options
+      query += " AND #{inflection.toString().toLowerCase()} IN (?)"
+      bindParameters.push(attribute.toString() for attribute in attributes)
+
+    @connection.query(query, bindParameters, (err, rows, fields) ->
       return onFailure(err) if err?
 
       participles = for row in rows

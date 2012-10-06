@@ -3,6 +3,9 @@ mysql = require('mysql')
 unorm = require('unorm')
 Bundler = require('./bundler')
 ParticipleDao = require('./participle_dao').sql
+greek = require('pseudw-util').greek
+
+DELIMITER = /[;, ]/
 
 connection = mysql.createConnection({
   host     : 'localhost',
@@ -13,7 +16,7 @@ connection = mysql.createConnection({
 connection.connect((err) ->
   throw err if err?
 )
-Participle = new ParticipleDao(connection)
+participleDao = new ParticipleDao(connection)
 
 bundler = new Bundler(module, require)
 bundler.dependency('pseudw-module1')
@@ -30,8 +33,15 @@ app.get('/application.js', (req, res) ->
 app.use(express.static(__dirname + '/../resources'))
 
 app.get('/lemmas/:lemmas/participles', (req, res, next) ->
-  lemmas = (unorm.nfc(lemma) for lemma in req.params.lemmas.split(/[;,]/))
-  Participle.findAllByLemma(lemmas,
+  lemmas = (unorm.nfc(lemma) for lemma in req.params.lemmas.split(DELIMITER))
+  options = {}
+  for inflection in greek.Participle.allInflections
+    inflectionLowerCase = inflection.toString().toLowerCase()
+
+    if req.query[inflectionLowerCase] && attributes = req.query[inflectionLowerCase].split(DELIMITER)
+      options[inflection] = (inflection[attribute] for attribute in attributes)
+
+  participleDao.findAllByLemma(lemmas, options,
     (participles) ->
       return res.status(404).end() if participles.length == 0
       

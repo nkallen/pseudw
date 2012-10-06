@@ -2,7 +2,7 @@ util = require('pseudw-util')
 
 # todo
 #
-# support server side filter of inflections
+# rename "inflections" to "attributes"
 # use inflections when making rpc
 # track user mistakes
 # tab behavior
@@ -55,7 +55,7 @@ class Game
         $div.find(".config [data-option-#{inflectionLowerCase}=#{activeAttribute}]").addClass("active")
     $div.find(".config [name=lemmas]").val(gameDesc.lemmas.join(", "))
 
-    participleDao.findAllByLemma(gameDesc.lemmas, (participles) ->
+    participleDao.findAllByLemma(gameDesc.lemmas, {}, (participles) ->
       gameDesc.participles = participles
       onSuccess(new Game(gameDesc, $div)))
 
