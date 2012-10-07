@@ -22,6 +22,7 @@ class ParticipleHttpDao
 
     queryStringOptions = {}
     for inflection, attributes of options
+      console.log(inflection, attributes)
       queryStringOptions[inflection.toString().toLowerCase()] =
         (attribute.toString() for attribute in attributes)
 

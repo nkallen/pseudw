@@ -9,13 +9,13 @@
     "import": "./src/scripts/coffee/import.coffee"
   },
   "dependencies": {
-    "libxmljs"    : "0.6.x",
-    "mysql"       : "2.0.0-alpha3",
-    "express"     : "3.0.x",
-    "unorm"       : "1.0.x",
-    "hercules"    : "0.0.6",
-    "pseudw-module1"     : "0.0.0",
-    "psuedw-util" : "0.0.1"
+    "libxmljs"       : "0.6.x",
+    "mysql"          : "2.0.0-alpha3",
+    "express"        : "3.0.x",
+    "unorm"          : "1.0.x",
+    "pseudw-module1" : "0.0.0",
+    "pseudw-util"    : "0.0.1",
+    "parseUri"       : "1.2.x"
   },
   "repository": "",
   "author": "Nick Kallen",

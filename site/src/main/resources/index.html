@@ -46,8 +46,8 @@
                 <button class="btn" data-option-number="dual">Dual</button>
                 <button class="btn" data-option-number="plural">Plural</button>
               </div>
-              <h4>Voices</h4>
-              <p>Include these voices. By default, the vocative is excluded.</p>
+              <h4>Cases</h4>
+              <p>Include these cases. By default, the vocative is excluded.</p>
               <div class="btn-group" data-toggle="buttons-checkbox">
                 <button class="btn" data-option-case="nominative">Nominative</button>
                 <button class="btn" data-option-case="genitive">Genitive</button>
@@ -154,10 +154,16 @@
       <script src="/bootstrap/js/bootstrap.min.js"></script>
       <script src="/application.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
+        process = {
+          binding: function() { return {} } // XXX this is really f'ed up.
+        }
         $(function() {
+          var querystring = require("querystring");
           var Game = require("pseudw-module1");
+          options = querystring.parse(window.location.search.substr(1, window.location.search.length));
+          console.log(options);
           var ParticipleHttpDao = require("participle-dao").http;
-          var gameFactory = Game.make($(".game"), new ParticipleHttpDao("/lemmas", $.getJSON), function(game) {
+          var gameFactory = Game.make(options, $(".game"), new ParticipleHttpDao("/lemmas", $.getJSON), function(game) {
             game.start();
           });
         });

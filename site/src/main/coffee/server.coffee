@@ -21,6 +21,7 @@ participleDao = new ParticipleDao(connection)
 bundler = new Bundler(module, require)
 bundler.dependency('pseudw-module1')
 bundler.dependency('./participle_dao', 'participle-dao')
+bundler.dependency('querystring')
 
 app = express()
 

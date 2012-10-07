@@ -3,8 +3,8 @@ Enum = (typeName, names...) ->
     constructor: (@name) ->
     toJSON: -> @name
     toString: -> @name
-    toSymbol: -> toString.toLowerCase() # XXX does not convert camelcase to dash
-    @toSymbol: -> @toString.toLowerCase()
+    toSymbol: -> toString().toLowerCase() # XXX does not convert camelcase to dash
+    @toSymbol: -> @toString().toLowerCase()
 
   for name in names
     anon[name] = new anon(name)

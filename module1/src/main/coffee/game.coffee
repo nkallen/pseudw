@@ -2,6 +2,7 @@ util = require('pseudw-util')
 
 # todo
 #
+# config populated from url
 # extract view class
 # fix centering when hiding inflections
 
@@ -9,7 +10,6 @@ util = require('pseudw-util')
 #
 # keybindings
 # tab behavior
-# config populated from url
 # show paradigm
 
 greek = util.greek
@@ -29,6 +29,23 @@ class Game
     numbers: [Number.singular, Number.plural] # dual absent by default
     genders: [Gender.masculine, Gender.feminine, Gender.neuter]
     cases: [Case.nominative, Case.genitive, Case.dative, Case.accusative] # vocative absent by default
+    toHash: ->
+      lemmas: @lemmas
+      inflections: inflection.toString() for inflection in @inflections
+      tenses: tense.toString() for tense in @tenses
+      voices: voice.toString() for voice in @voices
+      numbers: number.toString() for number in @numbers
+      genders: gender.toString() for gender in @genders
+      cases: kase.toString() for kase in @cases
+    @fromHash: (hash) ->
+      gameDesc = new GameDesc
+      gameDesc.lemmas = hash['lemmas[]']
+      gameDesc.tenses = (Tense[tense] for tense in hash['tenses[]'])
+      gameDesc.voices = (Voice[voice] for voice in hash['voices[]'])
+      gameDesc.numbers = (Number[number] for number in hash['numbers[]'])
+      gameDesc.genders = (Gender[gender] for gender in hash['genders[]'])
+      gameDesc.cases = (Case[kase] for kase in hash['cases[]'])
+      gameDesc
 
   class GameState
     constructor: ->
@@ -41,8 +58,11 @@ class Game
       mistakes: {}
       total: {}
 
-  @make: ($div, participleDao, onSuccess) ->
-    gameDesc = new GameDesc
+  @make: (options, $div, participleDao, onSuccess) ->
+    console.log(options)
+    gameDesc = GameDesc.fromHash(options)
+    console.log(gameDesc)
+
     for inflection in gameDesc.inflections
       inflectionLowerCase = inflection.toString().toLowerCase()
       $div.find(".config [data-option-inflection=#{inflectionLowerCase}]")
@@ -161,11 +181,10 @@ class Game
         .end()
 
     if participles.length > 1
-      $card.find(".morpheme").text("#{participles[0].morpheme} (#{participles.length} variants)")
+      $card.find(".morpheme").html("#{participles[0].morpheme} <span class='label info'>#{participles.length} variants</span>")
     else
       $card.find(".morpheme").text("#{participles[0].morpheme}")
     $card.find(".principalParts").text(participles[0].verb.principalParts)
-    console.log(participles[0].verb)
     $card.find(".translation").text(participles[0].verb.translation)
     $card.appendTo(@$carouselInner)
     @showState()

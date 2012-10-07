@@ -56,6 +56,12 @@ class Bundler
       richModule.load(resolved)
       richModule.exports
 
+    load: (filename) ->
+      if nativeContent = process.binding('natives')[filename]
+        @_compile(nativeContent, filename)
+      else
+        super(filename)
+
     toString: ->
       "{
         id: '#{@id}',
