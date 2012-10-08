@@ -3,13 +3,13 @@ Enum = (typeName, names...) ->
     constructor: (@name) ->
     toJSON: -> @name
     toString: -> @name
-    toSymbol: -> toString().toLowerCase() # XXX does not convert camelcase to dash
-    @toSymbol: -> @toString().toLowerCase()
+    toSymbol: -> @toString()
+    @toSymbol: -> typeName.toLowerCase()
+    @toString: -> typeName
 
   for name in names
     anon[name] = new anon(name)
 
-  anon.toString = -> typeName
   anon
 
 module.exports = Enum

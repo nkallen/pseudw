@@ -14,6 +14,10 @@ Case = Enum('Case', 'nominative', 'genitive', 'dative', 'accusative', 'vocative'
 Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
 Mood = Enum('Mood', 'indicative', 'optatitive', 'imperative', 'subjunctive')
 
+Inflections = {}
+for inflection in [Tense, Gender, Number, Case, Voice, Mood]
+  Inflections[inflection.toSymbol()] = inflection
+
 class Verb
   constructor: (@lemma, @principleParts, @translation) ->
 
@@ -170,6 +174,7 @@ module.exports = {
   Voice: Voice,
   Mood: Mood,
   Verb: Verb,
+  Inflections: Inflections,
   ParticipleDesc: ParticipleDesc,
   Participle: Participle,
   betacode2unicode: betacode2unicode,

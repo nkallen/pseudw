@@ -10,6 +10,7 @@ Gender = greek.Gender
 Number = greek.Number
 Tense = greek.Tense
 Voice = greek.Voice
+Inflections = greek.Inflections
 
 class ParticipleHttpDao
   constructor: (@uri, @getJson) ->
@@ -17,16 +18,11 @@ class ParticipleHttpDao
     Preconditions.assertDefined(@getJson)
 
   findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
+    # XXX Preconditions.assertKeys(options, ...)
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
-    queryStringOptions = {}
-    for inflection, attributes of options
-      console.log(inflection, attributes)
-      queryStringOptions[inflection.toString().toLowerCase()] =
-        (attribute.toString() for attribute in attributes)
-
-    @getJson("#{@uri}/#{lemmas.join(";")}/participles", queryStringOptions, (jsons) ->
+    @getJson("#{@uri}/#{lemmas.join(";")}/participles", options, (jsons) ->
       participles = for json in jsons
         new Participle(json.morpheme, new Verb(json.verb.lemma, json.verb.principleParts, json.verb.translation),
           new ParticipleDesc(
@@ -42,14 +38,16 @@ class ParticipleSqlDao
   constructor: (@connection) ->
 
   findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
+    # XXX Preconditions.assertKeys(options, ...)
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
     query = "SELECT * FROM morphemes LEFT OUTER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE morphemes.lemma IN (?) AND part_of_speech = 'participle'"
     bindParameters = [lemmas]
-    for inflection, attributes of options
-      query += " AND `#{inflection.toString().toLowerCase()}` IN (?)"
-      bindParameters.push(attribute.toString() for attribute in attributes)
+    for inflection in Inflections
+      if attribute = options[inflection.toSymbol() + 's']
+        query += " AND `#{inflection.toSymbol()}` IN (?)"
+        bindParameters.push(attribute for attribute in attributes)
 
     @connection.query(query, bindParameters, (err, rows, fields) ->
       return onFailure(err) if err?

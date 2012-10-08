@@ -2,14 +2,13 @@ util = require('pseudw-util')
 
 # todo
 #
-# config populated from url
-# extract view class
-# fix centering when hiding inflections
-
-# blocked on internet access
-#
+# serialize the options form 
 # keybindings
 # tab behavior
+# fix centering when hiding inflections
+# generalize server to /lemma/morphemes
+# generalize client to remove any Participle dependency, adding a config for POS
+# extract view class
 # show paradigm
 
 greek = util.greek
@@ -19,6 +18,7 @@ Number = greek.Number
 Tense = greek.Tense
 Voice = greek.Voice
 Participle = greek.Participle
+Inflections = greek.Inflections
 
 class Game
   class GameDesc
@@ -31,14 +31,15 @@ class Game
     cases: [Case.nominative, Case.genitive, Case.dative, Case.accusative] # vocative absent by default
     toHash: ->
       lemmas: @lemmas
-      inflections: inflection.toString() for inflection in @inflections
-      tenses: tense.toString() for tense in @tenses
-      voices: voice.toString() for voice in @voices
-      numbers: number.toString() for number in @numbers
-      genders: gender.toString() for gender in @genders
-      cases: kase.toString() for kase in @cases
+      inflections: (inflection.toSymbol() for inflection in @inflections)
+      tenses: (tense.toSymbol() for tense in @tenses)
+      voices: (voice.toSymbol() for voice in @voices)
+      numbers: (number.toSymbol() for number in @numbers)
+      genders: (gender.toSymbol() for gender in @genders)
+      cases: (kase.toSymbol() for kase in @cases)
     @fromHash: (hash) ->
       gameDesc = new GameDesc
+      gameDesc.inflections = (Inflections[inflection] for inflection in hash['inflections[]'])
       gameDesc.lemmas = hash['lemmas[]']
       gameDesc.tenses = (Tense[tense] for tense in hash['tenses[]'])
       gameDesc.voices = (Voice[voice] for voice in hash['voices[]'])
@@ -59,25 +60,20 @@ class Game
       total: {}
 
   @make: (options, $div, participleDao, onSuccess) ->
-    console.log(options)
     gameDesc = GameDesc.fromHash(options)
-    console.log(gameDesc)
+    $config = $div.find(".config")
 
     for inflection in gameDesc.inflections
-      inflectionLowerCase = inflection.toString().toLowerCase()
-      $div.find(".config [data-option-inflection=#{inflectionLowerCase}]")
+      $config.find("[data-option-inflection=#{inflection.toSymbol()}]")
         .addClass("active")
 
-    options = {}
     for inflection in Participle.allInflections
-      inflectionLowerCase = inflection.toString().toLowerCase()
-      options[inflection] = []
-      for activeAttribute in gameDesc["#{inflectionLowerCase}s"]
-        options[inflection].push(activeAttribute)
-        $div.find(".config [data-option-#{inflectionLowerCase}=#{activeAttribute}]").addClass("active")
-    $div.find(".config [name=lemmas]").val(gameDesc.lemmas.join(", "))
+      inflectionSymbol = inflection.toSymbol()
+      for activeAttribute in gameDesc["#{inflectionSymbol}s"]
+        $config.find("[data-option-#{inflectionSymbol}=#{activeAttribute}]").addClass("active")
+    $config.find("[name=lemmas]").val(gameDesc.lemmas.join(", "))
 
-    participleDao.findAllByLemma(gameDesc.lemmas, options, (participles) ->
+    participleDao.findAllByLemma(gameDesc.lemmas, gameDesc.toHash(), (participles) ->
       gameDesc.participles = participles
       onSuccess(new Game(gameDesc, $div)))
 
@@ -89,6 +85,8 @@ class Game
     @$morpheme       = @$div.find(".morpheme")
     @$totalTurns     = @$div.find(".total-turns")
     @$state          = @$div.find(".state")
+    @$config         = @$div.find(".config")
+    @$modal          = @$div.find(".modal")
 
     @participlesByForm = {}
     @forms = []
@@ -108,10 +106,14 @@ class Game
       e.preventDefault()
     )
 
+    @$modal.find(".btn-primary").click((e) =>
+      window.location = window.location.origin + window.location.pathname + "?#{$.param(@configToGameDesc().toHash())}"
+    )
+
     for inflection in Participle.allInflections
-      inflectionLowerCase = inflection.toString().toLowerCase() # XXX DRY
+      inflectionSymbol = inflection.toSymbol()
       if inflection not in gameDesc.inflections
-        @$cardPrototype.find("[data-inflection=#{inflectionLowerCase}]")
+        @$cardPrototype.find("[data-inflection=#{inflectionSymbol}]")
           .addClass("hide")
 
     @state = new GameState
@@ -124,10 +126,10 @@ class Game
       $currentCard = @$carousel.find(".item.active")
       madeMistake = false
       for inflection in @gameDesc.inflections
-        inflectionLowerCase = inflection.toString().toLowerCase()
+        inflectionSymbol = inflection.toSymbol()
         for participle in @state.currentTurn
-          $attribute = $currentCard.find("[data-#{inflectionLowerCase}=#{participle.participleDesc[inflectionLowerCase]}]")
-          attribute = participle.participleDesc[inflectionLowerCase]
+          $attribute = $currentCard.find("[data-#{inflectionSymbol}=#{participle.participleDesc[inflectionSymbol]}]")
+          attribute = participle.participleDesc[inflectionSymbol]
           if $attribute.hasClass('active')
             $attribute
               .addClass('btn-success')
@@ -140,10 +142,10 @@ class Game
           @state.accuracy.total[attribute] ||= 0
           @state.accuracy.total[attribute] += 1
         mistakes =
-          $currentCard.find("[data-#{inflectionLowerCase}].active").filter("[data-correct]")
+          $currentCard.find("[data-#{inflectionSymbol}].active").filter("[data-correct]")
             .addClass('btn-danger')
         madeMistake = true if mistakes.length > 0
-        $currentCard.find("[data-#{inflectionLowerCase}]")
+        $currentCard.find("[data-#{inflectionSymbol}]")
           .addClass("disabled")
 
       @state.totalTurns++
@@ -168,20 +170,19 @@ class Game
       showEnd()
 
   showTurn: (participles) ->
-    $card = @$cardPrototype
-      .clone()
+    $card = @$cardPrototype.clone()
+    $card
       .removeClass('prototype')
       .addClass('item')
       .removeAttr('aria-hidden')
       .find('.btn-group')
-        .keypress((event) ->
-          key = "p" # f(event.charCode) # XXX
-          $(this).find("[data-keybinding=#{key}]").click()
+        .keydown((e) ->
+          key = String.fromCharCode(e.which)
+          $card.find("[data-keybinding=#{key}]").click()
         )
-        .end()
 
     if participles.length > 1
-      $card.find(".morpheme").html("#{participles[0].morpheme} <span class='label info'>#{participles.length} variants</span>")
+      $card.find(".morpheme").html("#{participles[0].morpheme} <span class='label label-info'>#{participles.length} variants</span>")
     else
       $card.find(".morpheme").text("#{participles[0].morpheme}")
     $card.find(".principalParts").text(participles[0].verb.principalParts)
@@ -199,5 +200,22 @@ class Game
   showState: ->
     @$correctTurns.text(@state.correctTurns)
     @$totalTurns.text(@state.totalTurns)
+
+  configToGameDesc: ->
+    gameDesc = new GameDesc
+
+    gameDesc.inflections = []
+    @$config.find("[data-option-inflection].active").map((i, node) ->
+      # XXX jquery dependency
+      gameDesc.inflections.push(Inflections[$(node).data('option-inflection')])
+    )
+    for element in [Tense, Voice, Number, Gender, Case]
+      gameDesc["#{element.toSymbol()}s"] = []
+      @$config.find("[data-option-#{element.toSymbol()}].active").map((i, node) ->
+        # XXX jquery dependency
+        gameDesc["#{element.toSymbol()}s"].push(element[$(node).data("option-#{element.toSymbol()}")])
+      )
+    gameDesc.lemmas = @$config.find("[name=lemmas]").val().split(/[,;\s]\s*/)
+    gameDesc
 
 module.exports = Game
