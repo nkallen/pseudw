@@ -39,7 +39,8 @@ class Game
         if param = hash["#{element.toSymbol()}s[]"]
           array = Array.isArray(param) ? param : Array(param)
           gameDesc[element.toSymbol()] = (element[attribute] for attribute in array)
-      gameDesc.lemmas = hash['lemmas[]'] if hash['lemmas[]'] # XXX cast to array
+      if lemmas = hash['lemmas[]']
+        gameDesc.lemmas = Array.isArray(lemmas) ? lemmas : Array(lemmas)
       gameDesc
 
   class GameState
@@ -64,10 +65,15 @@ class Game
     for inflection in Participle.allInflections
       inflectionSymbol = inflection.toSymbol()
       for activeAttribute in gameDesc["#{inflectionSymbol}s"]
-        $config.find("[data-option-#{inflectionSymbol}=#{activeAttribute}]").addClass("active")
+        $config.find("[data-option-#{inflectionSymbol}=#{activeAttribute}]")
+          .addClass("active")
     $config.find("[name=lemmas]").val(gameDesc.lemmas.join(", "))
 
-    participleDao.findAllByLemma(gameDesc.lemmas, gameDesc.toHash(), (participles) ->
+    options = {}
+    gameDescHash = gameDesc.toHash()
+    options[key] = gameDescHash[key] for key in ['tenses', 'voices', 'numbers', 'genders', 'cases']
+
+    participleDao.findAllByLemma(gameDesc.lemmas, options, (participles) ->
       gameDesc.participles = participles
       onSuccess(new Game(gameDesc, $div)))
 

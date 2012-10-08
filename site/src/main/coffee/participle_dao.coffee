@@ -18,7 +18,7 @@ class ParticipleHttpDao
     Preconditions.assertDefined(@getJson)
 
   findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
-    # XXX Preconditions.assertKeys(options, ...)
+    Preconditions.assertKeys(options, 'tenses', 'voices', 'numbers', 'genders', 'cases')
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
@@ -38,7 +38,7 @@ class ParticipleSqlDao
   constructor: (@connection) ->
 
   findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
-    # XXX Preconditions.assertKeys(options, ...)
+    Preconditions.assertKeys(options, 'tenses', 'voices', 'numbers', 'genders', 'cases')
     Preconditions.assertDefined(lemmas)
     Preconditions.assertDefined(onSuccess)
 
