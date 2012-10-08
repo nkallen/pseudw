@@ -7,8 +7,13 @@ Enum = (typeName, names...) ->
     @toSymbol: -> typeName.toLowerCase()
     @toString: -> typeName
 
+  values = []
   for name in names
-    anon[name] = new anon(name)
+    value = new anon(name)
+    anon[name] = value
+    values.push(value)
+
+  anon.values = -> values
 
   anon
 

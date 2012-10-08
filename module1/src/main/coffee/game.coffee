@@ -35,12 +35,11 @@ class Game
       cases: (kase.toSymbol() for kase in @cases)
     @fromHash: (hash) ->
       gameDesc = new GameDesc
-      for element in [Inflections, Tense, Voice, Number, Gender, Case]
-        if param = hash["#{element.toSymbol()}s[]"]
-          array = Array.isArray(param) ? param : Array(param)
-          gameDesc[element.toSymbol()] = (element[attribute] for attribute in array)
+      for element in [Inflections, Tense, Voice, Number, Gender, Case] when param = hash["#{element.toSymbol()}s[]"]
+        array = if Array.isArray(param) then param else Array(param)
+        gameDesc["#{element.toSymbol()}s"] = (element[attribute] for attribute in array)
       if lemmas = hash['lemmas[]']
-        gameDesc.lemmas = Array.isArray(lemmas) ? lemmas : Array(lemmas)
+        gameDesc.lemmas = (if Array.isArray(lemmas) then lemmas else Array(lemmas))
       gameDesc
 
   class GameState
@@ -71,7 +70,8 @@ class Game
 
     options = {}
     gameDescHash = gameDesc.toHash()
-    options[key] = gameDescHash[key] for key in ['tenses', 'voices', 'numbers', 'genders', 'cases']
+    for key in ['tenses', 'voices', 'numbers', 'genders', 'cases']
+      options[key] = gameDescHash[key]
 
     participleDao.findAllByLemma(gameDesc.lemmas, options, (participles) ->
       gameDesc.participles = participles
@@ -90,7 +90,7 @@ class Game
 
     @participlesByForm = {}
     @forms = []
-    for participle in gameDesc.participles
+    for participle in @gameDesc.participles
       (@participlesByForm[participle.morpheme] ?= []).push(participle)
       @forms.push(participle.morpheme)
 
@@ -112,9 +112,12 @@ class Game
 
     for inflection in Participle.allInflections
       inflectionSymbol = inflection.toSymbol()
-      if inflection not in gameDesc.inflections
-        @$cardPrototype.find("[data-inflection=#{inflectionSymbol}]")
-          .addClass("hide")
+      $inflection = @$cardPrototype.find("[data-inflection=#{inflectionSymbol}]")
+      if inflection not in @gameDesc.inflections
+        $inflection.addClass("hide")
+      for attribute in inflection.values() when attribute not in @gameDesc["#{inflectionSymbol}s"]
+        $inflection.find("[data-#{inflectionSymbol}=#{attribute.toSymbol()}]")
+          .hide()
 
     @state = new GameState
 
@@ -198,7 +201,7 @@ class Game
     $card.appendTo(@$carouselInner)
     @showState()
     @$carousel.carousel('next')
-    $card.find('.btn-group')[0].focus()
+    $card.find('.btn-group:not(.hide)')[0].focus()
 
   chooseParticiples: ->
     form = @forms.shift()
