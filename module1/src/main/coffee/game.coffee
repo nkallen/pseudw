@@ -2,7 +2,6 @@ util = require('pseudw-util')
 
 # todo
 #
-# fix centering when hiding inflections
 # generalize server to /lemma/morphemes
 # generalize client to remove any Participle dependency, adding a config for POS
 # extract view class
