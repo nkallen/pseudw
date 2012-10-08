@@ -14,7 +14,8 @@ Case = Enum('Case', 'nominative', 'genitive', 'dative', 'accusative', 'vocative'
 Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
 Mood = Enum('Mood', 'indicative', 'optatitive', 'imperative', 'subjunctive')
 
-Inflections = {}
+Inflections =
+  toSymbol: -> 'inflection'
 for inflection in [Tense, Gender, Number, Case, Voice, Mood]
   Inflections[inflection.toSymbol()] = inflection
 

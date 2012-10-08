@@ -2,14 +2,10 @@ util = require('pseudw-util')
 
 # todo
 #
-# serialize the options form 
-# keybindings
-# tab behavior
 # fix centering when hiding inflections
 # generalize server to /lemma/morphemes
 # generalize client to remove any Participle dependency, adding a config for POS
 # extract view class
-# show paradigm
 
 greek = util.greek
 Case = greek.Case
@@ -39,13 +35,11 @@ class Game
       cases: (kase.toSymbol() for kase in @cases)
     @fromHash: (hash) ->
       gameDesc = new GameDesc
-      gameDesc.inflections = (Inflections[inflection] for inflection in hash['inflections[]'])
-      gameDesc.lemmas = hash['lemmas[]']
-      gameDesc.tenses = (Tense[tense] for tense in hash['tenses[]'])
-      gameDesc.voices = (Voice[voice] for voice in hash['voices[]'])
-      gameDesc.numbers = (Number[number] for number in hash['numbers[]'])
-      gameDesc.genders = (Gender[gender] for gender in hash['genders[]'])
-      gameDesc.cases = (Case[kase] for kase in hash['cases[]'])
+      for element in [Inflections, Tense, Voice, Number, Gender, Case]
+        if param = hash["#{element.toSymbol()}s[]"]
+          array = Array.isArray(param) ? param : Array(param)
+          gameDesc[element.toSymbol()] = (element[attribute] for attribute in array)
+      gameDesc.lemmas = hash['lemmas[]'] if hash['lemmas[]'] # XXX cast to array
       gameDesc
 
   class GameState
@@ -171,14 +165,22 @@ class Game
 
   showTurn: (participles) ->
     $card = @$cardPrototype.clone()
+    self = this
     $card
       .removeClass('prototype')
       .addClass('item')
       .removeAttr('aria-hidden')
       .find('.btn-group')
         .keydown((e) ->
-          key = String.fromCharCode(e.which)
-          $card.find("[data-keybinding=#{key}]").click()
+          if e.which == 13
+            self.$carousel.find('[data-move=next]').click()
+          else
+            key = String.fromCharCode(e.which).toLowerCase()
+            return unless /[a-z]/.test(key)
+            return if e.metaKey || e.ctrlKey || e.altKey
+            # XXX jquery dep
+            $(this).find("[data-keybinding=#{key}]").click()
+          e.preventDefault()
         )
 
     if participles.length > 1
@@ -190,6 +192,7 @@ class Game
     $card.appendTo(@$carouselInner)
     @showState()
     @$carousel.carousel('next')
+    $card.find('.btn-group')[0].focus()
 
   chooseParticiples: ->
     form = @forms.shift()
