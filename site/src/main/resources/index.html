@@ -18,7 +18,7 @@
   <body>
     <div class="container">
       <h1>The Participle Game</h1>
-      <div class="game hero-unit clearfix" style="height: 230px">
+      <div class="game hero-unit clearfix" style="height: 275px">
         <div class="modal hide fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -94,45 +94,35 @@
                   <p class="translation" style="text-align: center"></p>
                 </div>
               </div>
-              <div class="row-fluid">
-                <div class="offset1 span2" data-inflection="tense">
-                  <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-tense="present" data-keybinding="p"><u>P</u>resent</button>
-                    <button class="btn" tabindex="-1" data-tense="future" data-keybinding="f"><u>F</u>uture</button>
-                    <button class="btn" tabindex="-1" data-tense="aorist" data-keybinding="a"><u>A</u>orist</button>
-                    <button class="btn" tabindex="-1" data-tense="perfect" data-keybinding="r">Pe<u>r</u>fect</button>
-                  </div>
+              <div style="text-align: center; height: 160px">
+                <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-checkbox" data-inflection="tense" >
+                  <button class="btn" tabindex="-1" data-tense="present" data-keybinding="p"><u>P</u>resent</button>
+                  <button class="btn" tabindex="-1" data-tense="future" data-keybinding="f"><u>F</u>uture</button>
+                  <button class="btn" tabindex="-1" data-tense="aorist" data-keybinding="a"><u>A</u>orist</button>
+                  <button class="btn" tabindex="-1" data-tense="perfect" data-keybinding="r">Pe<u>r</u>fect</button>
                 </div>
-                <div class="span2" data-inflection="voice">
-                  <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-voice="active" data-keybinding="a"><u>A</u>ctive</button>
-                    <button class="btn" tabindex="-1" data-voice="middle" data-keybinding="m"><u>M</u>iddle</button>
-                    <button class="btn" tabindex="-1" data-voice="middlePassive" data-keybinding="i">M<u>i</u>ddle Passive</button>
-                    <button class="btn" tabindex="-1" data-voice="passive" data-keybinding="p"><u>P</u>assive</button>
-                  </div>
+                <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-checkbox" data-inflection="voice" >
+                  <button class="btn" tabindex="-1" data-voice="active" data-keybinding="a"><u>A</u>ctive</button>
+                  <button class="btn" tabindex="-1" data-voice="middle" data-keybinding="m"><u>M</u>iddle</button>
+                  <button class="btn" tabindex="-1" data-voice="middlePassive" data-keybinding="i">M<u>i</u>ddle Passive</button>
+                  <button class="btn" tabindex="-1" data-voice="passive" data-keybinding="p"><u>P</u>assive</button>
                 </div>
-                <div class="span2" data-inflection="case">
-                  <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-case="nominative" data-keybinding="n"><u>N</u>ominative</button>
-                    <button class="btn" tabindex="-1" data-case="genitive" data-keybinding="g"><u>G</u>enitive</button>
-                    <button class="btn" tabindex="-1" data-case="dative" data-keybinding="d"><u>D</u>ative</button>
-                    <button class="btn" tabindex="-1" data-case="accusative" data-keybinding="a"><u>A</u>ccusative</button>
-                    <button class="btn" tabindex="-1" data-case="vocative" data-keybinding="v"><u>V</u>ocative</button>
-                  </div>
+                <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-checkbox" data-inflection="case">
+                  <button class="btn" tabindex="-1" data-case="nominative" data-keybinding="n"><u>N</u>ominative</button>
+                  <button class="btn" tabindex="-1" data-case="genitive" data-keybinding="g"><u>G</u>enitive</button>
+                  <button class="btn" tabindex="-1" data-case="dative" data-keybinding="d"><u>D</u>ative</button>
+                  <button class="btn" tabindex="-1" data-case="accusative" data-keybinding="a"><u>A</u>ccusative</button>
+                  <button class="btn" tabindex="-1" data-case="vocative" data-keybinding="v"><u>V</u>ocative</button>
                 </div>
-                <div class="span2" data-inflection="gender">
-                  <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-checkbox">
-                    <button class="btn" tabindex="-1" data-gender="masculine" data-keybinding="m"><u>M</u>asculine</button>
-                    <button class="btn" tabindex="-1" data-gender="feminine" data-keybinding="f"><u>F</u>eminine</button>
-                    <button class="btn" tabindex="-1" data-gender="neuter" data-keybinding="n"><u>N</u>euter</button>
-                  </div>
+                <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-checkbox" data-inflection="gender">
+                  <button class="btn" tabindex="-1" data-gender="masculine" data-keybinding="m"><u>M</u>asculine</button>
+                  <button class="btn" tabindex="-1" data-gender="feminine" data-keybinding="f"><u>F</u>eminine</button>
+                  <button class="btn" tabindex="-1" data-gender="neuter" data-keybinding="n"><u>N</u>euter</button>
                 </div>
-                <div class="span2" data-inflection="number">
-                  <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-checkbox">
-                    <button class="btn singular" tabindex="-1" data-number="singular" data-keybinding="s"><u>S</u>ingular</button>
-                    <button class="btn dual" tabindex="-1" data-number="dual" data-keybinding="d"><u>D</u>ual</button>
-                    <button class="btn plural" tabindex="-1" data-number="plural" data-keybinding="p"><u>P</u>lural</button>
-                  </div>
+                <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-checkbox" data-inflection="number">
+                  <button class="btn singular" tabindex="-1" data-number="singular" data-keybinding="s"><u>S</u>ingular</button>
+                  <button class="btn dual" tabindex="-1" data-number="dual" data-keybinding="d"><u>D</u>ual</button>
+                  <button class="btn plural" tabindex="-1" data-number="plural" data-keybinding="p"><u>P</u>lural</button>
                 </div>
               </div>
             </div>
