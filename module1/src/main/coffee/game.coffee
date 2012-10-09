@@ -71,6 +71,7 @@ class Game
       @$state          = @$div.find(".state")
       @$config         = @$div.find(".config")
       @$modal          = @$div.find(".modal")
+      @posFromCurrentTurn = 0
 
     init: (gameDesc, game) ->
       @prepareOptionsForm(gameDesc)
@@ -108,12 +109,17 @@ class Game
 
     bindCarouselEvents: (game) ->
       @$carousel.on('click.carousel', '[data-move=next]', (e) =>
-        game.nextTurn()
+        if @posFromCurrentTurn < 0
+          @$carousel.carousel('next')
+          @posFromCurrentTurn++
+        else
+          game.nextTurn()
         e.preventDefault()
       )
 
       @$carousel.on('click.carousel', '[data-move=prev]', (e) =>
         @$carousel.carousel('prev')
+        @posFromCurrentTurn--
         e.preventDefault()
       )
 
@@ -194,8 +200,9 @@ class Game
       $card.find(".principalParts").text(participles[0].verb.principalParts)
       $card.find(".translation").text(participles[0].verb.translation)
       $card.appendTo(@$carouselInner)
-      @$carousel.carousel('next')
-      $card.find('.btn-group:not(.hide)')[0].focus()
+      @$carousel.carousel('next').one('slid', =>
+        $card.find('.btn-group:not(.hide)')[0].focus()
+      )
 
     showState: (state) ->
       @$correctTurns.text(state.correctTurns)
