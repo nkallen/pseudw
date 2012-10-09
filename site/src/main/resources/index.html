@@ -12,65 +12,63 @@
     <div class="container">
       <h1>The Participle Game</h1>
       <div class="game hero-unit">
-        <div class="modal hide fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
+        <div class="modal config hide fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="configLabel">Options</h3>
           </div>
           <div class="modal-body">
-            <div class="config">
-              <h4>Lemmas</h4>
-              <p>Use these greek lemmas to generate participles.</p>
-              <input type="text" name="lemmas" value="" />
-              <h4>Inflections</h4>
-              <p>Vary the game by having the player only indicate one or more of the tense/voice/etc.</p>
-              <p>Because both speed and accuracy are important components of fluency, by limiting the game to only one attribute at a time (e.g. just, <em>tense</em>) the user can spend less time thinking about data entry and more time recognizing forms.<p>
-              <div class="btn-group" data-toggle="buttons-checkbox">
-                <button class="btn" data-option-inflection="tense">Tense</button>
-                <button class="btn" data-option-inflection="voice">Voice</button>
-                <button class="btn" data-option-inflection="gender">Gender</button>
-                <button class="btn" data-option-inflection="number">Number</button>
-                <button class="btn" data-option-inflection="case">Case</button>
-              </div>
-              <h4>Tenses</h4>
-              <p>Limit the tenses of the participles to just present, aorist, etc. By default, all tenses are included.</p>
-              <div class="btn-group" data-toggle="buttons-checkbox">
-                <button class="btn" data-option-tense="present">Present</button>
-                <button class="btn" data-option-tense="future">Future</button>
-                <button class="btn" data-option-tense="aorist">Aorist</button>
-                <button class="btn" data-option-tense="perfect">Perfect</button>
-              </div>
-              <h4>Voices</h4>
-              <p>Limit the voices of the participles.</p>
-              <div class="btn-group" data-toggle="buttons-checkbox">
-                <button class="btn" data-option-voice="active">Active</button>
-                <button class="btn" data-option-voice="middle">Middle</button>
-                <button class="btn" data-option-voice="middlePassive">Middle Passive</button>
-                <button class="btn" data-option-voice="passive">Passive</button>
-              </div>
-              <h4>Genders</h4>
-              <p>Include these numbers. By default, the dual is excluded.</p>
-              <div class="btn-group" data-toggle="buttons-checkbox">
-                <button class="btn" data-option-gender="masculine">Masculine</button>
-                <button class="btn" data-option-gender="feminine">Feminine</button>
-                <button class="btn" data-option-gender="neuter">Neuter</button>
-              </div>
-              <h4>Numbers</h4>
-              <p>Include these numbers. By default, the dual is excluded.</p>
-              <div class="btn-group" data-toggle="buttons-checkbox">
-                <button class="btn" data-option-number="singular">Singular</button>
-                <button class="btn" data-option-number="dual">Dual</button>
-                <button class="btn" data-option-number="plural">Plural</button>
-              </div>
-              <h4>Cases</h4>
-              <p>Include these cases. By default, the vocative is excluded.</p>
-              <div class="btn-group" data-toggle="buttons-checkbox">
-                <button class="btn" data-option-case="nominative">Nominative</button>
-                <button class="btn" data-option-case="genitive">Genitive</button>
-                <button class="btn" data-option-case="dative">Dative</button>
-                <button class="btn" data-option-case="accusative">Accusative</button>
-                <button class="btn" data-option-case="vocative">Vocative</button>
-              </div>
+            <h4>Lemmas</h4>
+            <p>Use these greek lemmas to generate participles.</p>
+            <input type="text" name="lemmas" value="" />
+            <h4>Inflections</h4>
+            <p>Vary the game by having the player only indicate one or more of the tense/voice/etc.</p>
+            <p>Because both speed and accuracy are important components of fluency, by limiting the game to only one attribute at a time (e.g. just, <em>tense</em>) the user can spend less time thinking about data entry and more time recognizing forms.<p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-inflection="tense">Tense</button>
+              <button class="btn" data-option-inflection="voice">Voice</button>
+              <button class="btn" data-option-inflection="gender">Gender</button>
+              <button class="btn" data-option-inflection="number">Number</button>
+              <button class="btn" data-option-inflection="case">Case</button>
+            </div>
+            <h4>Tenses</h4>
+            <p>Limit the tenses of the participles to just present, aorist, etc. By default, all tenses are included.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-tense="present">Present</button>
+              <button class="btn" data-option-tense="future">Future</button>
+              <button class="btn" data-option-tense="aorist">Aorist</button>
+              <button class="btn" data-option-tense="perfect">Perfect</button>
+            </div>
+            <h4>Voices</h4>
+            <p>Limit the voices of the participles.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-voice="active">Active</button>
+              <button class="btn" data-option-voice="middle">Middle</button>
+              <button class="btn" data-option-voice="middlePassive">Middle Passive</button>
+              <button class="btn" data-option-voice="passive">Passive</button>
+            </div>
+            <h4>Genders</h4>
+            <p>Include these numbers. By default, the dual is excluded.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-gender="masculine">Masculine</button>
+              <button class="btn" data-option-gender="feminine">Feminine</button>
+              <button class="btn" data-option-gender="neuter">Neuter</button>
+            </div>
+            <h4>Numbers</h4>
+            <p>Include these numbers. By default, the dual is excluded.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-number="singular">Singular</button>
+              <button class="btn" data-option-number="dual">Dual</button>
+              <button class="btn" data-option-number="plural">Plural</button>
+            </div>
+            <h4>Cases</h4>
+            <p>Include these cases. By default, the vocative is excluded.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-case="nominative">Nominative</button>
+              <button class="btn" data-option-case="genitive">Genitive</button>
+              <button class="btn" data-option-case="dative">Dative</button>
+              <button class="btn" data-option-case="accusative">Accusative</button>
+              <button class="btn" data-option-case="vocative">Vocative</button>
             </div>
           </div>
           <div class="modal-footer">
