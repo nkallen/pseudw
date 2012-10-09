@@ -87,7 +87,7 @@ class Bundler
           var globals = {}, cache = {}, require = function(name, environment) {
             var module = environment[name], cached = cache[module.id];
             if (cached) {
-              return cached.exports;
+              return cached;
             } else if (module) {
               try {
                 var module_ = {exports: {}};
@@ -95,10 +95,10 @@ class Bundler
                   module_.exports,
                   function(name) { return require(name, module.children) },
                   module_);
-                cache[name] = module_.exports;
+                cache[module.id] = module_.exports;
                 return module_.exports;
               } catch (err) {
-                delete cache[name];
+                delete cache[module.id];
                 throw err;
               }
             } else {

@@ -113,7 +113,7 @@ class Game
       )
 
       @$carousel.on('click.carousel', '[data-move=prev]', (e) =>
-        game.prevTurn()
+        @$carousel.carousel('prev')
         e.preventDefault()
       )
 
@@ -240,7 +240,6 @@ class Game
         allegedAttributes = answer[inflectionSymbol]
         actualAttributes = (participle.participleDesc[inflectionSymbol] for participle in @state.currentTurn)
         for allegedAttribute in allegedAttributes
-          console.log(inflection[allegedAttribute], actualAttributes, inflection[allegedAttribute] in [inflection[allegedAttribute]])
           if inflection[allegedAttribute] not in actualAttributes
             corrections[inflectionSymbol].wrong.push(allegedAttribute)
             madeMistake = true
