@@ -1,7 +1,6 @@
 Trie = require('./trie')
 Preconditions = require('./preconditions')
 Enum = require('./enum')
-unorm = require('unorm')
 
 ###
 An object model for Greek Grammar and some utilities for character encoding.

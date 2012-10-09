@@ -62,15 +62,23 @@ class Bundler
       else
         super(filename)
 
-    toString: ->
-      "{
-        id: '#{@id}',
-        content: function(exports, require, module) {#{@content}},
-        children: {#{("'#{module.name}': #{module.toString()}" for module in @children).join(", ")}}
-      }"
+    toString: (excludes) ->
+      if @id in excludes
+        "{
+          id: '#{@id}',
+          content: function(exports, require, module) { throw 'This module #{@name} has been excluded from the dependency list' },
+          children: {}
+        }"
+      else
+        "{
+          id: '#{@id}',
+          content: function(exports, require, module) {#{@content}},
+          children: {#{("'#{module.name}': #{module.toString(excludes)}" for module in @children).join(", ")}}
+        }"
 
   constructor: (@parent, @require) ->
     @modules = []
+    @excludes = []
 
   dependency: (name, rename = name) ->
     resolved = @require.resolve(name)
@@ -79,8 +87,12 @@ class Bundler
     @modules.push(richModule)
     this
 
+  exclude: (name) ->
+    resolved = @require.resolve(name)
+    @excludes.push(resolved)
+
   toString: ->
-    globals = "{#{("'#{module.name}': #{module.toString()}" for module in @modules).join(", ")}}"
+    globals = "{#{("'#{module.name}': #{module.toString(@excludes)}" for module in @modules).join(", ")}}"
     """
       (function() {
         if (!this.require) {
