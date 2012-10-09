@@ -25,6 +25,8 @@ bundler.dependency('querystring')
 
 app = express()
 
+app.use(express.compress())
+
 app.get('/application.js', (req, res) ->
   res.charset = 'utf-8'
   res.type('application/javascript')

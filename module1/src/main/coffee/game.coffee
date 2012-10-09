@@ -3,9 +3,11 @@ Preconditions = util.preconditions
 
 # todo
 #
+# fix all the ||=
+# fix jquery dependency
+# somehow make static assets cacheable
 # generalize server to /lemma/morphemes
 # generalize client to remove any Participle dependency, adding a config for POS
-# extract view class
 
 greek = util.greek
 Case = greek.Case
@@ -49,9 +51,15 @@ class Game
     showingMistake: false
     totalTurns: 0
     correctTurns: 0
-    accuracy:
-      mistakes: {}
-      total: {}
+    accuracy: do ->
+      mistakes = {}
+      total = {}
+      mistake: (elem) ->
+        mistakes[elem] ||= 0
+        mistakes[elem]++
+      total: (elem) ->
+        total[elem] ||= 0
+        total[elem]++        
 
   class GameView
     class Correction
@@ -256,20 +264,16 @@ class Game
           if actualAttribute.toSymbol() not in allegedAttributes
             corrections[inflectionSymbol].missing.push(actualAttribute)
             madeMistake = true
-            @state.accuracy.mistakes[actualAttribute] ||= 0
-            @state.accuracy.mistakes[actualAttribute] += 1
-          @state.accuracy.total[actualAttribute] ||= 0
-          @state.accuracy.total[actualAttribute] += 1
+            @state.accuracy.mistake(actualAttribute)
+          @state.accuracy.total(actualAttribute)
 
       @state.totalTurns++
       if madeMistake
         @state.currentTurn = null
-        @state.accuracy.mistakes[participle] ||= 0
-        @state.accuracy.mistakes[participle] += 1
+        @state.accuracy.mistake(participle)
       else
         @state.correctTurns++
-      @state.accuracy.total[participle] ||= 0
-      @state.accuracy.total[participle] += 1
+      @state.accuracy.total(participle)
 
     @gameView.showCorrection(corrections)
     @gameView.showState(@state)
