@@ -85,6 +85,12 @@ class Game
       @prepareAnswerFields(gameDesc)
       @bindCarouselEvents(game)
 
+      # store the height of the carousel so that it doesn't jiggle while we switch visibility:hidden to display:none
+      @$carousel.height(@$carousel.height())
+      @$cardPrototype
+        .addClass('hide')
+        .removeClass('invisible')
+
     prepareOptionsForm: (gameDesc) ->
       Preconditions.assertType(gameDesc, GameDesc)
 
@@ -133,12 +139,12 @@ class Game
       gameDesc = new GameDesc
 
       gameDesc.inflections = []
-      @$config.find("[data-option-inflection].active").map((i, node) ->
+      @$config.find("[data-option-inflection].active").map((i, node) =>
         gameDesc.inflections.push(Inflections[@$(node).data('option-inflection')])
       )
       for element in [Tense, Voice, Number, Gender, Case]
         gameDesc["#{element.toSymbol()}s"] = []
-        @$config.find("[data-option-#{element.toSymbol()}].active").map((i, node) ->
+        @$config.find("[data-option-#{element.toSymbol()}].active").map((i, node) =>
           gameDesc["#{element.toSymbol()}s"].push(element[@$(node).data("option-#{element.toSymbol()}")])
         )
       gameDesc.lemmas = @$config.find("[name=lemmas]").val().split(/[,;\s]\s*/)
@@ -180,7 +186,6 @@ class Game
     showTurn: (participles) ->
       $card = @$cardPrototype.clone()
       self = this
-      $ = @$
       $card
         .removeClass('prototype')
         .addClass('item')
@@ -193,7 +198,7 @@ class Game
               key = String.fromCharCode(e.which).toLowerCase()
               return unless /[a-z]/.test(key)
               return if e.metaKey || e.ctrlKey || e.altKey
-              $(this).find("[data-keybinding=#{key}]").click()
+              (self.$)(this).find("[data-keybinding=#{key}]").click()
             e.preventDefault()
           )
 
