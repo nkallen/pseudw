@@ -11,6 +11,20 @@
       h2 {
         font-size: 20px;
       }
+      .morpheme {
+        text-align: center;
+        font-size: 24pt;
+      }
+      .translation {
+        text-align: center;
+      }
+      .inflections {
+        text-align: center;
+        margin: 8px;
+      }
+      .state {
+        text-align: right;
+      }
     </style>
   </head>
   <body>
@@ -86,11 +100,11 @@
             <div class="prototype invisible" aria-hidden="true">
               <div class="row-fluid">
                 <div class="span12">
-                  <div class="morpheme" style="text-align: center; font-size: 24pt"></div>
-                  <p class="translation" style="text-align: center"></p>
+                  <div class="morpheme"></div>
+                  <p class="translation"></p>
                 </div>
               </div>
-              <div style="text-align: center; margin: 8px">
+              <div class="inflections">
                 <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-checkbox" data-inflection="tense" >
                   <button class="btn" tabindex="-1" data-tense="present" data-keybinding="p"><u>P</u>resent</button>
                   <button class="btn" tabindex="-1" data-tense="future" data-keybinding="f"><u>F</u>uture</button>
@@ -126,7 +140,7 @@
           <a class="carousel-control left hide" href="#carousel" data-move="prev">&lsaquo;</a>
           <a class="carousel-control right" href="#carousel" data-move="next">&rsaquo;</a>
         </div>
-        <div class="state" style="text-align: right">
+        <div class="state">
           <p><span class="correct-turns"></span> correct / <span class="total-turns"></span> total</p>
           <span class="time"></span>
         </div>
