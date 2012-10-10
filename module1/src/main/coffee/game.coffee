@@ -3,8 +3,6 @@ Preconditions = util.preconditions
 
 # todo
 #
-# fix all the ||=
-# fix jquery dependency
 # somehow make static assets cacheable
 # generalize server to /lemma/morphemes
 # generalize client to remove any Participle dependency, adding a config for POS
@@ -69,6 +67,7 @@ class Game
         @missing = []
 
     constructor: (@$div) ->
+      @$               = $div.constructor # hacky way of not making jQuery a npm dependency
       @$config         = $div.find(".config")
       @$carousel       = @$div.find(".carousel")
       @$cardPrototype  = @$carousel.find(".prototype")
@@ -101,8 +100,7 @@ class Game
       @$config.find("[name=lemmas]").val(gameDesc.lemmas.join(", "))
 
       @$config.find(".btn-primary").click((e) =>
-        # XXX jquery dep
-        window.location = window.location.origin + window.location.pathname + "?#{$.param(@configToGameDesc().toHash())}"
+        window.location = window.location.origin + window.location.pathname + "?#{@$.param(@configToGameDesc().toHash())}"
       )
 
     prepareAnswerFields: (gameDesc) ->
@@ -136,14 +134,12 @@ class Game
 
       gameDesc.inflections = []
       @$config.find("[data-option-inflection].active").map((i, node) ->
-        # XXX jquery dependency
-        gameDesc.inflections.push(Inflections[$(node).data('option-inflection')])
+        gameDesc.inflections.push(Inflections[@$(node).data('option-inflection')])
       )
       for element in [Tense, Voice, Number, Gender, Case]
         gameDesc["#{element.toSymbol()}s"] = []
         @$config.find("[data-option-#{element.toSymbol()}].active").map((i, node) ->
-          # XXX jquery dependency
-          gameDesc["#{element.toSymbol()}s"].push(element[$(node).data("option-#{element.toSymbol()}")])
+          gameDesc["#{element.toSymbol()}s"].push(element[@$(node).data("option-#{element.toSymbol()}")])
         )
       gameDesc.lemmas = @$config.find("[name=lemmas]").val().split(/[,;\s]\s*/)
       gameDesc
@@ -153,11 +149,11 @@ class Game
       answer = {}
       corrections = {}
       for inflection in $currentCard.find("[data-inflection]")
-        $inflection = $(inflection)
+        $inflection = @$(inflection)
         inflectionSymbol = $inflection.data("inflection")
         answer[inflectionSymbol] = []
         for attribute in $inflection.find("[data-#{inflectionSymbol}].active")
-          $attribute = $(attribute)
+          $attribute = @$(attribute)
           answer[inflectionSymbol].push($attribute.data(inflectionSymbol))
         corrections[inflectionSymbol] = new Correction
       [corrections, answer]
@@ -184,6 +180,7 @@ class Game
     showTurn: (participles) ->
       $card = @$cardPrototype.clone()
       self = this
+      $ = @$
       $card
         .removeClass('prototype')
         .addClass('item')
@@ -196,7 +193,6 @@ class Game
               key = String.fromCharCode(e.which).toLowerCase()
               return unless /[a-z]/.test(key)
               return if e.metaKey || e.ctrlKey || e.altKey
-              # XXX jquery dep
               $(this).find("[data-keybinding=#{key}]").click()
             e.preventDefault()
           )

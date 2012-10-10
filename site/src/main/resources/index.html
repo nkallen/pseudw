@@ -6,7 +6,7 @@
     <meta name="author" content="">
     <meta charset="utf-8">
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
   </head>
   <body>
     <div class="container">
@@ -150,8 +150,13 @@
       <script src="/bootstrap/js/bootstrap.min.js"></script>
       <script src="/application.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
+        // This is a hack to get around node.js queryString module's dependency on process.binding('http_parser')
+        // -- which it never uses! (process is obviously not available client-side.)
         process = {
-          binding: function() { return {} } // XXX this is really f'ed up.
+          binding: function(name) {
+            if (name != "http_parser") throw name + " is available client-side";
+            return {};
+          }
         }
         $(function() {
           var querystring = require("querystring");
