@@ -17,10 +17,10 @@ class ParticipleHttpDao
     Preconditions.assertDefined(@uri)
     Preconditions.assertDefined(@getJson)
 
-  findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
+  findAllByLemma: (lemmas, options, cb) ->
     Preconditions.assertKeys(options, 'tenses', 'voices', 'numbers', 'genders', 'cases')
     Preconditions.assertDefined(lemmas)
-    Preconditions.assertDefined(onSuccess)
+    Preconditions.assertDefined(cb)
 
     @getJson("#{@uri}/#{lemmas.join(";")}/participles", options, (jsons) ->
       participles = for json in jsons
@@ -31,37 +31,33 @@ class ParticipleHttpDao
               Case[json.participleDesc.case],
               Gender[json.participleDesc.gender],
               Number[json.participleDesc.number]))
-      onSuccess(participles)
+      cb(null, participles)
     )
 
 class ParticipleSqlDao
-  constructor: (@connection) ->
+  constructor: (@client) ->
 
-  findAllByLemma: (lemmas, options, onSuccess, onFailure) ->
+  findAllByLemma: (lemmas, options, cb) ->
     Preconditions.assertKeys(options, 'tenses', 'voices', 'numbers', 'genders', 'cases')
     Preconditions.assertDefined(lemmas)
-    Preconditions.assertDefined(onSuccess)
+    Preconditions.assertDefined(cb)
 
-    query = "SELECT * FROM morphemes LEFT OUTER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE morphemes.lemma IN (?) AND part_of_speech = 'participle'"
-    bindParameters = [lemmas]
+    n = 1
+    query = "SELECT * FROM morphemes LEFT OUTER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE morphemes.lemma IN (#{("$#{n++}" for lemma in lemmas).join(", ")}) AND part_of_speech = 'participle'"
+    bindParameters = lemmas
     for inflection in Inflections
       if attribute = options[inflection.toSymbol() + 's']
-        query += " AND `#{inflection.toSymbol()}` IN (?)"
+        query += " AND \"#{inflection.toSymbol()}\" IN ($#{n++})"
         bindParameters.push(attribute for attribute in attributes)
 
-    @connection.query(query, bindParameters, (err, rows, fields) ->
-      return onFailure(err) if err?
+    @client.query(query, bindParameters, (err, result) ->
+      return cb(err) if err?
 
-      participles = for row in rows
-        if row.voice == "middle-passive"
-          voice = Voice["middlePassive"]
-        else
-          voice = Voice[row.voice]
-
+      participles = for row in result.rows
         new Participle(row.form, new Verb(row.lemma, [], row.translation),
-            new ParticipleDesc(Tense[row.tense], voice, Case[row.case], Gender[row.gender], Number[row.number]))
+            new ParticipleDesc(Tense[row.tense], Voice[row.voice], Case[row.case], Gender[row.gender], Number[row.number]))
 
-      onSuccess(participles)
+      cb(null, participles)
     )
 
 module.exports = {

@@ -106,8 +106,7 @@ class Game
       @$config.find("[name=lemmas]").val(gameDesc.lemmas.join(", "))
 
       @$config.find(".btn-primary").click((e) =>
-        window.location = window.location.origin + window.location.pathname + "?#{@$.param(@configToGameDesc().toHash())}"
-      )
+        window.location = window.location.origin + window.location.pathname + "?#{@$.param(@configToGameDesc().toHash())}")
 
     prepareAnswerFields: (gameDesc) ->
       for inflection in Participle.allInflections
@@ -132,21 +131,18 @@ class Game
       @$carousel.on('click.carousel', '[data-move=prev]', (e) =>
         @$carousel.carousel('prev')
         @posFromCurrentTurn--
-        e.preventDefault()
-      )
+        e.preventDefault())
 
     configToGameDesc: ->
       gameDesc = new GameDesc
 
       gameDesc.inflections = []
       @$config.find("[data-option-inflection].active").map((i, node) =>
-        gameDesc.inflections.push(Inflections[@$(node).data('option-inflection')])
-      )
+        gameDesc.inflections.push(Inflections[@$(node).data('option-inflection')]))
       for element in [Tense, Voice, Number, Gender, Case]
         gameDesc["#{element.toSymbol()}s"] = []
         @$config.find("[data-option-#{element.toSymbol()}].active").map((i, node) =>
-          gameDesc["#{element.toSymbol()}s"].push(element[@$(node).data("option-#{element.toSymbol()}")])
-        )
+          gameDesc["#{element.toSymbol()}s"].push(element[@$(node).data("option-#{element.toSymbol()}")]))
       gameDesc.lemmas = @$config.find("[name=lemmas]").val().split(/[,;\s]\s*/)
       gameDesc
 
@@ -199,8 +195,7 @@ class Game
               return unless /[a-z]/.test(key)
               return if e.metaKey || e.ctrlKey || e.altKey
               (self.$)(this).find("[data-keybinding=#{key}]").click()
-            e.preventDefault()
-          )
+            e.preventDefault())
 
       if participles.length > 1
         $card.find(".morpheme").html("#{participles[0].morpheme} <span class='label label-info'>#{participles.length} variants</span>")
@@ -210,8 +205,7 @@ class Game
       $card.find(".translation").text(participles[0].verb.translation)
       $card.appendTo(@$carouselInner)
       @$carousel.carousel('next').one('slid', =>
-        $card.find('.btn-group:not(.hide)')[0].focus()
-      )
+        $card.find('.btn-group:not(.hide)')[0].focus())
 
     showState: (state) ->
       @$correctTurns.text(state.correctTurns)
@@ -226,7 +220,9 @@ class Game
     for key in ['tenses', 'voices', 'numbers', 'genders', 'cases']
       options[key] = gameDescHash[key]
 
-    participleDao.findAllByLemma(gameDesc.lemmas, options, (participles) ->
+    participleDao.findAllByLemma(gameDesc.lemmas, options, (err, participles) ->
+      throw err if err?
+
       gameDesc.participles = participles
       onSuccess(new Game(gameDesc, gameView)))
 
