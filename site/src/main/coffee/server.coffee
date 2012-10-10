@@ -1,5 +1,5 @@
 express = require('express')
-mysql = require('mysql')
+pg = require('pg')
 unorm = require('unorm')
 Bundler = require('./bundler')
 ParticipleDao = require('./participle_dao').sql
@@ -7,16 +7,14 @@ greek = require('pseudw-util').greek
 
 DELIMITER = /[;, ]/
 
-connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : process.env.DB_USER,
-  password : process.env.DB_PASS,
-  database : 'pseudw',
-})
-connection.connect((err) ->
-  throw err if err?
-)
-participleDao = new ParticipleDao(connection)
+dbClient =
+  query: (query, bindParameters, cb) ->
+    pg.connect(process.env.DB_URL, (err, client) ->
+      return cb(err) if err?
+
+      client.query(query, bindParameters, cb))
+
+participleDao = new ParticipleDao(dbClient)
 
 bundler = new Bundler(module, require)
 bundler.dependency('pseudw-module1')
@@ -30,8 +28,7 @@ app.use(express.compress())
 app.get('/application.js', (req, res) ->
   res.charset = 'utf-8'
   res.type('application/javascript')
-  res.end(bundler.toString())
-)
+  res.end(bundler.toString()))
 
 app.use(express.static(__dirname + '/../resources'))
 
@@ -44,14 +41,10 @@ app.get('/lemmas/:lemmas/participles', (req, res, next) ->
     if req.query[inflectionLowerCase] && attributes = req.query[inflectionLowerCase]
       options[inflection] = (inflection[attribute] for attribute in attributes)
 
-  participleDao.findAllByLemma(lemmas, options,
-    (participles) ->
-      return res.status(404).end() if participles.length == 0
-      
-      res.json(participles)
-    ,
-    (error) ->
-      next(new Error(error)))
-)
+  participleDao.findAllByLemma(lemmas, options, (error, participles) ->
+    return next(new Error(error)) if error?
+    return res.status(404).end() if participles.length == 0
+
+    res.json(participles)))
 
 app.listen(3000)
