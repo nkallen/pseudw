@@ -23,7 +23,12 @@
     "attic",
     "ancient"
   ],
-  "dependencies" : {},
+  "engines": {
+    "npm": "1.1.x"
+  },
+  "dependencies" : {
+    "coffee-script"  : "1.3.x"
+  },
   "analyze": true,
   "devDependencies": {
     "jasmine-node"    :  "1.0.x"

@@ -6,7 +6,7 @@ Enum = require('./enum')
 An object model for Greek Grammar and some utilities for character encoding.
 ###
 
-Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist')
+Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist', 'futurePerfect')
 Gender = Enum('Gender', 'masculine', 'feminine', 'neuter')
 Number = Enum('Number', 'singular', 'dual', 'plural')
 Case = Enum('Case', 'nominative', 'genitive', 'dative', 'accusative', 'vocative')

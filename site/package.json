@@ -10,12 +10,17 @@
   },
   "dependencies": {
     "libxmljs"       : "0.6.x",
-    "mysql"          : "2.0.0-alpha3",
     "express"        : "3.0.x",
     "unorm"          : "1.0.x",
-    "pseudw-module1" : "0.0.0",
-    "pseudw-util"    : "0.0.1",
-    "parseUri"       : "1.2.x"
+    "pseudw-module1" : "0.0.x",
+    "pseudw-util"    : "0.0.x",
+    "parseUri"       : "1.2.x",
+    "coffee-script"  : "1.3.x",
+    "pg"             : "0.8.x"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
   },
   "repository": "",
   "author": "Nick Kallen",

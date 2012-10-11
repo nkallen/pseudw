@@ -9,7 +9,7 @@ DELIMITER = /[;, ]/
 
 dbClient =
   query: (query, bindParameters, cb) ->
-    pg.connect(process.env.DB_URL, (err, client) ->
+    pg.connect(process.env.DATABASE_URL, (err, client) ->
       return cb(err) if err?
 
       client.query(query, bindParameters, cb))
@@ -47,4 +47,4 @@ app.get('/lemmas/:lemmas/participles', (req, res, next) ->
 
     res.json(participles)))
 
-app.listen(3000)
+app.listen(process.env.PORT)

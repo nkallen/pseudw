@@ -1,15 +1,19 @@
 {
   "name": "pseudw-module1",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "src/main/coffee/game.coffee",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "pseudw-util"  : "0.0.1"
+    "pseudw-util"  : "0.0.x",
+    "coffee-script"  : "1.3.x"
   },
-  "repository": "",
+  "engines": {
+    "npm": "1.1.x"
+  },
+ "repository": "",
   "author": "Nick Kallen",
   "license": "MIT"
 }
