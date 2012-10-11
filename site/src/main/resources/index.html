@@ -18,6 +18,9 @@
       .translation {
         text-align: center;
       }
+      .translation .lemma {
+        font-style: italic;
+      }
       .inflections {
         text-align: center;
         margin: 8px;
@@ -25,7 +28,25 @@
       .state {
         text-align: right;
       }
+      .footer {
+        padding: 70px 0;
+        margin-top: 70px;
+        border-top: 1px solid #E5E5E5;
+        background-color: #DAD5CA;
+        text-align: center;
+      }
     </style>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-35516208-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </head>
   <body>
     <div class="container">
@@ -101,7 +122,7 @@
               <div class="row-fluid">
                 <div class="span12">
                   <div class="morpheme"></div>
-                  <p class="translation"></p>
+                  <p class="translation"><span class="lemma"></span>, <span class="english"></span></p>
                 </div>
               </div>
               <div class="inflections">
@@ -160,33 +181,40 @@
               <p>You can <a data-toggle="modal" href="#config" tabindex="-1">configure the game</a> to select from a specific list of Greek verbs, only ask for specific inflections (e.g., only tense), or even exclude certain attributes of inflections (e.g., no dual numbers or vocative cases).</p>
             </li>
             <li>
-              <p>You can share your custom game configurations with friends just by copying and pasting the URL from your browser's location bar. If the URL is too long, consider using a url shortener like <a href="http://bit.ly/" tabindex="-1">bit.ly</a>
+              <p>You can share your game configuration with friends just by copying and pasting the URL from your browser's location bar. The URL's tend to be thousands of characters (it's proportional to the number of lemmas you provide) so if you want to shorten it try using <a href="http://metamark.net/" tabindex="-1">metamark.net</a>, one of the few URL shorteners that supports really really really long URLs.
             </li>
           </ul>
         </div>
       </div>
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-      <script src="/bootstrap/js/bootstrap.min.js"></script>
-      <script src="/application.js" type="text/javascript" charset="utf-8"></script>
-      <script type="text/javascript" charset="utf-8">
-        // This is a hack to get around node.js queryString module's dependency on process.binding('http_parser')
-        // -- which it never uses! (process is obviously not available client-side.)
-        process = {
-          binding: function(name) {
-            if (name != "http_parser") throw name + " is available client-side";
-            return {};
-          }
-        }
-        $(function() {
-          var querystring = require("querystring");
-          var Game = require("pseudw-module1");
-          options = querystring.parse(window.location.search.substr(1, window.location.search.length));
-          var ParticipleHttpDao = require("participle-dao").http;
-          var gameFactory = Game.make(options, $(".game"), new ParticipleHttpDao("/lemmas", $.getJSON), function(game) {
-            game.start();
-          });
-        });
-      </script>
     </div>
+    <footer class="footer" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <p><small class="muted" property="dc:rights">&copy;
+        <span property="dc:dateCopyrighted">2012</span>
+        <span property="dc:creator">Nick Kallen</span>
+        &para; Email me at nickkallen ~at~ me ~dot~ com &para; <a href="https://github.com/nkallen/pseudw">Download the source</a>, offered with the <a href="http://opensource.org/licenses/mit-license.php">MIT license</a> &para; Report bugs <a href="https://github.com/nkallen/pseudw/issues">here</a> &para; Please be kind.
+      </small></p>
+    </footer>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/application.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      // This is a hack to get around node.js queryString module's dependency on process.binding('http_parser')
+      // -- which it never uses! (process is obviously not available client-side.)
+      process = {
+        binding: function(name) {
+          if (name != "http_parser") throw name + " is available client-side";
+          return {};
+        }
+      }
+      $(function() {
+        var querystring = require("querystring");
+        var Game = require("pseudw-module1");
+        options = querystring.parse(window.location.search.substr(1, window.location.search.length));
+        var ParticipleHttpDao = require("participle-dao").http;
+        var gameFactory = Game.make(options, $(".game"), new ParticipleHttpDao("/lemmas", $.getJSON), function(game) {
+          game.start();
+        });
+      });
+    </script>
   </body>
 </html>
