@@ -45,10 +45,10 @@ class ParticipleSqlDao
     n = 1
     query = "SELECT * FROM morphemes INNER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE morphemes.lemma IN (#{("$#{n++}" for lemma in lemmas).join(", ")}) AND part_of_speech = 'participle'"
     bindParameters = lemmas
-    for inflection in Inflections
-      if attribute = options[inflection.toSymbol() + 's']
-        query += " AND \"#{inflection.toSymbol()}\" IN ($#{n++})"
-        bindParameters.push(attribute for attribute in attributes)
+    for inflectionSymbol, inflection of Inflections
+      if attributes = options[inflectionSymbol + 's']
+        query += " AND \"#{inflectionSymbol}\" IN (#{("$#{n++}" for attribute in attributes).join(", ")})"
+        bindParameters.push(attribute) for attribute in attributes
 
     @client.query(query, bindParameters, (err, result) ->
       return cb(err) if err?

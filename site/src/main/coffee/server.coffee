@@ -38,8 +38,8 @@ app.get('/lemmas/:lemmas/participles', (req, res, next) ->
   for inflection in greek.Participle.allInflections
     inflectionLowerCase = inflection.toString().toLowerCase()
 
-    if req.query[inflectionLowerCase] && attributes = req.query[inflectionLowerCase]
-      options[inflection] = (inflection[attribute] for attribute in attributes)
+    if attributes = req.query["#{inflectionLowerCase}s"]
+      options["#{inflectionLowerCase}s"] = (inflection[attribute] for attribute in attributes)
 
   participleDao.findAllByLemma(lemmas, options, (error, participles) ->
     return next(new Error(error)) if error?

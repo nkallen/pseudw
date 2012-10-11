@@ -125,7 +125,7 @@ class AnalysisParser
         when State.handlePerson
           analysis.person = chars
         when State.handleDialect
-          if chars.indexOf("attic") != -1
+          if chars.indexOf("attic") == -1
            skip()
     endElementNS: (elem, prefix, uri) ->
       switch state
