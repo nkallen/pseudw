@@ -2,8 +2,7 @@ DROP TABLE morphemes;
 DROP TABLE lexemes;
 CREATE TABLE IF NOT EXISTS lexemes (
   lemma VARCHAR(128) PRIMARY KEY,
-  translation TEXT,
-  UNIQUE (lemma));
+  translation TEXT);
 
 DROP TYPE part_of_speech;
 CREATE TYPE part_of_speech AS ENUM('participle', 'verb', 'noun', 'exclamation', 'preposition', 'adjective', 'adverb', 'pronoun', 'particle', 'conjunction', 'adverbial', 'article', 'irregular', 'numeral');
@@ -33,4 +32,4 @@ CREATE TABLE IF NOT EXISTS morphemes (
   voice voice,
   mood mood,
   person person,
-  UNIQUE (lemma, part_of_speech, tense, voice, person, mood, gender, number, "case", form));
+  UNIQUE (lemma, part_of_speech, tense, voice, gender, number, "case", person, mood, form));
