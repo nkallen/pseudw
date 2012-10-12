@@ -43,7 +43,7 @@ class ParticipleSqlDao
     Preconditions.assertDefined(cb)
 
     n = 1
-    query = "SELECT * FROM morphemes INNER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE morphemes.lemma IN (#{("$#{n++}" for lemma in lemmas).join(", ")}) AND part_of_speech = 'participle'"
+    query = "SELECT * FROM morphemes INNER JOIN lexemes ON morphemes.lemma = lexemes.lemma WHERE lexemes.lemma IN (#{("$#{n++}" for lemma in lemmas).join(", ")}) AND part_of_speech = 'participle'"
     bindParameters = lemmas
     for inflectionSymbol, inflection of Inflections
       if attributes = options[inflectionSymbol + 's']

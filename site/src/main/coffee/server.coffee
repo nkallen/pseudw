@@ -12,8 +12,7 @@ dbClient =
     pg.connect(process.env.DATABASE_URL, (err, client) ->
       return cb(err) if err?
 
-      client.query("set enable_bitmapscan = false", (err, result) ->
-        client.query(query, bindParameters, cb)))
+      client.query(query, bindParameters, cb))
 
 participleDao = new ParticipleDao(dbClient)
 
