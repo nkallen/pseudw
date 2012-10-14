@@ -24,4 +24,4 @@ class Trie
 
   traverse: -> new Node(root)
 
-  module.exports = Trie
+module.exports = Trie
