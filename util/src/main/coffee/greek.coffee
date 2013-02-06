@@ -52,7 +52,7 @@ betacode2unicode = do ->
     a) ἀ
     a( ἁ
     a/ ά
-    a ὰ
+    a\\ ὰ
     a= ᾶ
     a| ᾳ
     a α
@@ -63,7 +63,7 @@ betacode2unicode = do ->
     e) ἐ
     e( ἑ
     e/ έ
-    e ὲ
+    e\\ ὲ
     e ε
     b β
     f φ
@@ -81,7 +81,7 @@ betacode2unicode = do ->
     h) ἠ
     h( ἡ
     h/ ή
-    h ὴ
+    h\\ ὴ
     h= ἠ
     h| ῃ
     h η
@@ -92,7 +92,7 @@ betacode2unicode = do ->
     i) ἰ
     i( ἱ
     i/ ί
-    i ὶ
+    i\\ ὶ
     i= ῖ
     i ι
     k κ
@@ -104,7 +104,7 @@ betacode2unicode = do ->
     o) ὀ
     o( ὁ
     o/ ό
-    o ὸ
+    o\\ ὸ
     o ο
     p π
     q θ
@@ -119,7 +119,7 @@ betacode2unicode = do ->
     u) ὐ
     u( ὑ
     u/ ύ
-    u ὺ
+    u\\ ὺ
     u= ῦ
     u υ
     w)/ ὤ
@@ -135,7 +135,7 @@ betacode2unicode = do ->
     w) ὠ
     w( ὡ
     w/ ώ
-    w ὼ
+    w\\ ὼ
     w= ῶ
     w| ῳ
     w ω
