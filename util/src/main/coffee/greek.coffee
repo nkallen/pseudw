@@ -37,111 +37,115 @@ class Participle
   @allInflections: [Tense, Voice, Case, Gender, Number]
 
 betacode2unicode = do ->
-  # The following is unicorn normalized to NFC
   raw =
-    "a)/ ἄ
-    a(/ ἅ
-    a(= ἇ
-    a)= ἆ
-    a|( ᾁ
-    a|) ᾀ
-    a/| ᾴ
-    a=| ᾷ
-    a| ᾲ
-    a|/ ᾴ
-    a) ἀ
-    a( ἁ
-    a/ ά
-    a\\ ὰ
-    a= ᾶ
-    a| ᾳ
-    a α
-    c ξ
-    d δ
-    e)/ ἔ
-    e(/ ἕ
-    e) ἐ
-    e( ἑ
-    e/ έ
-    e\\ ὲ
-    e ε
+   "a α
     b β
-    f φ
     g γ
-    h)/ ἤ
-    h(/ ἥ
-    h)= ἦ
-    h(= ἧ
-    h)| ᾐ
-    h(| ᾑ
-    h/| ῄ
-    h=| ῇ
-    h| ῂ
-    h|/ ῄ
-    h) ἠ
-    h( ἡ
-    h/ ή
-    h\\ ὴ
-    h= ἠ
-    h| ῃ
+    d δ
+    e ε
+    v ϝ
+    z ζ
     h η
-    i)/ ἴ
-    i(/ ἵ
-    i)= ἶ
-    i(= ἷ
-    i) ἰ
-    i( ἱ
-    i/ ί
-    i\\ ὶ
-    i= ῖ
+    q θ
     i ι
     k κ
     l λ
     m μ
     n ν
-    o)/ ὄ
-    o(/ ὅ
-    o) ὀ
-    o( ὁ
-    o/ ό
-    o\\ ὸ
+    c ξ
     o ο
     p π
-    q θ
-    r( ῥ
     r ρ
     s σ
+    s ς
     t τ
-    u)/ ὔ
-    u(/ ὕ
-    u)= ὖ
-    u(= ὗ
-    u) ὐ
-    u( ὑ
-    u/ ύ
-    u\\ ὺ
-    u= ῦ
     u υ
-    w)/ ὤ
-    w(/ ὥ
-    w|( ᾡ
-    w|) ᾠ
-    w)= ὦ
-    w(= ὧ
-    w/| ώ
-    w=| ῷ
-    w| ῲ
-    w|/ ώ
-    w) ὠ
-    w( ὡ
-    w/ ώ
-    w\\ ὼ
-    w= ῶ
-    w| ῳ
-    w ω
+    f φ
     x χ
     y ψ
-    z ζ"
+    w ω
+    *a Α
+    *b Β
+    *g Γ
+    *d Δ
+    *e Ε
+    *v Ϝ
+    *z Ζ
+    *h Η
+    *q Θ
+    *i Ι
+    *k Κ
+    *l Λ
+    *m Μ
+    *n Ν
+    *c Ξ
+    *o Ο
+    *p Π
+    *r Ρ
+    *s Σ
+    *t Τ
+    *u Υ
+    *f Φ
+    *x Χ
+    *y Ψ
+    *w Ω
+    *)/a Ἄ
+    *)/e Ἔ
+    *)/i Ἴ
+    *)/o Ὄ
+    *)/u Υ̓́
+    *)/w Ὤ
+    *)\\a Ἂ
+    *)\\e Ἒ
+    *)\\i Ἲ
+    *)\\o Ὂ
+    *)\\u Υ̓̀
+    *)\\w Ὢ
+    *)=a Ἆ
+    *)=e Ἐ͂
+    *)=i Ἶ
+    *)=o Ὀ͂
+    *)=u Υ̓͂
+    *)=w Ὦ
+    *)a Ἀ
+    *)e Ἐ
+    *)i Ἰ
+    *)o Ὀ
+    *)u Υ̓
+    *)w Ὠ
+    *(/a Ἅ
+    *(/e Ἕ
+    *(/i Ἵ
+    *(/o Ὅ
+    *(/u Ὕ
+    *(/w Ὥ
+    *(\\a Ἃ
+    *(\\e Ἓ
+    *(\\i Ἳ
+    *(\\o Ὃ
+    *(\\u Ὓ
+    *(\\w Ὣ
+    *(=a Ἇ
+    *(=e Ἑ͂
+    *(=i Ἷ
+    *(=o Ὁ͂
+    *(=u Ὗ
+    *(=w Ὧ
+    *(a Ἁ
+    *(e Ἑ
+    *(i Ἱ
+    *(o Ὁ
+    *(u Ὑ
+    *(w Ὡ
+    ) ̓
+    ( ̔
+    / ́
+    = ͂
+    \\ ̀
+    + ̈
+    | ͅ
+    & ̄
+    ' ̆"
   array = raw.split(/\s+/)
   betacode2unicodeTrie = new Trie
   while array.length > 0

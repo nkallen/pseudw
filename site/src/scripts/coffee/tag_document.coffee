@@ -52,7 +52,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
 
                     l.push(form: greek.betacode2unicode(form), lemma: greek.betacode2unicode(word.attr('lemma').value()))
 
-    out = ""
+    out = "<html>\n<head>\n<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n</head>"
     for book in books
       out += "<section class='book'>\n"
       for card in book
@@ -72,8 +72,8 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
             out += "</div>\n"
           out += "</p>\n"
         out += "</section>\n"
-      out += "</section>"
-
+      out += "</section>\n"
+    out += "</html>"
     console.log(out)
   )
 )
