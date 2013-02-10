@@ -50,9 +50,10 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                     unless token == form
                       console.warn("Warning: token mismatch on line '#{original_line}'\n '#{token}' <=> '#{word}'")
 
-                    l.push(form: greek.betacode2unicode(form), lemma: greek.betacode2unicode(word.attr('lemma').value()))
+                    lemma = word.attr('lemma').value().replace(/1$/, '')
+                    l.push(form: greek.betacode2unicode(form), lemma: greek.betacode2unicode(lemma))
 
-    out = "<html>\n<head>\n<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n</head>"
+    out = ""
     for book in books
       out += "<section class='book'>\n"
       for card in book
@@ -73,7 +74,6 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
           out += "</p>\n"
         out += "</section>\n"
       out += "</section>\n"
-    out += "</html>"
     console.log(out)
   )
 )

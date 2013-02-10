@@ -1,6 +1,7 @@
 Trie = require('./trie')
 Preconditions = require('./preconditions')
 Enum = require('./enum')
+unorm = require('unorm')
 
 ###
 An object model for Greek Grammar and some utilities for character encoding.
@@ -168,7 +169,7 @@ betacode2unicode = do ->
           out = out.concat(char)
         traversal = betacode2unicodeTrie.traverse()
     out = out.concat(traversal.value()) if traversal.value()
-    out
+    unorm.nfc(out)
 
 module.exports = {
   Tense: Tense,

@@ -27,7 +27,8 @@
     "npm": "1.1.x"
   },
   "dependencies" : {
-    "coffee-script"  : "1.3.x"
+    "coffee-script"  : "1.3.x",
+    "unorm"          : "1.0.x"
   },
   "analyze": true,
   "devDependencies": {

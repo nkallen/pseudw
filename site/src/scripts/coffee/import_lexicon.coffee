@@ -42,7 +42,7 @@ insertChunk = ->
 
   sanitize = (chunk) ->
     for item in chunk
-      tr = item.get(".//tr")?.text() || item.get(".//sense")?.text()
+      tr = (item.get(".//sense//tr") || item.get(".//ref"))?.text()
       [
         greek.betacode2unicode(item.attr("key").value()),
         tr
