@@ -184,7 +184,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                 out += ">#{word.form}</span>"
               n += 1
             out += "</div></div></div>\n"
-          out += "</div class='paragraph'>\n"
+          out += "</div>\n"
         out += "</section>\n"
       out += "</section>\n"
     console.log(out)
