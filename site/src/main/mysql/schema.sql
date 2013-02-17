@@ -2,6 +2,7 @@ DROP TABLE lexemes;
 CREATE TABLE IF NOT EXISTS lexemes (
   `lemma` VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_bin PRIMARY KEY,
   `translation` TEXT CHARACTER SET utf8,
+  `ref` VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_bin,
   UNIQUE (`lemma`)) ENGINE InnoDB;
 
 DROP TABLE morphemes;

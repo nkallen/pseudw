@@ -42,16 +42,67 @@ insertChunk = ->
 
   sanitize = (chunk) ->
     for item in chunk
-      tr = (item.get(".//sense//tr") || item.get(".//ref"))?.text()
+      ref = ""
+      if (senses = item.find(".//sense")).length > 0
+        translation = "<ol class='entry'>\n"
+        for sense in senses
+          translation += "<li class='sense'>"
+          for child in sense.childNodes()
+            switch child.name()
+              when "usg"
+                translation += "<span class='usage'>#{child.text()}</span>"
+              when "trans"
+                trans = child
+                for child in trans.childNodes()
+                  switch child.name()
+                    when "foreign"
+                      word = greek.betacode2unicode(child.text())
+                      translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
+                    when "text"
+                      translation += child.text()
+                    when "tr"
+                      tr = child
+                      for child in tr.childNodes()
+                        switch child.name()
+                          when "foreign"
+                            if child.attr("lang").value() == "greek"
+                              word = greek.betacode2unicode(child.text())
+                              translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
+                            else
+                              translation += "<span>child.text()</span>" # XXX latin?
+                          when "text"
+                            translation += "<span class='translation'>#{child.text()}</span>"
+              when "text"
+                translation += child.text()
+              when "ref"
+                if child.attr("lang").value() == "greek"
+                  word = greek.betacode2unicode(child.text())
+                  translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
+                else
+                  translation += "<span>child.text()</span>" # DRY
+              when "foreign"
+                if child.attr("lang").value() == "greek"
+                  word = greek.betacode2unicode(child.text())
+                  translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
+                else
+                  translation += child.text()
+          translation += "</li>\n"
+        translation += "</ol>"
+      else if r = item.get(".//ref")
+        ref = r.text()
+      else
+        console.error("==> Skipping:\n" + item.toString())
+        continue
       [
         greek.betacode2unicode(item.attr("key").value()),
-        tr
+        translation,
+        greek.betacode2unicode(ref)
       ]
 
   [chunk, entries] = [entries[0...CHUNK_SIZE], entries[CHUNK_SIZE..]]
   values = sanitize(chunk)
   connection.query(
-    "INSERT INTO lexemes (`lemma`, `translation`) VALUES ?",
+    "INSERT INTO lexemes (`lemma`, `translation`, `ref`) VALUES ?",
     [values],
   (err, rows, fields) =>
     throw err if err?

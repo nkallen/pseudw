@@ -30,9 +30,9 @@ fs.readFile('/Users/nkallen/Workspace/pseudw/site/src/main/resources/iliad.html'
   (err, rows, fields) =>
     throw err if err?
 
-    out = "<ul>\n"
+    out = "<ul class='lexicon'>\n"
     for row in rows
-      out += "  <li data-lemma='#{row.lemma}'>#{row.translation}</li>\n"
+      out += "  <li data-lemma='#{row.lemma}'>\n#{row.translation}\n</li>\n"
     out += "</ul>"
     console.log(out)
 
