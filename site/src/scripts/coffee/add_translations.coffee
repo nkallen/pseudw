@@ -6,35 +6,45 @@ libxml = require('libxmljs')
 unorm = require('unorm')
 mysql = require('mysql')
 
-connection = mysql.createConnection({
+connection = mysql.createConnection(
   host     : 'localhost',
   user     : process.env.DB_USER,
   password : process.env.DB_PASS,
-  database : 'pseudw'})
+  database : 'pseudw')
 
-connection.connect((err) ->
-  throw err if err?)
+connection.connect((err) -> throw err if err?)
 
-fs.readFile('/Users/nkallen/Workspace/pseudw/site/src/main/resources/iliad.html', 'utf8', (err, doc) ->
-  throw err if err?
-
+dirs = fs.readdirSync(path = 'src/main/resources/iliad/books/')
+processDir = (dir) ->
+  text = libxml.parseXml(fs.readFileSync(path + "#{dir}/text.html", 'utf8'))
   lemmas = {}
-  doc = libxml.parseXml(doc)
-
-  words = doc.find("//span[@class='word']")
+  words = text.find("//span[@class='word']")
   for word in words
     lemmas[unorm.nfc(word.attr('data-lemma').value())] = true
-  connection.query(
-    "SELECT * FROM lexemes WHERE lemma IN (?)",
-    [Object.keys(lemmas)],
-  (err, rows, fields) =>
-    throw err if err?
+  lemmas = Object.keys(lemmas)
 
-    out = "<ul class='lexicon'>\n"
-    for row in rows
-      out += "  <li data-lemma='#{row.lemma}'>\n#{row.translation}\n</li>\n"
+  out = "<ul class='lexicon'>\n"
+  processLemma = (lemma, oncomplete) ->
+    connection.query(
+      "SELECT * FROM lexemes WHERE lemma IN (?, ?) LIMIT 1",
+      ["#{lemma}1", lemma],
+    (err, rows, fields) =>
+      throw err if err?
+
+      for row in rows
+        out += "  <li data-lemma='#{lemma}'>\n#{row.translation}\n</li>\n"
+
+      if lemma = lemmas.pop()
+        processLemma(lemma, oncomplete)
+      else
+        oncomplete())
+
+  processLemma(lemmas.pop(), () ->
     out += "</ul>"
-    console.log(out)
+    fs.writeFileSync(path + "#{dir}/lexicon.html", out)
+    if dirs.length > 0
+      processDir(dirs.pop())
+    else
+      connection.end((err) -> throw err if err?))
 
-    connection.end((err) ->
-      throw err if err?)))
+processDir(dirs.pop())

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta charset="utf-8">
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <style>
+      h2 {
+        font-size: 20px;
+      }
+      .morpheme {
+        text-align: center;
+        font-size: 24pt;
+      }
+      .translation {
+        text-align: center;
+      }
+      .translation .lemma {
+        font-style: italic;
+      }
+      .inflections {
+        text-align: center;
+        margin: 8px;
+      }
+      .state {
+        text-align: right;
+      }
+      .footer {
+        padding: 70px 0;
+        margin-top: 70px;
+        border-top: 1px solid #E5E5E5;
+        background-color: #DAD5CA;
+        text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-35516208-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h3>THE PARTICIPLE GAME</h3>
+      <div class="game hero-unit">
+        <div class="modal config hide fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="configLabel">Options</h3>
+          </div>
+          <div class="modal-body">
+            <h4>Lemmas</h4>
+            <p>Use these greek lemmas to generate participles.</p>
+            <input type="text" name="lemmas" value="" />
+            <h4>Inflections</h4>
+            <p>Vary the game by having the player only indicate one or more of the tense/voice/etc.</p>
+            <p>Because both speed and accuracy are important components of fluency, by limiting the game to only one attribute at a time (e.g. just, <em>tense</em>) the user can spend less time thinking about data entry and more time recognizing forms.<p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-inflection="tense">Tense</button>
+              <button class="btn" data-option-inflection="voice">Voice</button>
+              <button class="btn" data-option-inflection="gender">Gender</button>
+              <button class="btn" data-option-inflection="number">Number</button>
+              <button class="btn" data-option-inflection="case">Case</button>
+            </div>
+            <h4>Tenses</h4>
+            <p>Limit the tenses of the participles to just present, aorist, etc. By default, all tenses are included.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-tense="present">Present</button>
+              <button class="btn" data-option-tense="future">Future</button>
+              <button class="btn" data-option-tense="aorist">Aorist</button>
+              <button class="btn" data-option-tense="perfect">Perfect</button>
+            </div>
+            <h4>Voices</h4>
+            <p>Limit the voices of the participles.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-voice="active">Active</button>
+              <button class="btn" data-option-voice="middle">Middle</button>
+              <button class="btn" data-option-voice="middlePassive">Middle Passive</button>
+              <button class="btn" data-option-voice="passive">Passive</button>
+            </div>
+            <h4>Genders</h4>
+            <p>Include these numbers. By default, the dual is excluded.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-gender="masculine">Masculine</button>
+              <button class="btn" data-option-gender="feminine">Feminine</button>
+              <button class="btn" data-option-gender="neuter">Neuter</button>
+            </div>
+            <h4>Numbers</h4>
+            <p>Include these numbers. By default, the dual is excluded.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-number="singular">Singular</button>
+              <button class="btn" data-option-number="dual">Dual</button>
+              <button class="btn" data-option-number="plural">Plural</button>
+            </div>
+            <h4>Cases</h4>
+            <p>Include these cases. By default, the vocative is excluded.</p>
+            <div class="btn-group" data-toggle="buttons-checkbox">
+              <button class="btn" data-option-case="nominative">Nominative</button>
+              <button class="btn" data-option-case="genitive">Genitive</button>
+              <button class="btn" data-option-case="dative">Dative</button>
+              <button class="btn" data-option-case="accusative">Accusative</button>
+              <button class="btn" data-option-case="vocative">Vocative</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+        <div class="carousel slide carousel" id="carousel" data-interval="">
+          <div class="carousel-inner">
+            <div class="prototype invisible" aria-hidden="true">
+              <div class="row-fluid">
+                <div class="span12">
+                  <div class="morpheme"></div>
+                  <p class="translation"><span class="lemma"></span>, <span class="english"></span></p>
+                </div>
+              </div>
+              <div class="inflections">
+                <div class="btn-group btn-group-vertical" tabindex="1" data-toggle="buttons-checkbox" data-inflection="tense" >
+                  <button class="btn" tabindex="-1" data-tense="present" data-keybinding="p"><u>P</u>resent</button>
+                  <button class="btn" tabindex="-1" data-tense="future" data-keybinding="f"><u>F</u>uture</button>
+                  <button class="btn" tabindex="-1" data-tense="aorist" data-keybinding="a"><u>A</u>orist</button>
+                  <button class="btn" tabindex="-1" data-tense="perfect" data-keybinding="r">Pe<u>r</u>fect</button>
+                </div>
+                <div class="btn-group btn-group-vertical" tabindex="2" data-toggle="buttons-checkbox" data-inflection="voice" >
+                  <button class="btn" tabindex="-1" data-voice="active" data-keybinding="a"><u>A</u>ctive</button>
+                  <button class="btn" tabindex="-1" data-voice="middle" data-keybinding="m"><u>M</u>iddle</button>
+                  <button class="btn" tabindex="-1" data-voice="middlePassive" data-keybinding="i">M<u>i</u>ddle Passive</button>
+                  <button class="btn" tabindex="-1" data-voice="passive" data-keybinding="p"><u>P</u>assive</button>
+                </div>
+                <div class="btn-group btn-group-vertical" tabindex="3" data-toggle="buttons-checkbox" data-inflection="case">
+                  <button class="btn" tabindex="-1" data-case="nominative" data-keybinding="n"><u>N</u>ominative</button>
+                  <button class="btn" tabindex="-1" data-case="genitive" data-keybinding="g"><u>G</u>enitive</button>
+                  <button class="btn" tabindex="-1" data-case="dative" data-keybinding="d"><u>D</u>ative</button>
+                  <button class="btn" tabindex="-1" data-case="accusative" data-keybinding="a"><u>A</u>ccusative</button>
+                  <button class="btn" tabindex="-1" data-case="vocative" data-keybinding="v"><u>V</u>ocative</button>
+                </div>
+                <div class="btn-group btn-group-vertical" tabindex="4" data-toggle="buttons-checkbox" data-inflection="gender">
+                  <button class="btn" tabindex="-1" data-gender="masculine" data-keybinding="m"><u>M</u>asculine</button>
+                  <button class="btn" tabindex="-1" data-gender="feminine" data-keybinding="f"><u>F</u>eminine</button>
+                  <button class="btn" tabindex="-1" data-gender="neuter" data-keybinding="n"><u>N</u>euter</button>
+                </div>
+                <div class="btn-group btn-group-vertical" tabindex="5" data-toggle="buttons-checkbox" data-inflection="number">
+                  <button class="btn singular" tabindex="-1" data-number="singular" data-keybinding="s"><u>S</u>ingular</button>
+                  <button class="btn dual" tabindex="-1" data-number="dual" data-keybinding="d"><u>D</u>ual</button>
+                  <button class="btn plural" tabindex="-1" data-number="plural" data-keybinding="p"><u>P</u>lural</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a class="carousel-control left hide" href="#carousel" data-move="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#carousel" data-move="next">&rsaquo;</a>
+        </div>
+        <div class="state">
+          <p><span class="correct-turns"></span> correct / <span class="total-turns"></span> total</p>
+          <span class="time"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span4">
+          <h4>INTRO</h4>
+          <p>This game is designed to improve your Greek participle recognition, both in accuracy and in speed. It works like this: the computer presents an inflected form, and you identify its inflections &mdash; tense, number, and so forth by clicking the buttons. To submit your answer, press <span class="label label-info">enter</span> or click on the arrow icon. Many different participles have identical forms, so the game will indicate if there are, for example, <span class="label label-info">3 variants</span>. In such cases, indicate each attribute that is possible: e.g., for a form like τιμήεντα which could be three different participles, select both masculine and neuter, nominative and accusive, singular and plural.</p>
+        </div>
+        <div class="span8">
+          <h4>TIPS</h4>
+          <ul>
+            <li>
+              <p>Try using the keyboard to answer. For example, type <span class="label label-info">p</span> to indicate Present tense, then hit <span class="label label-info">tab</span> to advance to the next inflection, lather, rinse, repeat, then finally hit <span class="label label-info">enter</span> to submit your answer. The key code for each attribute within an inflection is <u>underlined</u>.</p>
+            </li>
+            <li>
+              <p>You can <a data-toggle="modal" href="#config" tabindex="-1">configure the game</a> to select from a specific list of Greek verbs, only ask for specific inflections (e.g., only tense), or even exclude certain attributes of inflections (e.g., no dual numbers or vocative cases).</p>
+            </li>
+            <li>
+              <p>You can share your game configuration with friends just by copying and pasting the URL from your browser's location bar. The URL's tend to be thousands of characters (it's proportional to the number of lemmas you provide) so if you want to shorten it try using <a href="http://metamark.net/" tabindex="-1">metamark.net</a>, one of the few URL shorteners that supports really really really long URLs.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="footer" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <p><small class="muted" property="dc:rights">&copy;
+        <span property="dc:dateCopyrighted">2012</span>
+        <span property="dc:creator">Nick Kallen</span>
+        &para; Email me at nickkallen ~at~ me ~dot~ com &para; <a href="https://github.com/nkallen/pseudw">Download the source</a>, offered with the <a href="http://opensource.org/licenses/mit-license.php">MIT license</a> &para; Report bugs <a href="https://github.com/nkallen/pseudw/issues">here</a> &para; Please be kind.
+      </small></p>
+    </footer>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/application.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      // This is a hack to get around node.js queryString module's dependency on process.binding('http_parser')
+      // -- which it never uses! (process is obviously not available client-side.)
+      process = {
+        binding: function(name) {
+          if (name != "http_parser") throw name + " is available client-side";
+          return {};
+        }
+      }
+      $(function() {
+        var querystring = require("querystring");
+        var Game = require("pseudw-module1");
+        options = querystring.parse(window.location.search.substr(1, window.location.search.length));
+        var ParticipleHttpDao = require("participle-dao").http;
+        var gameFactory = Game.make(options, $(".game"), new ParticipleHttpDao("/lemmas", $.getJSON), function(game) {
+          game.start();
+        });
+      });
+    </script>
+  </body>
+</html>

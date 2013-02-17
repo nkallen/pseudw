@@ -16,7 +16,8 @@
     "pseudw-util"    : "0.0.x",
     "parseUri"       : "1.2.x",
     "coffee-script"  : "1.3.x",
-    "pg"             : "0.8.x"
+    "pg"             : "0.8.x",
+    "underscore"     : "1.4.x"
   },
   "engines": {
     "node": "0.8.x",
