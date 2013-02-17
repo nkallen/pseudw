@@ -1,0 +1,235 @@
+<html lang="en">
+  <head>
+    <title>The Iliad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta charset="utf-8" />
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+    <style type='text/css'>
+      .text {
+        float: left;
+      }
+      .info-pane {
+        padding: 0px 25px 10px 25px;
+      }
+      ul.lexicon, ol.notes {
+        display: none;
+        list-style-type: none;
+      }
+      .info-pane li {
+        list-style-type: lower-roman;
+      }
+      span.translation {
+        font-weight: bold;
+      }
+      div.paragraph {
+        margin-bottom: 15px;
+      }
+      div.line .row div.span1 {
+        vertical-align: baseline;
+        text-align: left;
+        line-height: 20px !important;
+      }
+      div.line span.line-number {
+        margin-left: 35px;
+        font-size: 80%;
+        padding: 1px 5px 2px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 9px;
+      }
+      div.line span.line-number:not(.highlight) {
+        visibility: hidden;
+        color: gray;
+      }
+      div.line .row .words, div.line .row .span1 {
+        position: relative;
+      }
+      div.line:hover span.line-number.has-commentary:not(.highlight) {
+        padding: 1px 4px 2px;
+        cursor: pointer;
+        border-radius: 9px;
+        border: 1px solid gray;
+      }
+      div.line:hover .line-number:not(.highlight) {
+        visibility: visible !important;
+      }
+      .btn-group {
+        padding-top: 5px;
+      }
+    </style>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-35516208-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="span5">
+          <div class="row">
+            <div class="span1 offset1"><h4>ΙΛΙΑΔΟ</h4></div>
+            <div class="span2 offset1 btn-group">
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                Book <%= book %> <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <% for (var i = 1; i <= 26; i++) { %>
+                  <li><a href="/iliad/books/<%= i %>">Book <%= i %></a></li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
+          <div class='text'>
+            <%= text %>
+          </div>
+        </div>
+        <div class='span5'>
+          <div class="info-pane span5" style="position: fixed; overflow-y: scroll; height: 100%; background-color: #dad5ca; border-left: 1px solid lightgrey">
+          <h4></h4>
+          <h5></h5>
+          <div class="content"></div>
+        </div>
+      </div>
+    </div>
+    <%= lexicon %>
+    <%= notes %>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/application.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+      var state = {highlighted: $(), styled: $()};
+      var $notes = $('ol.notes');
+      var i = 0;
+      function reset() {
+        $('.info-pane > h4').text('');
+        $('.info-pane > h5').text('');
+        state.highlighted.each(function() {
+          $this = $(this);
+          $this
+            .data('original')
+              .removeAttr('style')
+          $this.remove();
+        });
+        state.highlighted = $();
+      }
+      function highlight($item) {
+        var result = $();
+        $item.each(function () {
+          var $this = $(this);
+          var position = $this.position();
+          var $highlight = $this.clone()
+          $highlight
+            .css('position', 'absolute')
+            .data('original', $this)
+            .click(function() { $this.click() })
+            .css('top', position.top)
+            .css('left', position.left)
+            .addClass('highlight')
+            .appendTo($this.parent());
+          $this.css('visibility', 'hidden');
+          result = result.add($highlight);
+          state.highlighted = state.highlighted.add($highlight);
+        });
+        return result;
+      }
+
+      $('span.line-number')
+        .each(function() {
+          var $this = $(this);
+          if (++i % 5 == 0) $this.css('visibility', 'visible');
+          var $book = $this.parents('section.book');
+          var $note = $notes.find('li[data-book="' + $book.data('number') + '"]').filter('[data-line="' + $this.text() + '"]');
+          if ($note.length > 0) {
+            $this
+              .addClass('has-commentary')
+              .data('note', $note)
+          }
+        })
+        .click(function() {
+          reset();
+          var $this = $(this);
+          var $note = $this.data('note');
+          if ($note) {
+            highlight($this).addClass('label').addClass('label-info');
+            $('.info-pane > h4')
+              .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
+            $('.info-pane .content')
+              .html($note.html());
+          }
+        });
+
+      $('span.word').click(function() {
+        reset();
+        var $currentWord = $(this);
+        var lemma = $currentWord.data('lemma');
+
+        var $currentEntry = $('ul.lexicon > li[data-lemma=' + lemma + ']');
+        $('.info-pane > h4')
+          .text(lemma);
+        $('.info-pane > h5')
+          .html("<span class='label'>" + $currentWord.text() + "</span> ")
+          .append([$currentWord.data('tense'), $currentWord.data('mood'), $currentWord.data('person'), $currentWord.data('number'), $currentWord.data('voice'), $currentWord.data('case'), $currentWord.data('gender')].filter(function(item) {return item}).join(', '));
+        $('.info-pane .content').html($currentEntry.html())
+
+        var $section  = $currentWord.parents('section.card').first();
+        var $sentence = $section.find('span[data-sentence-id="' + $currentWord.data('sentence-id') + '"]');
+
+        var $parent     = $currentWord;
+        var parents     = [];
+        while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
+          parents.push($parent);
+        }
+
+        var bfs   = [$currentWord];
+        var stack = [$currentWord];
+        while (stack.length > 0) {
+          var $current  = stack.pop();
+          var level = $();
+          $current.each(function() {
+            $this = $(this);
+            var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
+            level = level.add($children);
+          });
+          if (level.length > 0) {
+            stack.push(level);
+            bfs.push(level);
+          }
+        };
+
+        var level = 0;
+        bfs.forEach(function(nodes) {
+          var opacity = 1.0 - level++ / bfs.length;
+          highlight(nodes)
+            .css('opacity', opacity)
+            .addClass('label')
+            .addClass('label-info');
+        });
+        level = 1; // pretend we skipped one
+        parents.forEach(function(parent) {
+          var opacity = 1.0 - (level++ / (parents.length + 1));
+          highlight(parent)
+            .css('opacity', opacity)
+            .addClass('label')
+            .addClass('label-important');
+        });
+
+        setTimeout(function() {
+          highlight($('div.text span[data-lemma="' + lemma + '"]').not($currentWord)).addClass('label')
+        }, 4)
+      });
+    //]]>
+    </script>
+  </body>
+</html>
