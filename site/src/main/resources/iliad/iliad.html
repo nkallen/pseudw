@@ -45,6 +45,9 @@
         visibility: hidden;
         color: gray;
       }
+      div.line span.line-number.five {
+        visibility: visible;
+      }
       div.line .row .words, div.line .row .span1 {
         position: relative;
       }
@@ -149,7 +152,7 @@
       $('span.line-number')
         .each(function() {
           var $this = $(this);
-          if (++i % 5 == 0) $this.css('visibility', 'visible');
+          if (++i % 5 == 0) $this.addClass('five');
           var $book = $this.parents('section.book');
           var $note = $notes.find('li[data-book="' + $book.data('number') + '"]').filter('[data-line="' + $this.text() + '"]');
           if ($note.length > 0) {
