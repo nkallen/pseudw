@@ -109,7 +109,6 @@
     <%= notes %>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/application.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
     //<![CDATA[
       var state = {highlighted: $(), styled: $()};
@@ -133,7 +132,7 @@
         $item.each(function () {
           var $this = $(this);
           var position = $this.position();
-          var $highlight = $this.clone()
+          var $highlight = $this.clone();
           $highlight
             .css('position', 'absolute')
             .data('original', $this)
@@ -234,7 +233,7 @@
         }, 4)
       });
       $('body').keydown(function(e) {
-        if (e.which == 27) reset()
+        if (e.which == 27) reset() // <ESC>
       });
     //]]>
     </script>
