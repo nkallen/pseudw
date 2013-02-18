@@ -19,11 +19,11 @@ for textDir in fs.readdirSync(path = 'src/main/resources/iliad/books/')
           out += "  <li data-book='#{bookNumber}' data-line='#{lineNumber}'>\n"
           out += "    <ol>\n"
           for child in notesForLine.childNodes()
-            out += "      <li>\n"
             switch child.name()
               when "text"
                 out += child.text()
               when "p"
+                out += "      <li>\n"
                 p = child
                 for child in p.childNodes()
                   switch child.name()
@@ -87,7 +87,9 @@ for textDir in fs.readdirSync(path = 'src/main/resources/iliad/books/')
                     when "title"
                       out += "<span class='title'>#{child.text()}</span>"
                     else throw child.toString()
+                out += "      </li>"
               when "l"
+                out += "      <li>"
                 out += "<span class='translation'>"
                 switch child.name()
                   when "lemma"
@@ -112,6 +114,7 @@ for textDir in fs.readdirSync(path = 'src/main/resources/iliad/books/')
                     out += "<span class='translation'>#{child.text()}</span>"
                   else throw child.name()
                 out += "</span>"
+                out += "      </li>"
               when "head"
                 out += "<h6>#{child.text()}</h6>"
               else throw child.toString()
