@@ -5,15 +5,30 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <meta charset="utf-8" />
+    <link href='http://fonts.googleapis.com/css?family=Cardo' rel='stylesheet' type='text/css'>
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
 
     <style type='text/css'>
+      body {
+        font-family: 'Cardo', serif;
+        line-height: 25px;
+      }
       .text {
-        float: left;
+        margin-top: 10px;
       }
       .info-pane {
         padding: 0px 25px 10px 25px;
+        margin-left: 0;
+        position: fixed;
+        overflow-y: scroll;
+        height: 100%;
+        background-color: #dad5ca; 
+        border-left: 1px solid lightgray;
+      }
+      .info-pane-container {
+        margin: 0;
+        padding: 0;
       }
       ul.lexicon, ol.notes {
         display: none;
@@ -79,7 +94,7 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="span5">
+        <div class="span6">
           <div class="row">
             <div class="span1 offset1"><h4>ΙΛΙΑΔΟ</h4></div>
             <div class="span2 offset1 btn-group">
@@ -97,8 +112,8 @@
             <%= text %>
           </div>
         </div>
-        <div class='span5'>
-          <div class="info-pane span5" style="position: fixed; overflow-y: scroll; height: 100%; background-color: #dad5ca; border-left: 1px solid lightgrey">
+        <div class='info-pane-container span5'>
+          <div class="info-pane span5">
           <h4></h4>
           <h5></h5>
           <div class="content"></div>
