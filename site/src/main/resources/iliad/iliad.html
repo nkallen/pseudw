@@ -51,10 +51,13 @@
       div.line span.line-number {
         margin-left: 35px;
         font-size: 80%;
-        padding: 1px 5px 2px;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 9px;
+        padding: 1px 8px;
+        -webkit-border-radius: 999px;
+        -moz-border-radius: 999px;
+        border-radius: 999px;
+        vertical-align: baseline;
+        line-height: 20px;
+        display: inline-block;
       }
       div.line span.line-number:not(.highlight) {
         visibility: hidden;
@@ -67,9 +70,8 @@
         position: relative;
       }
       div.line:hover span.line-number.has-commentary:not(.highlight) {
-        padding: 1px 4px 2px;
+        padding: 0px 7px;
         cursor: pointer;
-        border-radius: 9px;
         border: 1px solid gray;
       }
       div.line:hover .line-number:not(.highlight) {
