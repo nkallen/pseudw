@@ -58,7 +58,6 @@ betacode2unicode = do ->
     p π
     r ρ
     s σ
-    s ς
     t τ
     u υ
     f φ
@@ -92,48 +91,56 @@ betacode2unicode = do ->
     *w Ω
     *)/a Ἄ
     *)/e Ἔ
+    *)/h Ἤ
     *)/i Ἴ
     *)/o Ὄ
     *)/u Υ̓́
     *)/w Ὤ
     *)\\a Ἂ
     *)\\e Ἒ
+    *)\\h Ἢ
     *)\\i Ἲ
     *)\\o Ὂ
     *)\\u Υ̓̀
     *)\\w Ὢ
     *)=a Ἆ
     *)=e Ἐ͂
+    *)=h Ἦ
     *)=i Ἶ
     *)=o Ὀ͂
     *)=u Υ̓͂
     *)=w Ὦ
     *)a Ἀ
     *)e Ἐ
+    *)h Ἠ
     *)i Ἰ
     *)o Ὀ
     *)u Υ̓
     *)w Ὠ
     *(/a Ἅ
     *(/e Ἕ
+    *(/h Ἥ
     *(/i Ἵ
     *(/o Ὅ
     *(/u Ὕ
     *(/w Ὥ
     *(\\a Ἃ
     *(\\e Ἓ
+    *)\\h Ἣ
     *(\\i Ἳ
     *(\\o Ὃ
     *(\\u Ὓ
     *(\\w Ὣ
     *(=a Ἇ
     *(=e Ἑ͂
+    *(=h Ἧ
     *(=i Ἷ
     *(=o Ὁ͂
     *(=u Ὗ
     *(=w Ὧ
     *(a Ἁ
     *(e Ἑ
+    *(h Ἡ
     *(i Ἱ
     *(o Ὁ
     *(u Ὑ
@@ -146,7 +153,8 @@ betacode2unicode = do ->
     + ̈
     | ͅ
     & ̄
-    ' ̆"
+    ' ’
+    : ·"
   array = raw.split(/\s+/)
   betacode2unicodeTrie = new Trie
   while array.length > 0
@@ -169,7 +177,7 @@ betacode2unicode = do ->
           out = out.concat(char)
         traversal = betacode2unicodeTrie.traverse()
     out = out.concat(traversal.value()) if traversal.value()
-    unorm.nfc(out)
+    unorm.nfc(out.replace(/σ(\b|$)/, 'ς'))
 
 module.exports = {
   Tense: Tense,
