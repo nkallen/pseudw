@@ -118,7 +118,7 @@
           <div class='text'>
             <%= text %>
             <section class='footer span5'>
-              <p>Data provided by <a href="http://www.perseus.tufts.edu/hopper/">Perseus</a> under the <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC License</a>.</p>
+              <p>Data provided by <a id="thanks" data-toggle="tooltip" href="http://www.perseus.tufts.edu/hopper/" title="With special thanks to: Alex Lessie, James C. D'Amico, Brian Livingston, Calliopi Dourou, C. Dan Earley, Connor Hayden, Daniel Lim Libatique, Francis Hartel, George Matthews, J. F. Gentile, Jennifer Adams, Jessica Nord, Jennifer Curtin, Mary Ebbott, Meg Luthin, Molly Miller, Michael Kinney, Jack Mitchell, Sam Zukoff, Scott J. Dube, Tovah Keynton, W. B. Dolan">Perseus</a> under the <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC License</a>.</p>
               <p>Designed and built by <a href="http://twitter.com/nk" target="_blank">@nk</a>.</p>
             </section>
           </div>
@@ -261,6 +261,7 @@
       $('body').keydown(function(e) {
         if (e.which == 27) reset() // <ESC>
       });
+      $('#thanks').tooltip();
     //]]>
     </script>
   </body>
