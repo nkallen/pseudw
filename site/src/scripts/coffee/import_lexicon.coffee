@@ -65,7 +65,7 @@ insertChunk = ->
                       for child in tr.childNodes()
                         switch child.name()
                           when "foreign"
-                            if child.attr("lang").value() == "greek"
+                            if child.attr("lang")?.value() == "greek"
                               word = greek.betacode2unicode(child.text())
                               translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
                             else
@@ -75,13 +75,13 @@ insertChunk = ->
               when "text"
                 translation += child.text()
               when "ref"
-                if child.attr("lang").value() == "greek"
+                if child.attr("lang")?.value() == "greek"
                   word = greek.betacode2unicode(child.text())
                   translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
                 else
                   translation += "<span>child.text()</span>" # DRY
               when "foreign"
-                if child.attr("lang").value() == "greek"
+                if child.attr("lang")?.value() == "greek"
                   word = greek.betacode2unicode(child.text())
                   translation += "<span class='ref' data-lemma='#{word}'>#{word}</span>"
                 else
