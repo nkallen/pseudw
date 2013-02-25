@@ -169,7 +169,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
         for para in card
           out += "    <div class='paragraph'>\n"
           for line in para
-            out += "      <div class='line'><div class='row'><div class='span1'><span class='line-number'>#{++lineNumber}</span></div><div class='words span4'>"
+            out += "      <div class='line'><div class='row'><div class='span1'><a class='line-number' name='line_#{++lineNumber}'>#{lineNumber}</a></div><div class='words span4'>"
             n = 0
             for word in line
               sep = if n > 0 then " " else ""

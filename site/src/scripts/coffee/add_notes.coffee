@@ -14,7 +14,7 @@ for textDir in fs.readdirSync(path = 'src/main/resources/iliad/books/')
     bookNumber = book.attr('data-number').value()
     if notesForBook = notes.get("//div1[@type='book' and @n='#{bookNumber}']")
       for line in book.find(".//div[@class='line']")
-        lineNumber = line.get(".//span[@class='line-number']").text()
+        lineNumber = line.get(".//a[@class='line-number']").text()
         if notesForLine = notesForBook.get("div2[@type='commline' and @n='#{lineNumber}']")
           out += "  <li data-book='#{bookNumber}' data-line='#{lineNumber}'>\n"
           out += "    <ol>\n"
