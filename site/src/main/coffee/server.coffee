@@ -52,7 +52,6 @@ app.get('/lemmas/:lemmas/participles', (req, res, next) ->
 iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
 app.get('/iliad/books/:book', (req, res, next) ->
   return res.status(404).end() unless 1 <= (book = Number(req.params.book)) <= 24
-  iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
 
   fs.readFile(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8', (err, text) ->
     return res.status(500).end() if err?
