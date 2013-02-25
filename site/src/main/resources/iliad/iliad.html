@@ -306,10 +306,6 @@
             }
           });
         var offset = $('.text').css('margin-top').slice(0, -2);
-        $(window).scroll(function(e) {
-          var line = $(document.elementFromPoint(0, offset)).find('> div.span1 > a.line-number').first();
-          if (line.length > 0) $('.range .start').text(line.text());
-        })
         $('#thanks').tooltip();
         var params = {};
         window.location.search.slice(1).split('&').forEach(function(param) {
@@ -325,31 +321,37 @@
               scrollTop: $("div.line:eq(" + (start - 1) + ")").offset().top - offset
              }, 500);
         }
-        var vocabulary = {};
-        $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
-        $range.find('span.word').each(function() {
-          var self = $(this), partOfSpeech;
-          if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
-            if (!vocabulary[self.data('part-of-speech')])
-              vocabulary[self.data('part-of-speech')] = {};
-            partOfSpeech = vocabulary[self.data('part-of-speech')];
-
-            if (partOfSpeech[self.data('lemma')] === undefined) {
-              partOfSpeech[self.data('lemma')] = {count: 1, words: {}};
-              partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
-            } else {
-              partOfSpeech[self.data('lemma')].count++;
-              if (partOfSpeech[self.data('lemma')].words[self.text()] == undefined) {
-                partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
-              } else {
-                partOfSpeech[self.data('lemma')].words[self.text()].count++;
-              }
-            }
-          }
-        });
+        $(window).scroll(function(e) {
+          var line = $(document.elementFromPoint(0, offset)).find('> div.span1 > a.line-number').first();
+          start = Number(line.text());
+          if (line.length > 0) $('.range .start').text(start);
+        })
 
         var $tablePrototype = $("#vocabulary table");
         $("a.vocabulary").click(function() {
+          var vocabulary = {};
+          $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
+          $range.find('span.word').each(function() {
+            var self = $(this), partOfSpeech;
+            if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
+              if (!vocabulary[self.data('part-of-speech')])
+                vocabulary[self.data('part-of-speech')] = {};
+              partOfSpeech = vocabulary[self.data('part-of-speech')];
+
+              if (partOfSpeech[self.data('lemma')] === undefined) {
+                partOfSpeech[self.data('lemma')] = {count: 1, words: {}};
+                partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
+              } else {
+                partOfSpeech[self.data('lemma')].count++;
+                if (partOfSpeech[self.data('lemma')].words[self.text()] == undefined) {
+                  partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
+                } else {
+                  partOfSpeech[self.data('lemma')].words[self.text()].count++;
+                }
+              }
+            }
+          });
+
           var $modalBody = $('#vocabulary .modal-body').empty();
           ['noun', 'adjective', 'verb', 'participle', 'adverb'].forEach(function(key) {
             var $table = $tablePrototype.clone().removeClass("prototype").appendTo($modalBody);
