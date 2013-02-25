@@ -80,8 +80,12 @@
       div.line:hover a.line-number:not(.highlight) {
         visibility: visible !important;
       }
-      .btn-group {
-        padding-top: 5px;
+      .navbar-inner {
+        background: inherit;
+        border: inherit;
+        box-shadow: inherit;
+        -moz-box-shadow: inherit;
+        -webkit-box-shadow: inherit;
       }
       caption {
         font-variant: small-caps;
@@ -90,6 +94,9 @@
         text-align: center;
         padding: 30px 0;
         border-top: 1px solid gray;
+      }
+      .tooltip {
+        z-index: 2000 !important;
       }
     </style>
     <script type="text/javascript">
@@ -108,19 +115,28 @@
     <div class="container-fluid">
       <div class="row">
         <div class="span6">
-          <div class="row">
-            <div class="span1 offset1"><h4>ILIAD</h4></div>
-            <div class="span2 offset1 btn-group">
-              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                Book <%= book %> <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <% for (var i = 1; i <= 24; i++) { %>
-                  <li><a href="/iliad/books/<%= i %>">Book <%= i %></a></li>
-                <% } %>
-              </ul>
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="container">
+                <a class="brand" href="#">ILIAD</a>
+                <ul class="nav">
+                  <li>
+                    <div class="btn-group">
+                      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        Book <%= book %> <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <% for (var i = 1; i <= 24; i++) { %>
+                          <li><a href="/iliad/books/<%= i %>">Book <%= i %></a></li>
+                        <% } %>
+                      </ul>
+                    </div>
+                  </li>
+                  <li><a class="range">ll .....</a></li>
+                  <li><a href="#" class="vocabulary">Vocabulary</a></li>
+                </ul>
+              </div>
             </div>
-            <div class="range"></div>
           </div>
           <div class='text'>
             <%= text %>
@@ -182,6 +198,18 @@
           });
           return result;
         }
+        function inflections($word) {
+          return [
+            $word.data('part-of-speech'),
+            $word.data('person'),
+            $word.data('number'),
+            $word.data('tense'),
+            $word.data('mood'),
+            $word.data('voice'),
+            $word.data('case'),
+            $word.data('gender')
+          ].filter(function(item) {return item}).join(', ')
+        }
 
         $('a.line-number')
           .each(function() {
@@ -218,7 +246,7 @@
             .text(lemma);
           $('.info-pane > h5')
             .html("<span class='label'>" + $currentWord.text() + "</span> ")
-            .append([$currentWord.data('tense'), $currentWord.data('mood'), $currentWord.data('person'), $currentWord.data('number'), $currentWord.data('voice'), $currentWord.data('case'), $currentWord.data('gender')].filter(function(item) {return item}).join(', '));
+            .append(inflections($currentWord));
           $('.info-pane .content').html($currentEntry.html())
 
           var $section  = $currentWord.parents('section.card').first();
@@ -268,7 +296,10 @@
           }, 40)
         });
         $('body').keydown(function(e) {
-          if (e.which == 27) reset() // <ESC>
+          if (e.which == 27) {
+            $(".modal").modal('hide');
+            reset(); // <ESC>
+          }
         });
         $('#thanks').tooltip();
         var params = {};
@@ -277,7 +308,7 @@
           params[pair[0]] = pair[1];
         });
         var start = Number(params.start), end = Number(params.end);
-        // $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
+        $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
         if (start) {
           $('html, body')
             .animate({
@@ -294,43 +325,55 @@
             partOfSpeech = vocabulary[self.data('part-of-speech')];
 
             if (partOfSpeech[self.data('lemma')] === undefined) {
-              partOfSpeech[self.data('lemma')] = {count: 1, forms: {}};
-              partOfSpeech[self.data('lemma')].forms[self.text()] = 1;
+              partOfSpeech[self.data('lemma')] = {count: 1, words: {}};
+              partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
             } else {
               partOfSpeech[self.data('lemma')].count++;
-              if (partOfSpeech[self.data('lemma')].forms[self.data('form')] == undefined) {
-                partOfSpeech[self.data('lemma')].forms[self.text()] = 1;
+              if (partOfSpeech[self.data('lemma')].words[self.text()] == undefined) {
+                partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
               } else {
-                partOfSpeech[self.data('lemma')].forms[self.text()]++;
+                partOfSpeech[self.data('lemma')].words[self.text()].count++;
               }
             }
           }
         });
 
-        if (params.hasOwnProperty('vocabulary')) {
-          $('#vocabulary').modal();
+        $("a.vocabulary").click(function() {
           var $tablePrototype = $("#vocabulary table");
-          for (var key in vocabulary) {
+          ['noun', 'adjective', 'verb', 'participle', 'adverb'].forEach(function(key) {
             var $table = $tablePrototype.clone().removeClass("prototype").appendTo('#vocabulary .modal-body');
             var $tbody = $table.find("tbody");
             var partOfSpeech = vocabulary[key];
             var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
             $table.find("caption").text(key + " frequency");
             for (var i = 0; i < lemmas.length; i++) {
-              if (i >= (Number(params.limit || 20))) break;
+              if (i == (Number(params.limit || 30))) break;
               var lemma = lemmas[i];
-              var forms = partOfSpeech[lemma].forms;
-              forms = Object.keys(forms).sort(function(a, b) { return forms[b] - forms[a] });
+              var words = partOfSpeech[lemma].words;
+              forms = Object.keys(words).sort(function(a, b) { return words[b].count - words[a].count });
               var definition = $('ul.lexicon > li[data-lemma=' + lemma + '] .translation:first');
-              $tbody
-                .append("<tr><tr>")
-                  .append("<td>" + lemma + "</td>")
-                  .append("<td>" + partOfSpeech[lemma].count + "</td>")
-                  .append("<td>" + forms.slice(0, 3).join(", ") + "</td>")
-                  .append($("<td></td>").text(definition.text()));
+              $("<tr><td>" + lemma + "</td><td>" + partOfSpeech[lemma].count + "</td></tr>")
+                .append((function() {
+                  var cell = $("<td></td>");
+                  for (var i = 0; i < forms.length; i++) {
+                    if (i == 3) break;
+
+                    var span = words[forms[i]].word;
+                    $("<span data-toggle='tooltip' title='" + inflections(span) + "'>" + span.text() + "</span>")
+                      .appendTo(cell)
+                      .tooltip();
+                    if (i < 2 && i < forms.length - 1) cell.append(", ")
+                  }
+                  return cell;
+                })())
+                .append($("<td>" + definition.text() + "</td>"))
+                .appendTo($tbody);
             }
-          }
-        }
+          });
+          $('#vocabulary').modal();
+        });
+        if (params.hasOwnProperty('vocabulary')) $("a.vocabulary").click();
+
       });
     //]]></script>
     <div class="modal hide fade" id="vocabulary">
@@ -342,7 +385,7 @@
         <table class="table table-border prototype">
           <caption></caption>
           <thead>
-            <tr><th>Lemma</th><th>Frequency</th><th>Common Forms</th><th>Definition</th></tr>
+            <tr><th>Lemma</th><th>Freq.</th><th>Common</th><th>Definition</th></tr>
           </thead>
           <tbody>
           </tbody>

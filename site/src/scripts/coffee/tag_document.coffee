@@ -103,7 +103,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                       when 'o' then 'optative'
                       when 'n' then 'infinitive'
                       when 'm' then 'imperative'
-                      when 'p' then 'participle'
+                      when 'p' then null
                       when 'd' then 'gerund'
                       when 'g' then 'gerundive'
                       when '-' then null
