@@ -277,7 +277,7 @@
           params[pair[0]] = pair[1];
         });
         var start = Number(params.start), end = Number(params.end);
-        $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
+        // $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
         if (start) {
           $('html, body')
             .animate({
@@ -308,7 +308,7 @@
         });
 
         if (params.hasOwnProperty('vocabulary')) {
-          $('#vocabulary').modal({show: true});
+          $('#vocabulary').modal();
           var $tablePrototype = $("#vocabulary table");
           for (var key in vocabulary) {
             var $table = $tablePrototype.clone().removeClass("prototype").appendTo('#vocabulary .modal-body');
@@ -349,7 +349,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <a href="#" class="btn">Close</a>
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
       </div>
     </div>
   </body>
