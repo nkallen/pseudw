@@ -265,7 +265,7 @@
 
           setTimeout(function() {
             highlight($('div.text span[data-lemma="' + lemma + '"]').not($currentWord)).addClass('label')
-          }, 4)
+          }, 40)
         });
         $('body').keydown(function(e) {
           if (e.which == 27) reset() // <ESC>
