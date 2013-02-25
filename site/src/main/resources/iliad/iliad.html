@@ -18,7 +18,7 @@
         display: none;
       }
       .text {
-        margin-top: 10px;
+        margin-top: 50px;
       }
       .info-pane {
         padding: 0px 25px 10px 25px;
@@ -80,12 +80,15 @@
       div.line:hover a.line-number:not(.highlight) {
         visibility: visible !important;
       }
+      .navbar {
+        margin-left: 0;
+        width: 590px;
+      }
       .navbar-inner {
-        background: inherit;
+        background-color: #e5e0d4;
+        background-image: inherit;
+        padding-left: 40px !important;
         border: inherit;
-        box-shadow: inherit;
-        -moz-box-shadow: inherit;
-        -webkit-box-shadow: inherit;
       }
       caption {
         font-variant: small-caps;
@@ -115,9 +118,9 @@
     <div class="container-fluid">
       <div class="row">
         <div class="span6">
-          <div class="navbar">
+          <div class="navbar navbar-fixed-top span6">
             <div class="navbar-inner">
-              <div class="container">
+              <div class="">
                 <a class="brand" href="#">ILIAD</a>
                 <ul class="nav">
                   <li>
@@ -132,7 +135,7 @@
                       </ul>
                     </div>
                   </li>
-                  <li><a class="range">ll .....</a></li>
+                  <li><a class="range"><span class="start">1</span>..<span class="end"></a></li>
                   <li><a href="#" class="vocabulary">Vocabulary</a></li>
                 </ul>
               </div>
@@ -295,12 +298,18 @@
             highlight($('div.text span[data-lemma="' + lemma + '"]').not($currentWord)).addClass('label')
           }, 40)
         });
-        $('body').keydown(function(e) {
-          if (e.which == 27) {
-            $(".modal").modal('hide');
-            reset(); // <ESC>
-          }
-        });
+        $('body')
+          .keydown(function(e) {
+            if (e.which == 27) { // <ESC>
+              $(".modal").modal('hide');
+              reset();
+            }
+          });
+        var offset = $('.text').css('margin-top').slice(0, -2);
+        $(window).scroll(function(e) {
+          var line = $(document.elementFromPoint(0, offset)).find('> div.span1 > a.line-number').first();
+          if (line.length > 0) $('.range .start').text(line.text());
+        })
         $('#thanks').tooltip();
         var params = {};
         window.location.search.slice(1).split('&').forEach(function(param) {
@@ -308,11 +317,12 @@
           params[pair[0]] = pair[1];
         });
         var start = Number(params.start), end = Number(params.end);
-        $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
+        $(".range .start").text((start || 1).toString());
+        $(".range .end").text(end || "end");
         if (start) {
           $('html, body')
             .animate({
-              scrollTop: $("div.line:eq(" + (start - 1) + ")").offset().top
+              scrollTop: $("div.line:eq(" + (start - 1) + ")").offset().top - offset
              }, 500);
         }
         var vocabulary = {};
@@ -338,10 +348,11 @@
           }
         });
 
+        var $tablePrototype = $("#vocabulary table");
         $("a.vocabulary").click(function() {
-          var $tablePrototype = $("#vocabulary table");
+          var $modalBody = $('#vocabulary .modal-body').empty();
           ['noun', 'adjective', 'verb', 'participle', 'adverb'].forEach(function(key) {
-            var $table = $tablePrototype.clone().removeClass("prototype").appendTo('#vocabulary .modal-body');
+            var $table = $tablePrototype.clone().removeClass("prototype").appendTo($modalBody);
             var $tbody = $table.find("tbody");
             var partOfSpeech = vocabulary[key];
             var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
@@ -379,7 +390,7 @@
     <div class="modal hide fade" id="vocabulary">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Vocabulary Frequency <span class="range"></span></h3>
+        <h3>Vocabulary Frequency <span class="range"><span class="start"></span>..<span class="end"></span></h3>
       </div>
       <div class="modal-body">
         <table class="table table-border prototype">
