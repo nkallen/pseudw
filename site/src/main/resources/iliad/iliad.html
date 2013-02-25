@@ -83,6 +83,9 @@
       .btn-group {
         padding-top: 5px;
       }
+      caption {
+        font-variant: small-caps;
+      }
       .footer {
         text-align: center;
         padding: 30px 0;
@@ -142,185 +145,193 @@
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     //<![CDATA[
-      var state = {highlighted: $(), styled: $()};
-      var $notes = $('ol.notes');
-      var i = 0;
-      function reset() {
-        $('.info-pane > h4').text('');
-        $('.info-pane > h5').text('');
-        $('.info-pane > .content').text('');
-        state.highlighted.each(function() {
-          $this = $(this);
-          $this
-            .data('original')
-              .removeAttr('style')
-          $this.remove();
-        });
-        state.highlighted = $();
-      }
-      function highlight($item) {
-        var result = $();
-        $item.each(function () {
-          var $this = $(this);
-          var position = $this.position();
-          var $highlight = $this.clone();
-          $highlight
-            .css('position', 'absolute')
-            .data('original', $this)
-            .click(function() { $this.click() })
-            .css('top', position.top)
-            .css('left', position.left)
-            .addClass('highlight')
-            .appendTo($this.parent());
-          $this.css('visibility', 'hidden');
-          result = result.add($highlight);
-          state.highlighted = state.highlighted.add($highlight);
-        });
-        return result;
-      }
-
-      $('a.line-number')
-        .each(function() {
-          var $this = $(this);
-          if (++i % 5 == 0) $this.addClass('five');
-          var $book = $this.parents('section.book');
-          var $note = $notes.find('li[data-book="' + $book.data('number') + '"]').filter('[data-line="' + $this.text() + '"]');
-          if ($note.length > 0) {
+      $(function() {
+        var state = {highlighted: $(), styled: $()};
+        var $notes = $('ol.notes');
+        var i = 0;
+        function reset() {
+          $('.info-pane > h4').text('');
+          $('.info-pane > h5').text('');
+          $('.info-pane > .content').text('');
+          state.highlighted.each(function() {
+            $this = $(this);
             $this
-              .addClass('has-commentary')
-              .data('note', $note)
-          }
-        })
-        .click(function() {
-          reset();
-          var $this = $(this);
-          var $note = $this.data('note');
-          if ($note) {
-            highlight($this).addClass('label').addClass('label-info');
-            $('.info-pane > h4')
-              .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
-            $('.info-pane .content')
-              .html($note.html());
-          }
-        });
-
-      $('span.word').click(function() {
-        reset();
-        var $currentWord = $(this);
-        var lemma = $currentWord.data('lemma');
-
-        var $currentEntry = $('ul.lexicon > li[data-lemma=' + lemma + ']');
-        $('.info-pane > h4')
-          .text(lemma);
-        $('.info-pane > h5')
-          .html("<span class='label'>" + $currentWord.text() + "</span> ")
-          .append([$currentWord.data('tense'), $currentWord.data('mood'), $currentWord.data('person'), $currentWord.data('number'), $currentWord.data('voice'), $currentWord.data('case'), $currentWord.data('gender')].filter(function(item) {return item}).join(', '));
-        $('.info-pane .content').html($currentEntry.html())
-
-        var $section  = $currentWord.parents('section.card').first();
-        var $sentence = $section.find('span[data-sentence-id="' + $currentWord.data('sentence-id') + '"]');
-
-        var $parent     = $currentWord;
-        var parents     = [];
-        while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
-          parents.push($parent);
+              .data('original')
+                .removeAttr('style')
+            $this.remove();
+          });
+          state.highlighted = $();
+        }
+        function highlight($item) {
+          var result = $();
+          $item.each(function () {
+            var $this = $(this);
+            var position = $this.position();
+            var $highlight = $this.clone();
+            $highlight
+              .css('position', 'absolute')
+              .data('original', $this)
+              .click(function() { $this.click() })
+              .css('top', position.top)
+              .css('left', position.left)
+              .addClass('highlight')
+              .appendTo($this.parent());
+            $this.css('visibility', 'hidden');
+            result = result.add($highlight);
+            state.highlighted = state.highlighted.add($highlight);
+          });
+          return result;
         }
 
-        var bfs   = [$currentWord];
-        var stack = [$currentWord];
-        while (stack.length > 0) {
-          var $current  = stack.pop();
-          var level = $();
-          $current.each(function() {
-            $this = $(this);
-            var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
-            level = level.add($children);
+        $('a.line-number')
+          .each(function() {
+            var $this = $(this);
+            if (++i % 5 == 0) $this.addClass('five');
+            var $book = $this.parents('section.book');
+            var $note = $notes.find('li[data-book="' + $book.data('number') + '"]').filter('[data-line="' + $this.text() + '"]');
+            if ($note.length > 0) {
+              $this
+                .addClass('has-commentary')
+                .data('note', $note)
+            }
+          })
+          .click(function() {
+            reset();
+            var $this = $(this);
+            var $note = $this.data('note');
+            if ($note) {
+              highlight($this).addClass('label').addClass('label-info');
+              $('.info-pane > h4')
+                .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
+              $('.info-pane .content')
+                .html($note.html());
+            }
           });
-          if (level.length > 0) {
-            stack.push(level);
-            bfs.push(level);
+
+        $('span.word').click(function() {
+          reset();
+          var $currentWord = $(this);
+          var lemma = $currentWord.data('lemma');
+
+          var $currentEntry = $('ul.lexicon > li[data-lemma=' + lemma + ']');
+          $('.info-pane > h4')
+            .text(lemma);
+          $('.info-pane > h5')
+            .html("<span class='label'>" + $currentWord.text() + "</span> ")
+            .append([$currentWord.data('tense'), $currentWord.data('mood'), $currentWord.data('person'), $currentWord.data('number'), $currentWord.data('voice'), $currentWord.data('case'), $currentWord.data('gender')].filter(function(item) {return item}).join(', '));
+          $('.info-pane .content').html($currentEntry.html())
+
+          var $section  = $currentWord.parents('section.card').first();
+          var $sentence = $section.find('span[data-sentence-id="' + $currentWord.data('sentence-id') + '"]');
+
+          var $parent     = $currentWord;
+          var parents     = [];
+          while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
+            parents.push($parent);
           }
-        };
 
-        var level = 0;
-        bfs.forEach(function(nodes) {
-          var opacity = 1.0 - level++ / bfs.length;
-          highlight(nodes)
-            .css('opacity', opacity)
-            .addClass('label')
-            .addClass('label-info');
+          var bfs   = [$currentWord];
+          var stack = [$currentWord];
+          while (stack.length > 0) {
+            var $current  = stack.pop();
+            var level = $();
+            $current.each(function() {
+              $this = $(this);
+              var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
+              level = level.add($children);
+            });
+            if (level.length > 0) {
+              stack.push(level);
+              bfs.push(level);
+            }
+          };
+
+          var level = 0;
+          bfs.forEach(function(nodes) {
+            var opacity = 1.0 - level++ / bfs.length;
+            highlight(nodes)
+              .css('opacity', opacity)
+              .addClass('label')
+              .addClass('label-info');
+          });
+          level = 1; // pretend we skipped one
+          parents.forEach(function(parent) {
+            var opacity = 1.0 - (level++ / (parents.length + 1));
+            highlight(parent)
+              .css('opacity', opacity)
+              .addClass('label')
+              .addClass('label-important');
+          });
+
+          setTimeout(function() {
+            highlight($('div.text span[data-lemma="' + lemma + '"]').not($currentWord)).addClass('label')
+          }, 4)
         });
-        level = 1; // pretend we skipped one
-        parents.forEach(function(parent) {
-          var opacity = 1.0 - (level++ / (parents.length + 1));
-          highlight(parent)
-            .css('opacity', opacity)
-            .addClass('label')
-            .addClass('label-important');
+        $('body').keydown(function(e) {
+          if (e.which == 27) reset() // <ESC>
         });
+        $('#thanks').tooltip();
+        var params = {};
+        window.location.search.slice(1).split('&').forEach(function(param) {
+          var pair = param.split('=');
+          params[pair[0]] = pair[1];
+        });
+        var start = Number(params.start), end = Number(params.end);
+        $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
+        if (start) {
+          $('html, body')
+            .animate({
+              scrollTop: $("div.line:eq(" + (start - 1) + ")").offset().top
+             }, 500);
+        }
+        var vocabulary = {};
+        $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
+        $range.find('span.word').each(function() {
+          var self = $(this), partOfSpeech;
+          if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
+            if (!vocabulary[self.data('part-of-speech')])
+              vocabulary[self.data('part-of-speech')] = {};
+            partOfSpeech = vocabulary[self.data('part-of-speech')];
 
-        setTimeout(function() {
-          highlight($('div.text span[data-lemma="' + lemma + '"]').not($currentWord)).addClass('label')
-        }, 4)
-      });
-      $('body').keydown(function(e) {
-        if (e.which == 27) reset() // <ESC>
-      });
-      $('#thanks').tooltip();
-      var params = {};
-      window.location.search.slice(1).split('&').forEach(function(param) {
-        var pair = param.split('=');
-        params[pair[0]] = pair[1];
-      });
-      var start = Number(params.start), end = Number(params.end);
-      $(".range").text("ll " + (start || 1).toString() + ".." + (end || "end"));
-      if (start) {
-        $('html, body')
-          .animate({
-            scrollTop: $("div.line:eq(" + (start - 1) + ")").offset().top
-           }, 500);
-      }
-      var vocabulary = {};
-      $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
-      $range.find('span.word').each(function() {
-        var self = $(this), partOfSpeech;
-        if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
-          if (!vocabulary[self.data('part-of-speech')])
-            vocabulary[self.data('part-of-speech')] = {};
-          partOfSpeech = vocabulary[self.data('part-of-speech')];
-
-          if (partOfSpeech[self.data('lemma')] === undefined) {
-            partOfSpeech[self.data('lemma')] = {count: 1, forms: {}};
-            partOfSpeech[self.data('lemma')].forms[self.text()] = 1;
-          } else {
-            partOfSpeech[self.data('lemma')].count++;
-            if (partOfSpeech[self.data('lemma')].forms[self.data('form')] == undefined) {
+            if (partOfSpeech[self.data('lemma')] === undefined) {
+              partOfSpeech[self.data('lemma')] = {count: 1, forms: {}};
               partOfSpeech[self.data('lemma')].forms[self.text()] = 1;
             } else {
-              partOfSpeech[self.data('lemma')].forms[self.text()]++;
+              partOfSpeech[self.data('lemma')].count++;
+              if (partOfSpeech[self.data('lemma')].forms[self.data('form')] == undefined) {
+                partOfSpeech[self.data('lemma')].forms[self.text()] = 1;
+              } else {
+                partOfSpeech[self.data('lemma')].forms[self.text()]++;
+              }
+            }
+          }
+        });
+
+        if (params.hasOwnProperty('vocabulary')) {
+          $('#vocabulary').modal({show: true});
+          var $tablePrototype = $("#vocabulary table");
+          for (var key in vocabulary) {
+            var $table = $tablePrototype.clone().removeClass("prototype").appendTo('#vocabulary .modal-body');
+            var $tbody = $table.find("tbody");
+            var partOfSpeech = vocabulary[key];
+            var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
+            $table.find("caption").text(key + " frequency");
+            for (var i = 0; i < lemmas.length; i++) {
+              if (i >= (Number(params.limit || 20))) break;
+              var lemma = lemmas[i];
+              var forms = partOfSpeech[lemma].forms;
+              forms = Object.keys(forms).sort(function(a, b) { return forms[b] - forms[a] });
+              var definition = $('ul.lexicon > li[data-lemma=' + lemma + '] .translation:first');
+              $tbody
+                .append("<tr><tr>")
+                  .append("<td>" + lemma + "</td>")
+                  .append("<td>" + partOfSpeech[lemma].count + "</td>")
+                  .append("<td>" + forms.slice(0, 3).join(", ") + "</td>")
+                  .append($("<td></td>").text(definition.text()));
             }
           }
         }
       });
-
-      if (params.hasOwnProperty('vocabulary')) {
-        $('#vocabulary').modal({show: true});
-        var $tablePrototype = $("#vocabulary table");
-        for (var key in vocabulary) {
-          var $table = $tablePrototype.clone().removeClass("prototype").appendTo('.content');
-          var $tbody = $table.find("tbody");
-          var partOfSpeech = vocabulary[key];
-          var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
-          $table.find("caption").text(key + " frequency");
-          for (var i = 0; i < lemmas.length; i++) {
-            if (i >= (Number(params.limit || 10))) break;
-            var lemma = lemmas[i];
-            var forms = partOfSpeech[lemma].forms;
-            forms = Object.keys(forms).sort(function(a, b) { return forms[b] - forms[a] });
-            $tbody.append("<tr><td>" + lemma + "</td><td>" + partOfSpeech[lemma].count + "</td><td>" + forms.slice(0, 3).join(", ") + "</td><td></td></tr>");
-          }
-        }
-      }
     //]]></script>
     <div class="modal hide fade" id="vocabulary">
       <div class="modal-header">
