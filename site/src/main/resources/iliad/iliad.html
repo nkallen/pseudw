@@ -18,7 +18,7 @@
         display: none;
       }
       .text {
-        margin-top: 50px;
+        margin-top: 55px;
       }
       .info-pane {
         padding: 0px 25px 10px 25px;
@@ -28,6 +28,7 @@
         height: 100%;
         background-color: #dad5ca; 
         border-left: 1px solid lightgray;
+        z-index: 1040;
       }
       .info-pane-container {
         margin: 0;
@@ -72,6 +73,10 @@
       div.line .row .words, div.line .row .span1 {
         position: relative;
       }
+      div.line .row .words {
+        /*margin-left: 28px;*/
+        /*text-indent: -20px;*/
+      }
       div.line:hover a.line-number.has-commentary:not(.highlight) {
         padding: 0px 7px;
         cursor: pointer;
@@ -82,13 +87,18 @@
       }
       .navbar {
         margin-left: 0;
-        width: 590px;
+        padding-left: 40px !important;
+        background-color: #e5e0d4;
+        -mozilla-box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+        -webkit-box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 10px rgba(0,0,0,0.1);
       }
       .navbar-inner {
-        background-color: #e5e0d4;
-        background-image: inherit;
-        padding-left: 40px !important;
-        border: inherit;
+        background: inherit;
+        border: none;
+        -mozilla-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
       }
       caption {
         font-variant: small-caps;
@@ -120,7 +130,7 @@
         <div class="span6">
           <div class="navbar navbar-fixed-top span6">
             <div class="navbar-inner">
-              <div class="">
+              <div class="container">
                 <a class="brand" href="#">ILIAD</a>
                 <ul class="nav">
                   <li>
