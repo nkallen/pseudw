@@ -28,7 +28,8 @@
       }
       .carousel-inner .item {
         margin: 0 115px;
-        height: 100px;
+        height: 200px;
+        overflow-y: scroll;
         width: 300px;
       }
       .carousel-inner .item p {
@@ -393,10 +394,10 @@
               var lemma = lemmas[i];
               var words = partOfSpeech[lemma].words;
               var forms = Object.keys(words).sort(function(a, b) { return words[b].count - words[a].count });
-              var definition = $('ul.lexicon > li[data-lemma=' + lemma + '] .translation:first');
+              var definition = $('ul.lexicon > li[data-lemma=' + lemma + ']');
               $carousel.find(".carousel-inner")
                 .append("<div class='item'><p>" + lemma + "</p><div class='carousel-caption'><p>" + forms.join(", ") + "</p></div></div>")
-                .append("<div class='item'><p>" + definition.text() + "</p></div>");
+                .append("<div class='item'><p>" + definition.html() + "</p></div>");
               $("<tr><td>" + lemma + "</td><td>" + partOfSpeech[lemma].count + "</td></tr>")
                 .append((function() {
                   var cell = $("<td></td>");
@@ -411,7 +412,7 @@
                   }
                   return cell;
                 })())
-                .append($("<td>" + definition.text() + "</td>"))
+                .append($("<td>" + definition.find(".translation:first").text() + "</td>"))
                 .appendTo($tbody);
             }
           });
