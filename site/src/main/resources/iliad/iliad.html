@@ -20,6 +20,23 @@
       .text {
         margin-top: 55px;
       }
+      .modal .modal-body {
+        height: 400px;
+      }
+      .carousel {
+        margin-top: 100px;
+      }
+      .carousel-inner .item {
+        margin: 0 115px;
+        height: 100px;
+        width: 300px;
+      }
+      .carousel-inner .item p {
+        text-align: center;
+      }
+      .carousel-inner .item > p {
+        font-size: 200%;
+      }
       .info-pane {
         padding: 0px 25px 10px 25px;
         margin-left: 0;
@@ -338,7 +355,9 @@
         })
 
         var $tablePrototype = $("#vocabulary table");
+        var $carouselPrototype = $("#vocabulary #vocabulary-practice");
         $("a.vocabulary").click(function() {
+          var $modalBody = $('#vocabulary .modal-body').empty();
           var vocabulary = {};
           $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
           $range.find('span.word').each(function() {
@@ -362,7 +381,7 @@
             }
           });
 
-          var $modalBody = $('#vocabulary .modal-body').empty();
+          var $carousel = $carouselPrototype.clone().appendTo($modalBody);
           ['noun', 'adjective', 'verb', 'participle', 'adverb'].forEach(function(key) {
             var $table = $tablePrototype.clone().removeClass("prototype").appendTo($modalBody);
             var $tbody = $table.find("tbody");
@@ -373,8 +392,11 @@
               if (i == (Number(params.limit || 30))) break;
               var lemma = lemmas[i];
               var words = partOfSpeech[lemma].words;
-              forms = Object.keys(words).sort(function(a, b) { return words[b].count - words[a].count });
+              var forms = Object.keys(words).sort(function(a, b) { return words[b].count - words[a].count });
               var definition = $('ul.lexicon > li[data-lemma=' + lemma + '] .translation:first');
+              $carousel.find(".carousel-inner")
+                .append("<div class='item'><p>" + lemma + "</p><div class='carousel-caption'><p>" + forms.join(", ") + "</p></div></div>")
+                .append("<div class='item'><p>" + definition.text() + "</p></div>");
               $("<tr><td>" + lemma + "</td><td>" + partOfSpeech[lemma].count + "</td></tr>")
                 .append((function() {
                   var cell = $("<td></td>");
@@ -393,11 +415,15 @@
                 .appendTo($tbody);
             }
           });
+          $carousel.find(".item").first().addClass('active');
           $('#vocabulary').modal();
           return false;
         });
+        $("#vocabulary .btn-primary").click(function() {
+          $("#vocabulary .modal-body table").hide();
+          $("#vocabulary-practice").show();
+        });
         if (params.hasOwnProperty('vocabulary')) $("a.vocabulary").click();
-
       });
     //]]></script>
     <div class="modal hide fade" id="vocabulary">
@@ -414,8 +440,14 @@
           <tbody>
           </tbody>
         </table>
+        <div id="vocabulary-practice" class="carousel slide hide">
+          <div class="carousel-inner"></div>
+          <a class="carousel-control left" href="#vocabulary-practice" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#vocabulary-practice" data-slide="next">&rsaquo;</a>
+        </div>
       </div>
       <div class="modal-footer">
+        <a href="#" class="btn btn-primary">Practice Vocabulary</a>
         <a href="#" class="btn" data-dismiss="modal">Close</a>
       </div>
     </div>
