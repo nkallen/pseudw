@@ -244,7 +244,8 @@
             $word.data('gender')
           ].filter(function(item) {return item}).join(', ')
         }
-        var offset = Number($('.text').css('margin-top').slice(0, -2)) - 5 /* for descenders */ ;
+        var fudge = 5; // for descenders;
+        var offset = Number($('.text').css('margin-top').slice(0, -2)) - fudge;
         function scrollTo(line) {
           $('html, body')
             .animate({
@@ -354,15 +355,15 @@
         if (start = Number(params.start)) {
           scrollTo(start);
         }
+        var $start = $('.range input.start'), $end = $('.range input.end');
         $(window).scroll(function(e) {
-          var line = $(document.elementFromPoint(0, offset)).find('> div.span1 > a.line-number').first();
+          var line = $(document.elementFromPoint(0, offset + fudge)).find('> div.span1 > a.line-number').first();
           if (line.length > 0) {
             var lineNumber = Number(line.text());
-            $('.range .start').val(lineNumber).text(lineNumber);
-            var end = Math.max(lineNumber, Number($('.range input.end').val()));
-            $('.range .end').val(end).text(end);
+            $start.val(lineNumber).text(lineNumber);
+            var end = Math.max(lineNumber, Number($end.val()));
+            $end.val(end).text(end);
           }
-          console.log(e);
         })
 
         var $tablePrototype = $("#vocabulary table");
@@ -372,6 +373,8 @@
           var vocabulary = {};
           var start = Number($(".range input.start").val()) || 1;
           var end = Number($(".range input.end").val());
+          $("#vocabulary .start").text(start);
+          $("#vocabulary .end").text(end);
           $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
           $range.find('span.word').each(function() {
             var self = $(this), partOfSpeech;
