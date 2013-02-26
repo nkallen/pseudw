@@ -100,6 +100,9 @@
         cursor: pointer;
         border: 1px solid gray;
       }
+      a.vocabulary {
+        cursor: pointer;
+      }
       div.line:hover a.line-number:not(.highlight) {
         visibility: visible !important;
       }
@@ -163,8 +166,8 @@
                       </ul>
                     </div>
                   </li>
-                  <li><a class="range"><span class="start">1</span>..<span class="end"></a></li>
-                  <li><a href="#" class="vocabulary">Vocabulary</a></li>
+                  <li><a class="range"><input type="text" class="start input-mini" value="1" />..<input type="text" class="end input-mini" /></a></li>
+                  <li><a class="vocabulary">Vocabulary</a></li>
                 </ul>
               </div>
             </div>
@@ -240,6 +243,13 @@
             $word.data('case'),
             $word.data('gender')
           ].filter(function(item) {return item}).join(', ')
+        }
+        var offset = Number($('.text').css('margin-top').slice(0, -2)) - 5 /* for descenders */ ;
+        function scrollTo(line) {
+          $('html, body')
+            .animate({
+              scrollTop: $("div.line:eq(" + (line - 1) + ")").offset().top - offset
+             }, 500);
         }
 
         $('a.line-number')
@@ -333,27 +343,24 @@
               reset();
             }
           });
-        var offset = $('.text').css('margin-top').slice(0, -2);
         $('#thanks').tooltip();
         var params = {};
         window.location.search.slice(1).split('&').forEach(function(param) {
           var pair = param.split('=');
           params[pair[0]] = pair[1];
         });
-        var start = Number(params.start), end = Number(params.end);
-        $(".range .start").text((start || 1).toString());
-        $(".range .end").text(end || "end");
-        if (start) {
-          $('html, body')
-            .animate({
-              scrollTop: $("div.line:eq(" + (start - 1) + ")").offset().top - offset
-             }, 500);
+        var start, end = params.end || "";
+        $(".range .end").val(end).text(end);
+        if (start = Number(params.start)) {
+          scrollTo(start);
         }
         $(window).scroll(function(e) {
           var line = $(document.elementFromPoint(0, offset)).find('> div.span1 > a.line-number').first();
           if (line.length > 0) {
-            start = Number(line.text());
-            $('.range .start').text(start);
+            var lineNumber = Number(line.text());
+            $('.range .start').val(lineNumber).text(lineNumber);
+            var end = Math.max(lineNumber, Number($('.range input.end').val()));
+            $('.range .end').val(end).text(end);
           }
         })
 
@@ -362,6 +369,8 @@
         $("a.vocabulary").click(function() {
           var $modalBody = $('#vocabulary .modal-body').empty();
           var vocabulary = {};
+          var start = Number($(".range input.start").val()) || 1;
+          var end = Number($(".range input.end").val());
           $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
           $range.find('span.word').each(function() {
             var self = $(this), partOfSpeech;
@@ -422,6 +431,16 @@
           $('#vocabulary').modal();
           return false;
         });
+        $(".range input.start")
+          .keypress(function(e) {
+            if (e.which == 13) {
+              var line = Number($(this).val());
+              if (line) scrollTo(line);
+            }
+          })
+          .blur(function(e) {
+            var line = Number($(this).val());
+          });
         $("#vocabulary .btn-primary").click(function() {
           $("#vocabulary .modal-body table").hide();
           $("#vocabulary-practice").show();
@@ -433,7 +452,7 @@
     <div class="modal hide fade" id="vocabulary">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Vocabulary Frequency <span class="range"><span class="start"></span>..<span class="end"></span></h3>
+        <h3>Vocabulary Frequency, Book <%= book %>  <span class="range"><span class="start"></span>..<span class="end"></span></h3>
       </div>
       <div class="modal-body">
         <table class="table table-border prototype">
