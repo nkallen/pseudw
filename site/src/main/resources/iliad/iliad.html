@@ -351,8 +351,10 @@
         }
         $(window).scroll(function(e) {
           var line = $(document.elementFromPoint(0, offset)).find('> div.span1 > a.line-number').first();
-          start = Number(line.text());
-          if (line.length > 0) $('.range .start').text(start);
+          if (line.length > 0) {
+            start = Number(line.text());
+            $('.range .start').text(start);
+          }
         })
 
         var $tablePrototype = $("#vocabulary table");
