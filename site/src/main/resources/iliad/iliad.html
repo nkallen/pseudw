@@ -402,6 +402,8 @@
             var $table = $tablePrototype.clone().removeClass("prototype").appendTo($modalBody);
             var $tbody = $table.find("tbody");
             var partOfSpeech = vocabulary[key];
+            if (!partOfSpeech) return;
+
             var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
             $table.find("caption").text(key + " frequency");
             for (var i = 0; i < lemmas.length; i++) {
