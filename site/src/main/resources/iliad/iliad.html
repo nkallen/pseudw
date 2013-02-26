@@ -425,6 +425,7 @@
         $("#vocabulary .btn-primary").click(function() {
           $("#vocabulary .modal-body table").hide();
           $("#vocabulary-practice").show();
+          return false;
         });
         if (params.hasOwnProperty('vocabulary')) $("a.vocabulary").click();
       });
