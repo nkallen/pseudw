@@ -234,8 +234,7 @@
           $infoWell.remove();
           state.each(function() {
             $this = $(this);
-            $this
-              .data('original')
+            $($this.data('original')) // hack
                 .removeAttr('style')
             $this.remove();
           });
