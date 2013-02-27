@@ -48,6 +48,14 @@
         .hidden-desktop {
           display: none;
         }
+        div.line:hover a.line-number.has-commentary:not(.highlight) {
+          padding: 0px 7px;
+          cursor: pointer;
+          border: 1px solid gray;
+        }
+        div.line:hover a.line-number:not(.highlight) {
+          visibility: visible !important;
+        }
       }
       @media (max-width: 979px) {
         .info-pane {
@@ -116,16 +124,8 @@
       div.line .row .words, div.line .row .span1 {
         position: relative;
       }
-      div.line:hover a.line-number.has-commentary:not(.highlight) {
-        padding: 0px 7px;
-        cursor: pointer;
-        border: 1px solid gray;
-      }
       a.vocabulary {
         cursor: pointer;
-      }
-      div.line:hover a.line-number:not(.highlight) {
-        visibility: visible !important;
       }
       .navbar {
         margin-left: 0;
