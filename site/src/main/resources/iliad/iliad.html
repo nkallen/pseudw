@@ -16,6 +16,10 @@
       .prototype {
         display: none;
       }
+      .well.info-well {
+        background-color: #dad5ca;
+        border: inherit;
+      }
       .text {
         margin-top: 55px;
       }
@@ -38,31 +42,40 @@
         font-size: 200%;
       }
       @media (min-width: 980px) {
-        .info-pane {
-          margin: 0;
-          padding: 0;
-          right: 0;
-          top: 0;
-          position: fixed;
-          background-color: #dad5ca; 
-          z-index: 1040;
-          width: 500px;
-          height: 100%;
-          overflow-y: scroll;
+        .info-well {
+          display: none;
         }
-        .info-pane .container {
-          padding: 0px 25px 10px 25px;
-          margin-left: 0;
-          border-left: 1px solid lightgray;
+        .hidden-desktop {
+          display: none;
         }
       }
       @media (max-width: 979px) {
+        .info-pane {
+          display: none;
+        }
         .hidden-phone {
           display: none;
         }
         body > .container, body > .container > .row {
           width: 480px;
         }
+      }
+      .info-pane {
+        margin: 0;
+        padding: 0;
+        right: 0;
+        top: 0;
+        position: fixed;
+        background-color: #dad5ca; 
+        z-index: 1040;
+        width: 500px;
+        height: 100%;
+        overflow-y: scroll;
+      }
+      .info-pane .container {
+        padding: 0px 25px 10px 25px;
+        margin-left: 0;
+        border-left: 1px solid lightgray;
       }
       ul.lexicon, ol.notes {
         display: none;
@@ -102,10 +115,6 @@
       }
       div.line .row .words, div.line .row .span1 {
         position: relative;
-      }
-      div.line .row .words {
-        /*margin-left: 28px;*/
-        /*text-indent: -20px;*/
       }
       div.line:hover a.line-number.has-commentary:not(.highlight) {
         padding: 0px 7px;
@@ -199,6 +208,11 @@
           <div class="content"></div>
         </div>
       </div>
+      <div class='well info-well prototype'>
+        <h4></h4>
+        <h5></h5>
+        <div class='content'></div>
+      </div>
     </div>
     <%= lexicon %>
     <%= notes %>
@@ -206,50 +220,28 @@
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     //<![CDATA[
-      function Word($span) {
-        this.$span = $span;
-      }
-      Word.prototype = {
-        constructor: Word,
-        partOfSpeech: function() {
-          switch (this.$span.data('postag')[0]) {
-            case 'n': return 'noun';
-            case 'v': return 'verb';
-            case 't': return 'participle';
-            case 'a': return 'adjective';
-            case 'd': return 'adverb';
-            case 'l': return 'article';
-            case 'g': return 'particle';
-            case 'c': return 'conjunction';
-            case 'r': return 'preposition';
-            case 'p': return 'pronoun';
-            case 'm': return 'numeral';
-            case 'i': return 'interjection';
-            case 'e': return 'exclamation';
-            case 'u': return 'punctuation';
-            case 'x': return 'irregular';
-            case '-': return null;
-            default: throw "Invalid part-of-speech"
-          }
-        }
-      }
       $(function() {
-        var state = {highlighted: $(), styled: $()};
+        var state = $();
         var $notes = $('ol.notes');
         var i = 0;
+        var $infoPane = $('.info-pane');
+        var $infoWell = $('.info-well').removeClass('prototype');
+        var $info = $infoPane.add($infoWell);
         function reset() {
-          $('.info-pane h4').text('');
-          $('.info-pane h5').text('');
-          $('.info-pane .content').text('');
-          state.highlighted.each(function() {
+          $info.find('h4').text('');
+          $info.find('h5').text('');
+          $info.find('.content').text('');
+          $infoWell.remove();
+          state.each(function() {
             $this = $(this);
             $this
               .data('original')
                 .removeAttr('style')
             $this.remove();
           });
-          state.highlighted = $();
+          state = $();
         }
+        reset();
         function highlight($item) {
           var result = $();
           $item.each(function () {
@@ -266,7 +258,7 @@
               .appendTo($this.parent());
             $this.css('visibility', 'hidden');
             result = result.add($highlight);
-            state.highlighted = state.highlighted.add($highlight);
+            state = state.add($highlight);
           });
           return result;
         }
@@ -303,44 +295,51 @@
                 .data('note', $note)
             }
           })
+        $('.line .span1')
           .click(function() {
             reset();
             var $this = $(this);
-            var $note = $this.data('note');
+            var $row = $this.parents(".row");
+            var $lineNumber = $this.find('.line-number');
+            var $note = $lineNumber.data('note');
             if ($note) {
-              highlight($this).addClass('label').addClass('label-info');
-              $('.info-pane h4')
+              highlight($lineNumber).addClass('label').addClass('label-info').click(function() {
+                reset();
+                return false;
+              });
+              $info.find('h4')
                 .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
-              $('.info-pane .content')
+              $info.find('.content')
                 .html($note.html());
+              $row.after($infoWell);
             }
           });
 
         $('.words span').click(function() {
           reset();
-          var $currentWord = $(this);
-          var lemma = $currentWord.data('lemma');
+          var $word = $(this);
+          var $row = $word.parents(".row");
+          var lemma = $word.data('lemma');
 
-          var $currentEntry = $('ul.lexicon > li[data-lemma=' + lemma + ']');
-          $('.info-pane h4')
-            .text(lemma);
-          $('.info-pane h5')
-            .html("<span class='label'>" + $currentWord.text() + "</span> ")
-            .append(inflections($currentWord));
-          console.log($currentEntry);
-          $('.info-pane .content').html($currentEntry.html());
+          var $translation = $('ul.lexicon > li[data-lemma=' + lemma + ']');
+          $info.find('h4').text(lemma);
+          $info.find('h5')
+            .html("<span class='label'>" + $word.text() + "</span> ")
+            .append(inflections($word));
+          $info.find('.content').html($translation.html());
+          $row.after($infoWell);
 
-          var $section  = $currentWord.parents('section.card').first();
-          var $sentence = $section.find('span[data-sentence-id="' + $currentWord.data('sentence-id') + '"]');
+          var $section  = $word.parents('section.card').first();
+          var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
 
-          var $parent     = $currentWord;
+          var $parent     = $word;
           var parents     = [];
           while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
             parents.push($parent);
           }
 
-          var bfs   = [$currentWord];
-          var stack = [$currentWord];
+          var bfs   = [$word];
+          var stack = [$word];
           while (stack.length > 0) {
             var $current  = stack.pop();
             var level = $();
@@ -355,9 +354,14 @@
             }
           };
 
-          var level = 0;
+          highlight($word)
+            .addClass('label').addClass('label-info')
+            .off('click')
+            .click(reset);
+          bfs.shift();
+          var level = 1; // pretend we skipped one
           bfs.forEach(function(nodes) {
-            var opacity = 1.0 - level++ / bfs.length;
+            var opacity = 1.0 - level++ / (bfs.length + 1);
             highlight(nodes)
               .css('opacity', opacity)
               .addClass('label')
@@ -373,8 +377,8 @@
           });
 
           setTimeout(function() {
-            highlight($('div.text span[data-lemma="' + lemma + '"]').not($currentWord)).addClass('label')
-          }, 40)
+            highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('label')
+          }, 10)
         });
         $('body')
           .keydown(function(e) {
@@ -390,7 +394,7 @@
           params[pair[0]] = pair[1];
         });
         var start, end = params.end || "";
-        $(".range .end").val(end).text(end);
+        $(".range .end").val(end);
         if (start = Number(params.start)) {
           scrollTo(start);
         }
@@ -412,7 +416,7 @@
           var $modalBody = $('#vocabulary .modal-body').empty();
           var vocabulary = {};
           var start = Number($(".range input.start").val()) || 1;
-          var end = Number($(".range input.end").val());
+          var end = Number($(".range input.end").val() || $(".line-number:last").text());
           $("#vocabulary .start").text(start);
           $("#vocabulary .end").text(end);
           $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
@@ -440,10 +444,10 @@
 
           var $carousel = $carouselPrototype.clone().appendTo($modalBody);
           ['noun', 'adjective', 'verb', 'participle', 'adverb'].forEach(function(key) {
-            var $table = $tablePrototype.clone().removeClass("prototype").appendTo($modalBody);
-            var $tbody = $table.find("tbody");
             var partOfSpeech = vocabulary[key];
             if (!partOfSpeech) return;
+            var $table = $tablePrototype.clone().removeClass("prototype").appendTo($modalBody);
+            var $tbody = $table.find("tbody");
 
             var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
             $table.find("caption").text(key + " frequency");
