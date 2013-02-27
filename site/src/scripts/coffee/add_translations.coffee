@@ -18,7 +18,7 @@ dirs = fs.readdirSync(path = 'src/main/resources/iliad/books/')
 processDir = (dir) ->
   text = libxml.parseXml(fs.readFileSync(path + "#{dir}/text.html", 'utf8'))
   lemmas = {}
-  words = text.find("//span[@class='word']")
+  words = text.find("//div[@class='words span5']/span")
   for word in words
     lemmas[unorm.nfc(word.attr('data-lemma').value())] = true
   lemmas = Object.keys(lemmas)

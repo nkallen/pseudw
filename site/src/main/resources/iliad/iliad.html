@@ -7,7 +7,6 @@
     <meta charset="utf-8" />
     <link href='http://fonts.googleapis.com/css?family=Cardo:400,700' rel='stylesheet' type='text/css'>
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
 
     <style type='text/css'>
       body {
@@ -39,18 +38,21 @@
         font-size: 200%;
       }
       .info-pane {
-        padding: 0px 25px 10px 25px;
-        margin-left: 0;
-        position: fixed;
-        overflow-y: scroll;
-        height: 100%;
-        background-color: #dad5ca; 
-        border-left: 1px solid lightgray;
-        z-index: 1040;
-      }
-      .info-pane-container {
         margin: 0;
         padding: 0;
+        right: 0;
+        top: 0;
+        position: fixed;
+        background-color: #dad5ca; 
+        z-index: 1040;
+        width: 500px;
+        height: 100%;
+        overflow-y: scroll;
+      }
+      .info-pane .container {
+        padding: 0px 25px 10px 25px;
+        margin-left: 0;
+        border-left: 1px solid lightgray;
       }
       ul.lexicon, ol.notes {
         display: none;
@@ -121,6 +123,9 @@
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
       }
+      .navbar input {
+        margin-bottom: 0;
+      }
       caption {
         font-variant: small-caps;
       }
@@ -146,10 +151,10 @@
     </script>
   </head>
   <body>
-    <div class="container-fluid">
+    <div class="container">
       <div class="row">
         <div class="span6">
-          <div class="navbar navbar-fixed-top span6">
+          <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
               <div class="container">
                 <a class="brand" href="#">ILIAD</a>
@@ -180,12 +185,12 @@
             </section>
           </div>
         </div>
-        <div class='info-pane-container span6'>
-          <div class="info-pane span6">
+      </div>
+      <div class='info-pane'>
+        <div class="container span5">
           <h4></h4>
           <h5></h5>
-          <div class="content">
-          </div>
+          <div class="content"></div>
         </div>
       </div>
     </div>
@@ -200,9 +205,9 @@
         var $notes = $('ol.notes');
         var i = 0;
         function reset() {
-          $('.info-pane > h4').text('');
-          $('.info-pane > h5').text('');
-          $('.info-pane > .content').text('');
+          $('.info-pane h4').text('');
+          $('.info-pane h5').text('');
+          $('.info-pane .content').text('');
           state.highlighted.each(function() {
             $this = $(this);
             $this
@@ -271,25 +276,26 @@
             var $note = $this.data('note');
             if ($note) {
               highlight($this).addClass('label').addClass('label-info');
-              $('.info-pane > h4')
+              $('.info-pane h4')
                 .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
               $('.info-pane .content')
                 .html($note.html());
             }
           });
 
-        $('span.word').click(function() {
+        $('.words span').click(function() {
           reset();
           var $currentWord = $(this);
           var lemma = $currentWord.data('lemma');
 
           var $currentEntry = $('ul.lexicon > li[data-lemma=' + lemma + ']');
-          $('.info-pane > h4')
+          $('.info-pane h4')
             .text(lemma);
-          $('.info-pane > h5')
+          $('.info-pane h5')
             .html("<span class='label'>" + $currentWord.text() + "</span> ")
             .append(inflections($currentWord));
-          $('.info-pane .content').html($currentEntry.html())
+          console.log($currentEntry);
+          $('.info-pane .content').html($currentEntry.html());
 
           var $section  = $currentWord.parents('section.card').first();
           var $sentence = $section.find('span[data-sentence-id="' + $currentWord.data('sentence-id') + '"]');
@@ -357,7 +363,8 @@
         }
         var $start = $('.range input.start'), $end = $('.range input.end');
         $(window).scroll(function(e) {
-          var line = $(document.elementFromPoint(0, offset + fudge)).find('> div.span1 > a.line-number').first();
+          var leftOffset = $(".text").offset().left;
+          var line = $(document.elementFromPoint(leftOffset, offset + fudge)).find('a.line-number').first();
           if (line.length > 0) {
             var lineNumber = Number(line.text());
             $start.val(lineNumber).text(lineNumber);
@@ -376,7 +383,7 @@
           $("#vocabulary .start").text(start);
           $("#vocabulary .end").text(end);
           $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
-          $range.find('span.word').each(function() {
+          $range.find('.words span').each(function() {
             var self = $(this), partOfSpeech;
             if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
               if (!vocabulary[self.data('part-of-speech')])
