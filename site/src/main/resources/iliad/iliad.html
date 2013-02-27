@@ -200,6 +200,33 @@
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     //<![CDATA[
+      function Word($span) {
+        this.$span = $span;
+      }
+      Word.prototype = {
+        constructor: Word,
+        partOfSpeech: function() {
+          switch (this.$span.data('postag')[0]) {
+            case 'n': return 'noun';
+            case 'v': return 'verb';
+            case 't': return 'participle';
+            case 'a': return 'adjective';
+            case 'd': return 'adverb';
+            case 'l': return 'article';
+            case 'g': return 'particle';
+            case 'c': return 'conjunction';
+            case 'r': return 'preposition';
+            case 'p': return 'pronoun';
+            case 'm': return 'numeral';
+            case 'i': return 'interjection';
+            case 'e': return 'exclamation';
+            case 'u': return 'punctuation';
+            case 'x': return 'irregular';
+            case '-': return null;
+            default: throw "Invalid part-of-speech"
+          }
+        }
+      }
       $(function() {
         var state = {highlighted: $(), styled: $()};
         var $notes = $('ol.notes');
@@ -384,21 +411,22 @@
           $("#vocabulary .end").text(end);
           $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
           $range.find('.words span').each(function() {
-            var self = $(this), partOfSpeech;
+            var self = $(this), wordsByPartOfSpeech;
             if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
-              if (!vocabulary[self.data('part-of-speech')])
-                vocabulary[self.data('part-of-speech')] = {};
-              partOfSpeech = vocabulary[self.data('part-of-speech')];
+              var partOfSpeech = self.data('part-of-speech');
+              if (!vocabulary[partOfSpeech])
+                vocabulary[partOfSpeech] = {};
+              wordsByPartOfSpeech = vocabulary[partOfSpeech];
 
-              if (partOfSpeech[self.data('lemma')] === undefined) {
-                partOfSpeech[self.data('lemma')] = {count: 1, words: {}};
-                partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
+              if (wordsByPartOfSpeech[self.data('lemma')] === undefined) {
+                wordsByPartOfSpeech[self.data('lemma')] = {count: 1, words: {}};
+                wordsByPartOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
               } else {
-                partOfSpeech[self.data('lemma')].count++;
-                if (partOfSpeech[self.data('lemma')].words[self.text()] == undefined) {
-                  partOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
+                wordsByPartOfSpeech[self.data('lemma')].count++;
+                if (wordsByPartOfSpeech[self.data('lemma')].words[self.text()] == undefined) {
+                  wordsByPartOfSpeech[self.data('lemma')].words[self.text()] = {count: 1, word: self};
                 } else {
-                  partOfSpeech[self.data('lemma')].words[self.text()].count++;
+                  wordsByPartOfSpeech[self.data('lemma')].words[self.text()].count++;
                 }
               }
             }
