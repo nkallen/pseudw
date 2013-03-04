@@ -1,7 +1,7 @@
 <html lang="en">
   <head>
     <title>The Iliad</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <meta name="description" content="" />
     <meta name="author" content="Nick Kallen" />
     <meta charset="utf-8" />
@@ -15,6 +15,9 @@
       }
       .prototype {
         display: none;
+      }
+      .label {
+        text-indent: 0;
       }
       .well.info-well {
         background-color: #dad5ca;
@@ -62,6 +65,9 @@
         div.line:hover a.line-number:not(.highlight) {
           visibility: visible !important;
         }
+        .navbar {
+          padding-left: 40px !important;
+        }
       }
       @media (max-width: 979px) {
         .info-pane {
@@ -70,8 +76,17 @@
         .hidden-phone {
           display: none;
         }
-        body > .container, body > .container > .row {
-          width: 480px;
+        body > .container, .row {
+          width: 320px;
+        }
+        .span5 {
+          width: 240px;
+        }
+        .span1 {
+          width: 20px;
+        }
+        .navbar {
+          padding-left: 10px !important;
         }
       }
       .info-pane {
@@ -110,7 +125,7 @@
         line-height: 20px !important;
       }
       div.line a.line-number {
-        margin-left: 25px;
+        margin-left: 10px;
         font-size: 80%;
         padding: 1px 8px;
         -webkit-border-radius: 999px;
@@ -127,6 +142,10 @@
       div.line a.line-number.five {
         visibility: visible;
       }
+      div.line .row .words {
+        text-indent: -20px;
+        margin-left: 40px;
+      }
       div.line .row .words, div.line .row .span1 {
         position: relative;
       }
@@ -135,7 +154,6 @@
       }
       .navbar {
         margin-left: 0;
-        padding-left: 40px !important;
         background-color: #e5e0d4;
         -mozilla-box-shadow: 0 1px 10px rgba(0,0,0,0.1);
         -webkit-box-shadow: 0 1px 10px rgba(0,0,0,0.1);
