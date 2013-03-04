@@ -367,7 +367,7 @@
           var $row = $word.parents(".row");
           var lemma = $word.data('lemma');
 
-          var $translation = lexicon[lemma];
+          var $translation = $(lexicon[lemma]);
           $info.find('h4').text(lemma);
           $info.find('h5')
             .html("<span class='label'>" + $word.text() + "</span> ")
