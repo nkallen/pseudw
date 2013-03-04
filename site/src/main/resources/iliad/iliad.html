@@ -89,13 +89,16 @@
           padding-left: 10px !important;
         }
         .modal {
-          width: auto;
+          width: 100%;
           margin: 0 !important;
           top: 0 !important;
           left: 0 !important;
         }
         .modal .modal-body {
-          height: 60%;
+          padding: 0;
+        }
+        .modal .modal-body table {
+          width: auto !important;
         }
       }
       .info-pane {
@@ -255,6 +258,10 @@
     <script type="text/javascript">
     //<![CDATA[
       $(function() {
+        $('a.dropdown-toggle, .dropdown-menu a').on('touchstart', function(e) {
+          e.stopPropagation();
+        }); // hack to fix menu navigation issue with bootstrap.
+
         var state = $();
         var $notes = $('ol.notes');
         var i = 0;
