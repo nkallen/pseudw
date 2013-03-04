@@ -26,20 +26,8 @@
       .text {
         margin-top: 55px;
       }
-      .modal .modal-body {
-        height: 400px;
-      }
       .modal h3 .book {
         font-size: 50%;
-      }
-      .carousel {
-        margin-top: 100px;
-      }
-      .carousel-inner .item {
-        margin: 0 115px;
-        height: 200px;
-        overflow-y: scroll;
-        width: 300px;
       }
       .carousel-inner .item p {
         text-align: center;
@@ -68,6 +56,18 @@
         .navbar {
           padding-left: 40px !important;
         }
+        .modal .modal-body {
+          height: 400px;
+        }
+        .carousel {
+          margin-top: 100px;
+        }
+        .carousel-inner .item {
+          margin: 0 115px;
+          height: 200px;
+          overflow-y: scroll;
+          width: 300px;
+        }
       }
       @media (max-width: 979px) {
         .info-pane {
@@ -87,6 +87,15 @@
         }
         .navbar {
           padding-left: 10px !important;
+        }
+        .modal {
+          width: auto;
+          margin: 0 !important;
+          top: 0 !important;
+          left: 0 !important;
+        }
+        .modal .modal-body {
+          height: 60%;
         }
       }
       .info-pane {
