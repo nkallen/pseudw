@@ -57,6 +57,7 @@ class AnalysisParser
     @handleCase:         new State
     @handlePerson:       new State
     @handleDialect:      new State
+    @handleFeature:      new State
 
   state = State.skip
   analyses = []
@@ -96,6 +97,8 @@ class AnalysisParser
               state = State.handleMood
             when "dialect"
               state = State.handleDialect
+            when "feature"
+              state = State.handleFeature
     characters: (chars) ->
       switch state
         when State.handleForm
@@ -125,13 +128,14 @@ class AnalysisParser
         when State.handlePerson
           analysis.person = chars
         when State.handleDialect
-          if chars.indexOf("attic") == -1
-           skip()
+          analysis.dialect = greek.Dialect.toBitmap(greek.Dialect[word] for word in chars.split(/\s/))
+        when State.handleFeature
+          analysis.feature = greek.Feature.toBitmap(greek.Feature[word] for word in chars.split(/\s/))
     endElementNS: (elem, prefix, uri) ->
       switch state
-        when State.handleNumber, State.handleTense, State.handleVoice, State.handleGender, State.handleCase, State.handleMood, State.handlePerson, State.handleDialect
+        when State.handleNumber, State.handleTense, State.handleVoice, State.handleGender, State.handleCase, State.handleMood, State.handlePerson, State.handleDialect, State.handleFeature
           switch elem
-            when "number", "tense", "voice", "gender", "case", "mood", "person", "dialect"
+            when "number", "tense", "voice", "gender", "case", "mood", "person", "dialect", "feature"
               state = State.handleMorpheme
   }
   parser = new libxml.SaxPushParser(handleAnalysis)
@@ -159,7 +163,7 @@ class MysqlStream extends stream.Stream
     values = sanitize(queue)
     queue = []
     connection.query(
-      "INSERT INTO morphemes (`part_of_speech`, `lemma`, `form`, `number`, `tense`, `mood`, `gender`, `case`, `person`, `voice`) VALUES ?",
+      "INSERT INTO morphemes (`part_of_speech`, `lemma`, `form`, `number`, `tense`, `mood`, `gender`, `case`, `person`, `voice`, `dialect`, `feature`) VALUES ?",
       [values],
     (err, rows, fields) =>
       throw err if err?
@@ -218,6 +222,7 @@ class MysqlStream extends stream.Stream
     sanitizeTense = (tense) ->
       switch tense
         when "pres" then "present"
+        when "imperf" then "imperf"
         when "aor" then "aorist"
         when "fut" then "future"
         when "perf" then "perfect"
@@ -271,6 +276,15 @@ class MysqlStream extends stream.Stream
         when voice?
           throw new TypeError("Invalid Voice '#{voice}'")
 
+    sanitizeBitmap = (bitmap) ->
+      bitmap ||= []
+      result = new Buffer(length = bitmap.length * 4)
+      offset = length - 4
+      for word in bitmap
+        result.writeUInt32BE(word, offset)
+        offset -= 4
+      result
+
     (queue) ->
       [
         sanitizePartOfSpeech(item.partOfSpeech),
@@ -283,6 +297,8 @@ class MysqlStream extends stream.Stream
         sanitizeCase(item.case),
         sanitizePerson(item.person),
         sanitizeVoice(item.voice),
+        sanitizeBitmap(item.dialect),
+        sanitizeBitmap(item.feature),
       ] for item in queue
 
 analysisStream = new AnalysisStream(new AnalysisParser)

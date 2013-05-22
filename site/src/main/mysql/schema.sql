@@ -17,6 +17,10 @@ CREATE TABLE IF NOT EXISTS morphemes (
   voice ENUM('active', 'middle', 'passive', 'middlePassive'),
   mood ENUM('indicative', 'imperative', 'optative', 'subjunctive', 'infinitive'),
   person ENUM('1st', '2nd', '3rd'),
+
+  dialect BIT(9),
+  feature BIT(56),
+
   UNIQUE (`lemma`, `part_of_speech`, `tense`, `voice`, `person`, `mood`, `gender`, `number`, `case`, `form`), -- useful for verb lookup
   INDEX (`form`), -- useful for lemmatization
   INDEX (`lemma`, `part_of_speech`, `gender`, `number`, `case`)) ENGINE InnoDB; -- useful for noun and participle lookup

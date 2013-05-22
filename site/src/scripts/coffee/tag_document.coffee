@@ -57,6 +57,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                     parentId = word.attr('head').value()
 
                     postag = word.attr('postag').value()
+                    relation = word.attr('relation').value()
                     partOfSpeech = switch postag[0]
                       when 'n' then 'noun'
                       when 'v' then 'verb'
@@ -135,6 +136,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                       when 's' then 'superlative'
                       when '-' then null
                       else throw "Invalid degree #{postag[7]}"
+                    relation = 
 
                     l.push(
                       form: greek.betacode2unicode(form),
@@ -150,7 +152,8 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                       voice: voice,
                       gender: gender,
                       case: kase,
-                      degree: degree)
+                      degree: degree,
+                      relation: relation)
 
     out = ""
     bookNumber = 0
@@ -186,6 +189,7 @@ fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', '
                 out += " data-gender='#{word.gender}'" if word.gender?
                 out += " data-case='#{word.case}'" if word.case?
                 out += " data-degree='#{word.degree}'" if word.degree?
+                out += " data-relation='#{word.relation}'" if word.relation?
                 out += ">#{word.form}</span>"
               n += 1
             out += "      </div></div></div>\n"
