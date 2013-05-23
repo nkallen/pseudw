@@ -1,10 +1,10 @@
 express = require('express')
 pg = require('pg')
 unorm = require('unorm')
-Bundler = require('./bundler')
-ParticipleDao = require('./participle_dao').sql
 greek = require('pseudw-util').greek
 fs = require('fs')
+libxml = require('libxmljs')
+vm = require('vm')
 _ = require('underscore')
 
 DELIMITER = /[;, ]/
@@ -16,51 +16,25 @@ dbClient =
 
       client.query(query, bindParameters, cb))
 
-participleDao = new ParticipleDao(dbClient)
-
-bundler = new Bundler(module, require)
-bundler.dependency('pseudw-module1')
-bundler.dependency('./participle_dao', 'participle-dao')
-bundler.dependency('querystring')
 
 app = express()
-
 app.use(express.compress())
-
-app.get('/application.js', (req, res) ->
-  res.charset = 'utf-8'
-  res.type('application/javascript')
-  res.end(bundler.toString()))
-
 app.use(express.static(__dirname + '/../resources/public'))
 
-app.get('/lemmas/:lemmas/participles', (req, res, next) ->
-  lemmas = (unorm.nfc(lemma) for lemma in req.params.lemmas.split(DELIMITER))
-  options = {}
-  for inflection in greek.Participle.allInflections
-    inflectionLowerCase = inflection.toString().toLowerCase()
-
-    if attributes = req.query["#{inflectionLowerCase}s"]
-      options["#{inflectionLowerCase}s"] = (inflection[attribute] for attribute in attributes)
-
-  participleDao.findAllByLemma(lemmas, options, (error, participles) ->
-    return next(new Error(error)) if error?
-    return res.status(404).end() if participles.length == 0
-
-    res.json(participles)))
-
 iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
-app.get('/iliad/books/:book', (req, res, next) ->
+app.get('/:text/books/:book', (req, res, next) ->
   return res.status(404).end() unless 1 <= (book = Number(req.params.book)) <= 24
+  text = req.params.text  
+
   iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
 
-  fs.readFile(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8', (err, text) ->
+  fs.readFile(__dirname + "/../resources/#{text}/books/#{book}/text.html", 'utf8', (err, text) ->
     return res.status(500).end() if err?
 
-    fs.readFile(__dirname + "/../resources/iliad/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
+    fs.readFile(__dirname + "/../resources/#{text}/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
       return res.status(500).end() if err?
 
-      fs.readFile(__dirname + "/../resources/iliad/books/#{book}/notes.html", 'utf8', (err, notes) ->
+      fs.readFile(__dirname + "/../resources/#{text}/books/#{book}/notes.html", 'utf8', (err, notes) ->
         return res.status(500).end() if err?
 
         html = iliad(
@@ -72,5 +46,72 @@ app.get('/iliad/books/:book', (req, res, next) ->
         res.charset = 'utf-8'
         res.type('text/html')
         res.send(200, html)))))
+
+treeXml = fs.readFileSync(__dirname + '/../../../../treebank/data/1999.01.0133.xml', 'utf8')
+tree = libxml.parseXml(treeXml)
+tags =
+  word: []
+
+class Dom
+  constructor: (@attributes, @nodeName) ->
+    @children = []
+    @parentNode = null
+  nodeType: 1
+  getAttribute: (attribute) ->
+    @attributes[attribute]
+  compareDocumentPosition: (that) -> 1
+  getElementsByTagName: (name) ->
+    if name == "*"
+      @children
+    else
+      child for child in @children when child.nodeName == name
+
+for sentenceNode in tree.find("//sentence")
+  id2word = {}
+  root = null
+  for wordNode in sentenceNode.find("word")
+    word = new Dom(greek.Treebank.wordNode2word(wordNode), "word")
+    id2word[word.attributes.id] = word
+    tags.word.push(word)
+    if lemma = tags[word.attributes.lemma]
+      lemma.push(word)
+    else
+      tags[word.attributes.lemma] = [word]
+  for _, word of id2word
+    if word.attributes.parentId == '0'
+      root = word
+    else
+      parent = id2word[word.attributes.parentId]
+      parent.children.push(word)
+      word.parentNode = parent
+
+document =
+  nodeType: 9
+  getElementsByTagName : (name) ->
+    if name == "*"
+      tags.word
+    else
+      tags[name] || []
+  documentElement:
+    removeChild: () ->
+  createComment : () -> {}
+  createElement : () -> {}
+  getElementById : () -> []
+
+Sizzle = do ->
+  script = vm.createScript(fs.readFileSync(__dirname + "/../../../../sizzle/sizzle.js", "utf8"), 'sizzle.js');
+  sandbox = { window: {}, document: document, console: console }
+  script.runInNewContext(sandbox)
+  sandbox.window.Sizzle
+
+# console.log(Sizzle('word[form=θεὰ][partOfSpeech=noun][number=singular][case=vocative]', document))
+# :has([partOfSpeech=verb][mood=subjunctive])
+console.log(Sizzle('[partOfSpeech=verb][mood=indicative][tense=future] > εἰ[relation=AuxC]:has([partOfSpeech=verb][mood=subjunctive])', document).length)
+app.post('/search', (req, res, next) ->
+  console.log(Sizzle(req.params.query, document))
+
+  res.charset = 'utf-8'
+  res.type('text/html')
+  res.send(200, 'html'))
 
 app.listen(process.env.PORT)
