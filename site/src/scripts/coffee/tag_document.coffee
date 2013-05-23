@@ -4,7 +4,7 @@ fs = require('fs')
 greek = require('pseudw-util').greek
 libxml = require('libxmljs')
 
-fs.readFile('/Users/nkallen/Workspace/Perseus/agdt-1.6/data/1999.01.0133.xml', 'utf8', (err, tags) ->
+fs.readFile('/Users/nkallen/Workspace/agdt-1.6/data/1999.01.0133.xml', 'utf8', (err, tags) ->
   throw err if err?
 
   fs.readFile('/Users/nkallen/Workspace/Perseus/texts/1999.01/1999.01.0133.xml', 'utf8', (err, doc) ->

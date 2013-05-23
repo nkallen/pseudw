@@ -1,0 +1,3 @@
+[submodule "treebank"]
+	path = treebank
+	url = git@github.com:nkallen/treebank.git
