@@ -20,6 +20,17 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    <style type="text/css">
+      .info-well {
+        display: block !important;
+        position: absolute;
+        top: 0 !important;
+        left: 400px;
+      }
+      section {
+        position: relative !important;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -27,22 +38,25 @@
         <h1>Structural Search</h1>
         <p>Run a structural query against the treebank database.</p>
         <form class="form-search" action="/search">
-          <input type="text" name="query" class="input-xxlarge search-query" value="<%= query %>">
-          <button type="submit" class="btn">Search</button>
+          <div class="input-append">
+            <input type="text" name="query" class="input-xxlarge search-query" value="<%= query %>" style="height: 30px">
+            <button type="submit" class="btn">Search</button>
+          </div>
         </form>
       </div>
       <% if (results.length > 0) { %>
         <div class="alert"><%= results.length %> results</div>
         <div class="row">
-          <div class="span5">
+          <div class="span5 offset1">
             <div class="matches text" style="margin-top: 0">
               <% for (i in results) { %>
                 <section class="sentence words card">
-                  <blockquote>
+                  <blockquote class="row">
                     <% for (j in results[i]) { %>
                       <% var word = results[i][j].attributes %>
-                      <span data-lemma="<%= word.lemma %>" data-sentence-id="<%= word.sentenceId %>" data-id="<%= word.id %>" data-parent-id="<%= word.parentId %>" data-part-of-speech="<%= word.partOfSpeech %>" data-number="<%= word.number %>" data-gender="<%= word.gender %>" data-case="<%= word.case %>" data-relation="<%= word.relation %>"><%= word.form %></span>
+                      <span data-lemma="<%= word.lemma %>" data-sentence-id="<%= word.sentenceId %>" data-id="<%= word.id %>" data-parent-id="<%= word.parentId %>" data-part-of-speech="<%= word.partOfSpeech %>" data-number="<%= word.number %>" data-gender="<%= word.gender %>" data-case="<%= word.case %>" data-relation="<%= word.relation %>" data-person="<%= word.person %>" data-tense="<%= word.tense %>" data-mood="<%= word.mood %>" data-voice="<%= word.voice %>"><%= word.form %></span>
                     <% } %>
+                    <small><cite title="Source Title">Placeholder <a href="<%= results[i].uri %>"><%= results[i].text %><%= results[i].section %></a></cite></small>
                   </blockquote>
                 </section>
               <% } %>
@@ -54,5 +68,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script src="/iliados.js"></script>
+    <div class='well info-well span5 prototype'>
+      <h4></h4>
+      <h5></h5>
+      <div class='content'></div>
+    </div>
   </body>
 </html>

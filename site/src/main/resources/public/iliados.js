@@ -7,9 +7,9 @@ $(function() {
   var $notes = $('ol.notes');
   var i = 0;
   var $infoPane = $('.info-pane');
-  var $infoWell = $('.info-well').removeClass('prototype');
+  var $infoWell = $('.info-well').removeClass('prototype').remove();
   var $info = $infoPane.add($infoWell);
-  function reset() {
+  function reset(complete) {
     $info.find('h4').text('');
     $info.find('h5').text('');
     $info.find('.content').text('');
@@ -21,6 +21,7 @@ $(function() {
       $this.remove();
     });
     state = $();
+    complete && complete();
   }
   reset();
   function highlight($item) {
@@ -78,22 +79,24 @@ $(function() {
     })
   $('.line .span1')
     .click(function() {
-      reset();
       var $this = $(this);
-      var $row = $this.parents(".row");
-      var $lineNumber = $this.find('.line-number');
-      var $note = $lineNumber.data('note');
-      if ($note) {
-        highlight($lineNumber).addClass('label').addClass('label-info').click(function() {
-          reset();
-          return false;
-        });
-        $info.find('h4')
-          .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
-        $info.find('.content')
-          .html($note.html());
-        $row.after($infoWell);
-      }
+
+      reset(function() {
+        var $row = $this.parents(".row").first();
+        var $lineNumber = $this.find('.line-number');
+        var $note = $lineNumber.data('note');
+        if ($note) {
+          highlight($lineNumber).addClass('label').addClass('label-info').click(function() {
+            reset();
+            return false;
+          });
+          $info.find('h4')
+            .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
+          $info.find('.content')
+            .html($note.html());
+          $row.after($infoWell);
+        }
+      })
     });
 
   var $lexicon = $("ul.lexicon > li");
@@ -103,72 +106,71 @@ $(function() {
     lexicon[$this.data('lemma')] = $this;
   })
   $('.words span').click(function() {
-    reset();
     var $word = $(this);
-    var $row = $word.parents(".row");
-    var lemma = $word.data('lemma');
 
-    var $translation = $(lexicon[lemma]);
-    $info.find('h4').text(lemma);
-    $info.find('h5')
-      .html("<span class='label'>" + $word.text() + "</span> ")
-      .append(inflections($word));
-    $info.find('.content').html($translation.html());
-    $row.after($infoWell);
+    reset(function() {
+      var $row = $word.parents(".row").first();
+      var lemma = $word.data('lemma');
 
-    var $section  = $word.parents('section.card').first();
-    console.log($section);
-    var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
-    console.log($sentence);
+      var $translation = $(lexicon[lemma]);
+      $info.find('h4').text(lemma);
+      $info.find('h5')
+        .html("<span class='label'>" + $word.text() + "</span> ")
+        .append(inflections($word));
+      $info.find('.content').html($translation.html());
+      $row.after($infoWell);
 
-    var $parent     = $word;
-    var parents     = [];
-    while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
-      parents.push($parent);
-    }
+      var $section  = $word.parents('section.card').first();
+      var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
 
-    var bfs   = [$word];
-    var stack = [$word];
-    while (stack.length > 0) {
-      var $current  = stack.pop();
-      var level = $();
-      $current.each(function() {
-        $this = $(this);
-        var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
-        level = level.add($children);
-      });
-      if (level.length > 0) {
-        stack.push(level);
-        bfs.push(level);
+      var $parent     = $word;
+      var parents     = [];
+      while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
+        parents.push($parent);
       }
-    };
-    console.log(bfs);
 
-    highlight($word)
-      .addClass('label').addClass('label-info')
-      .off('click')
-      .click(reset);
-    bfs.shift();
-    var level = 1; // pretend we skipped one
-    bfs.forEach(function(nodes) {
-      var opacity = 1.0 - level++ / (bfs.length + 1);
-      highlight(nodes)
-        .css('opacity', opacity)
-        .addClass('label')
-        .addClass('label-info');
-    });
-    level = 1; // pretend we skipped one
-    parents.forEach(function(parent) {
-      var opacity = 1.0 - (level++ / (parents.length + 1));
-      highlight(parent)
-        .css('opacity', opacity)
-        .addClass('label')
-        .addClass('label-important');
-    });
+      var bfs   = [$word];
+      var stack = [$word];
+      while (stack.length > 0) {
+        var $current  = stack.pop();
+        var level = $();
+        $current.each(function() {
+          $this = $(this);
+          var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
+          level = level.add($children);
+        });
+        if (level.length > 0) {
+          stack.push(level);
+          bfs.push(level);
+        }
+      };
 
-    setTimeout(function() {
-      highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('label')
-    }, 10)
+      highlight($word)
+        .addClass('label').addClass('label-info')
+        .off('click')
+        .click(function() { reset() });
+      bfs.shift();
+      var level = 1; // pretend we skipped one
+      bfs.forEach(function(nodes) {
+        var opacity = 1.0 - level++ / (bfs.length + 1);
+        highlight(nodes)
+          .css('opacity', opacity)
+          .addClass('label')
+          .addClass('label-info');
+      });
+      level = 1; // pretend we skipped one
+      parents.forEach(function(parent) {
+        var opacity = 1.0 - (level++ / (parents.length + 1));
+        highlight(parent)
+          .css('opacity', opacity)
+          .addClass('label')
+          .addClass('label-important');
+      });
+
+      setTimeout(function() {
+        highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('label')
+      }, 10)
+    })
   });
   $('body')
     .keydown(function(e) {
