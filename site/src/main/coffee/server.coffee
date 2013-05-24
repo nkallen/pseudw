@@ -34,7 +34,11 @@ class Dom
   nodeType: 1
   getAttribute: (attribute) ->
     @attributes[attribute]
-  compareDocumentPosition: (that) -> 1
+  compareDocumentPosition: (that) ->
+    if this.attributes.id < that.attributes.id
+      4
+    else
+      2
   getElementsByTagName: (name) ->
     if name == "*"
       @children
