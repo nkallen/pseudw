@@ -109,8 +109,11 @@ app.get('/search', (req, res, next) ->
   matches = []
   query = req.query.query
   error = null
+  start = end = null
   try
+    start = new Date
     matches = Sizzle(query, document)
+    end = new Date
   catch e
     error = e
 
@@ -133,7 +136,8 @@ app.get('/search', (req, res, next) ->
   html = search(
     query: query
     results: results
-    error: error)
+    error: error
+    time: end - start)
   res.send(200, html))
 
 iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))

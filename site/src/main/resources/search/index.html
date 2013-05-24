@@ -47,7 +47,7 @@
           <div class="alert alert-error"><%= error %></div>
         <% } %>
         <% if (results.length > 0) { %>
-          <div class="alert alert-success"><%= results.length %> results.<% if (results.length > 100) { %> Displaying first 100.<% } %></div>
+          <div class="alert alert-success"><%= results.length %> results in <%= time %>ms.<% if (results.length > 100) { %> Displaying first 100.<% } %></div>
           <div class="row">
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
