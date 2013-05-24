@@ -97,7 +97,8 @@ app.get('/', (req, res, next) ->
   res.type('text/html')
   html = search(
     query: ''
-    results: [])
+    results: []
+    error: null)
   res.send(200, html))
 
 app.get('/search', (req, res, next) ->
