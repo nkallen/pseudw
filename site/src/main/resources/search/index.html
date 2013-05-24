@@ -43,8 +43,11 @@
             <button type="submit" class="btn">Search</button>
           </div>
         </form>
+        <% if (error) { %>
+          <div class="alert alert-error"><%= error %></div>
+        <% } %>
         <% if (results.length > 0) { %>
-          <div class="alert"><%= results.length %> results</div>
+          <div class="alert alert-success"><%= results.length %> results</div>
           <div class="row">
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
@@ -64,6 +67,8 @@
               </div>
             </div>
           </div>
+        <% } else if (query) { %>
+          <div class="alert">0 results</div>
         <% } %>
       </div>
     </div>

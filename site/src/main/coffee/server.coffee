@@ -79,7 +79,7 @@ Sizzle = do ->
   script.runInNewContext(sandbox)
   sandbox.window.Sizzle
 
-# console.log(Sizzle('word[form=θεὰ][partOfSpeech=noun][number=singular][case=vocative]', document))
+# console.log(Sizzle('partOfSpeech=noun][number=singular][case=vocative]', document))
 # :has([partOfSpeech=verb][mood=subjunctive])
 # console.log(Sizzle('[partOfSpeech=verb][mood=indicative][tense=future] > εἰ[relation=AuxC]:has([partOfSpeech=verb][mood=subjunctive])', document).length)
 search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
@@ -93,7 +93,14 @@ app.get('/', (req, res, next) ->
 
 app.get('/search', (req, res, next) ->
   search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
-  matches = Sizzle(query = req.query.query, document)
+  matches = []
+  query = req.query.query
+  error = null
+  try
+    matches = Sizzle(query, document)
+  catch e
+    error = e
+
   results = for match in matches
     root = match
     while root.parentNode
@@ -112,7 +119,8 @@ app.get('/search', (req, res, next) ->
   res.type('text/html')
   html = search(
     query: query
-    results: results)
+    results: results
+    error: error)
   res.send(200, html))
 
 iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
