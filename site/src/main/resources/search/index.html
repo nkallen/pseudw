@@ -43,32 +43,34 @@
             <button type="submit" class="btn">Search</button>
           </div>
         </form>
-      </div>
-      <% if (results.length > 0) { %>
-        <div class="alert"><%= results.length %> results</div>
-        <div class="row">
-          <div class="span5 offset1">
-            <div class="matches text" style="margin-top: 0">
-              <% for (i in results) { %>
-                <section class="sentence words card">
-                  <blockquote class="row">
-                    <% for (j in results[i]) { %>
-                      <% var word = results[i][j].attributes %>
-                      <span data-lemma="<%= word.lemma %>" data-sentence-id="<%= word.sentenceId %>" data-id="<%= word.id %>" data-parent-id="<%= word.parentId %>" data-part-of-speech="<%= word.partOfSpeech %>" data-number="<%= word.number %>" data-gender="<%= word.gender %>" data-case="<%= word.case %>" data-relation="<%= word.relation %>" data-person="<%= word.person %>" data-tense="<%= word.tense %>" data-mood="<%= word.mood %>" data-voice="<%= word.voice %>"><%= word.form %></span>
-                    <% } %>
-                    <small><cite title="Source Title">Placeholder <a href="<%= results[i].uri %>"><%= results[i].text %><%= results[i].section %></a></cite></small>
-                  </blockquote>
-                </section>
-              <% } %>
+        <% if (results.length > 0) { %>
+          <div class="alert"><%= results.length %> results</div>
+          <div class="row">
+            <div class="span5">
+              <div class="matches text" style="margin-top: 0">
+                <% for (i in results) { %>
+                  <section class="sentence words card">
+                    <blockquote class="row">
+                      <% for (j in results[i].nodes) { %>
+                        <% var word = results[i].nodes[j].attributes %>
+                        <% if (results[i].nodes[j] == results[i].match) print("<b>") %>
+                        <span data-lemma="<%= word.lemma %>" data-sentence-id="<%= word.sentenceId %>" data-id="<%= word.id %>" data-parent-id="<%= word.parentId %>" data-part-of-speech="<%= word.partOfSpeech %>" data-number="<%= word.number %>" data-gender="<%= word.gender %>" data-case="<%= word.case %>" data-relation="<%= word.relation %>" data-person="<%= word.person %>" data-tense="<%= word.tense %>" data-mood="<%= word.mood %>" data-voice="<%= word.voice %>"><%= word.form %></span>
+                          <% if (results[i].nodes[j] == results[i].match) print("</b>") %>
+                      <% } %>
+                      <small><cite title="Source Title">Iliad x.y <a href="<%= results[i].uri %>"><%= results[i].text %><%= results[i].section %></a></cite></small>
+                    </blockquote>
+                  </section>
+                <% } %>
+              </div>
             </div>
-          <% } %>
-        </div>
+          </div>
+        <% } %>
       </div>
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script src="/iliados.js"></script>
-    <div class='well info-well span5 prototype'>
+    <div class='info-well span5 prototype'>
       <h4></h4>
       <h5></h5>
       <div class='content'></div>

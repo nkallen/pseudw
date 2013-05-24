@@ -27,9 +27,10 @@ tags =
   word: []
 
 class Dom
-  constructor: (@attributes, @nodeName) ->
+  constructor: (@attributes) ->
     @children = []
     @parentNode = null
+    @nodeName = @attributes.lemma
   nodeType: 1
   getAttribute: (attribute) ->
     @attributes[attribute]
@@ -44,7 +45,7 @@ for sentenceNode in tree.find("//sentence")
   id2word = {}
   root = null
   for wordNode in sentenceNode.find("word")
-    word = new Dom(greek.Treebank.wordNode2word(wordNode), "word")
+    word = new Dom(greek.Treebank.wordNode2word(wordNode))
     id2word[word.attributes.id] = word
     tags.word.push(word)
     if lemma = tags[word.attributes.lemma]
@@ -102,7 +103,10 @@ app.get('/search', (req, res, next) ->
     while nodes.length > i
       nodes = nodes.concat(nodes[i].children)
       i++
-    nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
+    {
+      nodes: nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
+      match: match
+    }
 
   res.charset = 'utf-8'
   res.type('text/html')
