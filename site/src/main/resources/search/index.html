@@ -47,11 +47,11 @@
           <div class="alert alert-error"><%= error %></div>
         <% } %>
         <% if (results.length > 0) { %>
-          <div class="alert alert-success"><%= results.length %> results</div>
+          <div class="alert alert-success"><%= results.length %> results.<% if (results.length > 100) { %> Displaying first 100.<% } %></div>
           <div class="row">
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
-                <% for (i in results) { %>
+                <% for (var i= 0; i < Math.min(results.length, 100); i++) { %>
                   <section class="sentence words card">
                     <blockquote class="row">
                       <% for (j in results[i].nodes) { %>
@@ -67,7 +67,7 @@
               </div>
             </div>
           </div>
-        <% } else if (query) { %>
+        <% } else if (query && !error) { %>
           <div class="alert">0 results</div>
         <% } %>
       </div>
