@@ -101,7 +101,6 @@ app.get('/', (req, res, next) ->
   res.send(200, html))
 
 app.get('/search', (req, res, next) ->
-  search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
   matches = []
   query = req.query.query
   error = null
