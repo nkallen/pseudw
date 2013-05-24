@@ -1,6 +1,6 @@
 [submodule "treebank"]
 	path = treebank
-	url = git@github.com:nkallen/treebank.git
+	url = git://github.com/nkallen/treebank.git
 [submodule "sizzle"]
 	path = sizzle
 	url = https://github.com/jquery/sizzle.git
