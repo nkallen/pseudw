@@ -79,9 +79,18 @@ Sizzle = do ->
   script.runInNewContext(sandbox)
   sandbox.window.Sizzle
 
-# console.log(Sizzle('partOfSpeech=noun][number=singular][case=vocative]', document))
-# :has([partOfSpeech=verb][mood=subjunctive])
-# console.log(Sizzle('[partOfSpeech=verb][mood=indicative][tense=future] > εἰ[relation=AuxC]:has([partOfSpeech=verb][mood=subjunctive])', document).length)
+Sizzle.selectors.pseudos.before = Sizzle.selectors.createPseudo(
+  (selector) ->
+    (elem) ->
+      matches = Sizzle(selector, elem)
+      (match for match in matches when (elem.getAttribute('id') < match.getAttribute('id'))).length)
+
+Sizzle.selectors.pseudos.after = Sizzle.selectors.createPseudo(
+  (selector) ->
+    (elem) ->
+      matches = Sizzle(selector, elem)
+      (match for match in matches when (elem.getAttribute('id') > match.getAttribute('id'))).length)
+
 search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->
   res.charset = 'utf-8'
