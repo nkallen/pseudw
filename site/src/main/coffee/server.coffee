@@ -1,99 +1,18 @@
 express = require('express')
 pg = require('pg')
-unorm = require('unorm')
-greek = require('pseudw-util').greek
+util = greek = require('pseudw-util')
+greek = util.greek
+treebank = util.treebank
 fs = require('fs')
 libxml = require('libxmljs')
-vm = require('vm')
 _ = require('underscore')
-
-DELIMITER = /[;, ]/
-
-dbClient =
-  query: (query, bindParameters, cb) ->
-    pg.connect(process.env.DATABASE_URL, (err, client) ->
-      return cb(err) if err?
-
-      client.query(query, bindParameters, cb))
-
 
 app = express()
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
 treeXml = fs.readFileSync(__dirname + '/../../../../treebank/data/1999.01.0133.xml', 'utf8')
-tree = libxml.parseXml(treeXml)
-tags =
-  word: []
-
-class Dom
-  constructor: (@attributes) ->
-    @children = []
-    @parentNode = null
-    @nodeName = @attributes.lemma
-  nodeType: 1
-  getAttribute: (attribute) ->
-    @attributes[attribute]
-  compareDocumentPosition: (that) ->
-    if this.attributes.id < that.attributes.id
-      4
-    else
-      2
-  getElementsByTagName: (name) ->
-    if name == "*"
-      @children
-    else
-      child for child in @children when child.nodeName == name
-
-for sentenceNode in tree.find("//sentence")
-  id2word = {}
-  root = null
-  for wordNode in sentenceNode.find("word")
-    word = new Dom(greek.Treebank.wordNode2word(wordNode))
-    id2word[word.attributes.id] = word
-    tags.word.push(word)
-    if lemma = tags[word.attributes.lemma]
-      lemma.push(word)
-    else
-      tags[word.attributes.lemma] = [word]
-  for blah, word of id2word
-    if word.attributes.parentId == '0'
-      root = word
-    else
-      parent = id2word[word.attributes.parentId]
-      parent.children.push(word)
-      word.parentNode = parent
-
-document =
-  nodeType: 9
-  getElementsByTagName: (name) ->
-    if name == "*"
-      tags.word
-    else
-      tags[name] || []
-  documentElement:
-    removeChild: () ->
-  createComment : () -> {}
-  createElement : () -> {}
-  getElementById : () -> []
-
-Sizzle = do ->
-  script = vm.createScript(fs.readFileSync(__dirname + "/../../../../sizzle/sizzle.js", "utf8"), 'sizzle.js');
-  sandbox = { window: {}, document: document, console: console }
-  script.runInNewContext(sandbox)
-  sandbox.window.Sizzle
-
-Sizzle.selectors.pseudos.before = Sizzle.selectors.createPseudo(
-  (selector) ->
-    (elem) ->
-      matches = Sizzle(selector, elem)
-      (match for match in matches when (elem.getAttribute('id') < match.getAttribute('id'))).length)
-
-Sizzle.selectors.pseudos.after = Sizzle.selectors.createPseudo(
-  (selector) ->
-    (elem) ->
-      matches = Sizzle(selector, elem)
-      (match for match in matches when (elem.getAttribute('id') > match.getAttribute('id'))).length)
+database = treebank.load(libxml.parseXml(treeXml))
 
 search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->
@@ -112,7 +31,7 @@ app.get('/search', (req, res, next) ->
   start = end = null
   try
     start = new Date
-    matches = Sizzle(query, document)
+    matches = database(query)
     end = new Date
   catch e
     error = e

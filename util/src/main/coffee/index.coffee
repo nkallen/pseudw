@@ -1,4 +1,4 @@
-module.exports = {
-  preconditions: require("./preconditions"),
+module.exports =
+  preconditions: require("./preconditions")
   greek: require("./greek")
-}
+  treebank: require("./treebank")

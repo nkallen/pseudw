@@ -238,125 +238,17 @@ betacode2unicode = do ->
     out = out.concat(traversal.value()) if traversal.value()
     unorm.nfc(out.replace(/σ(\b|$)/, 'ς'))
 
-Treebank =
-  wordNode2word: (wordNode) ->
-    sentence = wordNode.parent()
-    lemma = wordNode.attr('lemma').value().replace(/1$/, '')
-    id = wordNode.attr('id').value()
-    sentenceId = sentence.attr('id').value()
-    parentId = wordNode.attr('head').value()
-
-    postag = wordNode.attr('postag').value()
-    relation = wordNode.attr('relation').value()
-    partOfSpeech = switch postag[0]
-      when 'n' then 'noun'
-      when 'v' then 'verb'
-      when 't' then 'participle'
-      when 'a' then 'adjective'
-      when 'd' then 'adverb'
-      when 'l' then 'article'
-      when 'g' then 'particle'
-      when 'c' then 'conjunction'
-      when 'r' then 'preposition'
-      when 'p' then 'pronoun'
-      when 'm' then 'numeral'
-      when 'i' then 'interjection'
-      when 'e' then 'exclamation'
-      when 'u' then 'punctuation'
-      when 'x' then 'irregular'
-      when '-' then null
-      else throw "Invalid part-of-speech #{postag[0]} #{wordNode}"
-    person = switch postag[1]
-      when '1' then 'first'
-      when '2' then 'second'
-      when '3' then 'third'
-      when '-' then null
-      else throw "Invalid person #{postag[1]}"
-    number = switch postag[2]
-      when 's' then 'singular'
-      when 'd' then 'dual'
-      when 'p' then 'plural'
-      when '-' then null
-      else throw "Invalid number #{postag[2]}"
-    tense = switch postag[3]
-      when 'p' then 'present'
-      when 'i' then 'imperfect'
-      when 'r' then 'perfect'
-      when 'l' then 'pluperfect'
-      when 't' then 'future perfect'
-      when 'f' then 'future'
-      when 'a' then 'aorist'
-      when '-' then null
-      else throw "Invalid tense #{postag[3]}"
-    mood = switch postag[4]
-      when 'i' then 'indicative'
-      when 's' then 'subjunctive'
-      when 'o' then 'optative'
-      when 'n' then 'infinitive'
-      when 'm' then 'imperative'
-      when 'p' then null
-      when 'd' then 'gerund'
-      when 'g' then 'gerundive'
-      when '-' then null
-      else throw "Invalid mood #{postag[4]}"
-    voice = switch postag[5]
-      when 'a' then 'active'
-      when 'p' then 'passive'
-      when 'm' then 'middle'
-      when 'e' then 'middle-passive'
-      when '-' then null
-      else throw "Invalid voice #{postag[5]}"
-    gender = switch postag[6]
-      when 'm' then 'masculine'
-      when 'f' then 'feminine'
-      when 'n' then 'neuter'
-      when '-' then null
-      else throw "Invalid gender #{postag[6]}"
-    kase = switch postag[7]
-      when 'n' then 'nominative'
-      when 'g' then 'genitive'
-      when 'd' then 'dative'
-      when 'a' then 'accusative'
-      when 'v' then 'vocative'
-      when 'l' then 'locative'
-      when '-' then null
-      else throw "Invalid case #{postag[7]}"
-    degree = switch postag[8]
-      when 'c' then 'comparative'
-      when 's' then 'superlative'
-      when '-' then null
-      else throw "Invalid degree #{postag[7]}"
-
-    {
-      form: betacode2unicode(wordNode.attr('form').value()),
-      lemma: betacode2unicode(lemma),
-      id: id,
-      sentenceId: sentenceId,
-      parentId: parentId,
-      partOfSpeech: partOfSpeech,
-      person: person,
-      number: number,
-      tense: tense,
-      mood: mood,
-      voice: voice,
-      gender: gender,
-      case: kase,
-      degree: degree,
-      relation: relation}
-
-module.exports = {
-  Tense: Tense,
-  Gender: Gender,
-  Number: Number,
-  Case: Case,
-  Voice: Voice,
-  Mood: Mood,
-  Verb: Verb,
-  Inflections: Inflections,
-  ParticipleDesc: ParticipleDesc,
-  Participle: Participle,
-  Dialect: Dialect,
-  Feature: Feature,
-  Treebank: Treebank,
-  betacode2unicode: betacode2unicode,
-}
+module.exports =
+  Tense: Tense
+  Gender: Gender
+  Number: Number
+  Case: Case
+  Voice: Voice
+  Mood: Mood
+  Verb: Verb
+  Inflections: Inflections
+  ParticipleDesc: ParticipleDesc
+  Participle: Participle
+  Dialect: Dialect
+  Feature: Feature
+  betacode2unicode: betacode2unicode
