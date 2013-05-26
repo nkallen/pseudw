@@ -47,13 +47,13 @@
           <div class="alert alert-error"><%= error %></div>
         <% } %>
         <% if (results.length > 0) { %>
-          <div class="alert alert-success"><%= results.length %> results in <%= time %>ms.<% if (results.length > 100) { %> Displaying first 100.<% } %></div>
+          <div class="alert alert-success"><%= count %> results in <%= time %>ms.<% if (results.length > 100) { %> Displaying first 100.<% } %></div>
           <div class="row">
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
-                <% for (var i= 0; i < Math.min(results.length, 100); i++) { %>
+                <% for (var i = 0; i < Math.min(results.length, 100); i++) { %>
                   <% var result = results[i] %>
-                  <section class="sentence attributess card">
+                  <section class="sentence attributess card words">
                     <blockquote class="row">
                       <% for (j in results[i].nodes) { %>
                         <%

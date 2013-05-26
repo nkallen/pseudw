@@ -37,31 +37,29 @@ app.get('/search', (req, res, next) ->
     error = e
 
   root2result = {}
-  results = for match in matches
+  for match in matches
     root = match
     while root.parentNode
       root = root.parentNode
     nodes = [root]
     i = 0
-    if result = root2result[root]
+    if result = root2result[root.attributes.uuid()]
       result.matches[match.attributes.uuid()] = true
     else
       while nodes.length > i
         nodes = nodes.concat(nodes[i].children)
         i++
-      root2result[root] = result =
+      root2result[root.attributes.uuid()] =
         nodes: nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
-        matches: do ->
-          result = {}
-          result[match.attributes.uuid()] = true
-          result
-    result
+        matches: {}
+      root2result[root.attributes.uuid()].matches[match.attributes.uuid()] = true
 
   res.charset = 'utf-8'
   res.type('text/html')
   html = search(
     query: query
-    results: results
+    count: matches.length
+    results: (result for root, result of root2result)
     error: error
     time: end - start)
   res.send(200, html))
