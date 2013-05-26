@@ -52,13 +52,17 @@
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
                 <% for (var i= 0; i < Math.min(results.length, 100); i++) { %>
-                  <section class="sentence words card">
+                  <% var result = results[i] %>
+                  <section class="sentence attributess card">
                     <blockquote class="row">
                       <% for (j in results[i].nodes) { %>
-                        <% var word = results[i].nodes[j].attributes %>
-                        <% if (results[i].nodes[j] == results[i].match) print("<b>") %>
-                        <span data-lemma="<%= word.lemma %>" data-sentence-id="<%= word.sentenceId %>" data-id="<%= word.id %>" data-parent-id="<%= word.parentId %>" data-part-of-speech="<%= word.partOfSpeech %>" data-number="<%= word.number %>" data-gender="<%= word.gender %>" data-case="<%= word.case %>" data-relation="<%= word.relation %>" data-person="<%= word.person %>" data-tense="<%= word.tense %>" data-mood="<%= word.mood %>" data-voice="<%= word.voice %>"><%= word.form %></span>
-                          <% if (results[i].nodes[j] == results[i].match) print("</b>") %>
+                        <%
+                          var word = result.nodes[j];
+                          var attributes = word.attributes;
+                        %>
+                        <% if (result.matches[attributes.uuid()]) { print("<b>") } %>
+                          <span data-lemma="<%= attributes.lemma %>" data-sentence-id="<%= attributes.sentenceId %>" data-id="<%= attributes.id %>" data-parent-id="<%= attributes.parentId %>" data-part-of-speech="<%= attributes.partOfSpeech %>" data-number="<%= attributes.number %>" data-gender="<%= attributes.gender %>" data-case="<%= attributes.case %>" data-relation="<%= attributes.relation %>" data-person="<%= attributes.person %>" data-tense="<%= attributes.tense %>" data-mood="<%= attributes.mood %>" data-voice="<%= attributes.voice %>"><%= attributes.form %></span>
+                        <% if (result.matches[attributes.uuid()]) print("</b>") %>
                       <% } %>
                       <small><cite title="Source Title">Iliad x.y <a href="<%= results[i].uri %>"><%= results[i].text %><%= results[i].section %></a></cite></small>
                     </blockquote>

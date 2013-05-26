@@ -36,19 +36,26 @@ app.get('/search', (req, res, next) ->
   catch e
     error = e
 
+  root2result = {}
   results = for match in matches
     root = match
     while root.parentNode
       root = root.parentNode
     nodes = [root]
     i = 0
-    while nodes.length > i
-      nodes = nodes.concat(nodes[i].children)
-      i++
-    {
-      nodes: nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
-      match: match
-    }
+    if result = root2result[root]
+      result.matches[match.attributes.uuid()] = true
+    else
+      while nodes.length > i
+        nodes = nodes.concat(nodes[i].children)
+        i++
+      root2result[root] = result =
+        nodes: nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
+        matches: do ->
+          result = {}
+          result[match.attributes.uuid()] = true
+          result
+    result
 
   res.charset = 'utf-8'
   res.type('text/html')
