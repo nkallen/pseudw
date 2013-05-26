@@ -60,11 +60,11 @@
                           var word = result.nodes[j];
                           var attributes = word.attributes;
                         %>
-                        <% if (result.matches[attributes.uuid()]) { print("<b>") } %>
+                        <% if (result.matches[word.uuid()]) { print("<b>") } %>
                           <span data-lemma="<%= attributes.lemma %>" data-sentence-id="<%= attributes.sentenceId %>" data-id="<%= attributes.id %>" data-parent-id="<%= attributes.parentId %>" data-part-of-speech="<%= attributes.partOfSpeech %>" data-number="<%= attributes.number %>" data-gender="<%= attributes.gender %>" data-case="<%= attributes.case %>" data-relation="<%= attributes.relation %>" data-person="<%= attributes.person %>" data-tense="<%= attributes.tense %>" data-mood="<%= attributes.mood %>" data-voice="<%= attributes.voice %>"><%= attributes.form %></span>
-                        <% if (result.matches[attributes.uuid()]) print("</b>") %>
+                        <% if (result.matches[word.uuid()]) print("</b>") %>
                       <% } %>
-                      <small><cite title="Source Title">Iliad x.y <a href="<%= results[i].uri %>"><%= results[i].text %><%= results[i].section %></a></cite></small>
+                      <small><cite title="Source Title">Iliad x.y <a href="<%= results[i].uri %>"><%= result.text %><%= result.section %></a></cite></small>
                     </blockquote>
                   </section>
                 <% } %>

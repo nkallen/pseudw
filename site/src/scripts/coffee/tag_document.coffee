@@ -1,7 +1,9 @@
 #!/usr/bin/env coffee
 
 fs = require('fs')
-greek = require('pseudw-util').greek
+util = require('pseudw-util')
+greek = util.greek
+treebank = util.treebank
 libxml = require('libxmljs')
 
 fs.readFile('../treebank/data/1999.01.0133.xml', 'utf8', (err, tags) ->
@@ -50,7 +52,7 @@ fs.readFile('../treebank/data/1999.01.0133.xml', 'utf8', (err, tags) ->
                     unless token == form
                       console.warn("Warning: token mismatch on line '#{original_line}'\n '#{token}' <=> '#{word}'")
 
-                    word = greek.Treebank.wordNode2word(word)
+                    word = treebank.wordNode2word(word)
                     l.push(word)
 
     out = ""
@@ -74,10 +76,10 @@ fs.readFile('../treebank/data/1999.01.0133.xml', 'utf8', (err, tags) ->
             n = 0
             for word in line
               sep = if n > 0 then " " else ""
-              if word.form.match(/[,:;.]/)
-                out += word.form
+              if word.partOfSpeech == 'punctuation'
+                out += "<span data-lemma='#{word.lemma}' data-sentence-id='#{word.sentenceId}' data-id='#{word.id}' data-parent-id='#{word.parentId}' data-part-of-speech='#{word.partOfSpeech}' data-relation='#{word.relation}'>#{word.form}</span>"
               else
-                out += sep + "<span data-lemma='#{word.lemma}' data-sentence-id='#{word.sentenceId}' data-id='#{word.id}' data-parent-id='#{word.parentId.toString()}'"
+                out += sep + "<span data-lemma='#{word.lemma}' data-sentence-id='#{word.sentenceId}' data-id='#{word.id}' data-parent-id='#{word.parentId}'"
                 out += " data-part-of-speech='#{word.partOfSpeech}'"
                 out += " data-person='#{word.person}'" if word.person?
                 out += " data-number='#{word.number}'" if word.number?
