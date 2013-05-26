@@ -54,14 +54,18 @@ app.get('/search', (req, res, next) ->
       root2result[root.uuid()] =
         nodes: nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
         matches: {}
+        root: root
       root2result[root.uuid()].matches[match.uuid()] = true
+
+  results = (result for root, result of root2result)
+  results.text = 'Iliad'
 
   res.charset = 'utf-8'
   res.type('text/html')
   html = search(
     query: query
     count: matches.length
-    results: (result for root, result of root2result)
+    results: results
     error: error
     time: end - start)
   res.send(200, html))

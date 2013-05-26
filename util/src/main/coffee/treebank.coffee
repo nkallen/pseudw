@@ -167,52 +167,54 @@ Treebank =
 
     id2word = currentSentenceId = null
 
-    for wordNode in xml.find("//span")
-      sentenceId = wordNode.attr('data-sentence-id').value()
+    for bookNode in xml.find("//section[@class='book']")
+      for wordNode in bookNode.find(".//span")
+        sentenceId = wordNode.attr('data-sentence-id').value()
 
-      unless currentSentenceId
-        currentSentenceId = sentenceId
-        id2word = {}
-      if sentenceId != currentSentenceId
-        root = null
+        unless currentSentenceId
+          currentSentenceId = sentenceId
+          id2word = {}
+        if sentenceId != currentSentenceId
+          root = null
 
-        for id, word of id2word
-          attributes = word.attributes
-          if attributes.parentId == '0'
-            root = word
-          else
-            parent = id2word[attributes.parentId]
-            parent.children.push(word)
-            word.parentNode = parent
+          for id, word of id2word
+            attributes = word.attributes
+            if attributes.parentId == '0'
+              root = word
+            else
+              parent = id2word[attributes.parentId]
+              parent.children.push(word)
+              word.parentNode = parent
 
-        currentSentenceId = sentenceId
-        id2word = {}
+          currentSentenceId = sentenceId
+          id2word = {}
 
-      attributes =
-        form: wordNode.text()
-        lemma: wordNode.attr('data-lemma').value()
-        sentenceId: sentenceId
-        id: wordNode.attr('data-id').value()
-        parentId: wordNode.attr('data-parent-id').value()
-        relation: wordNode.attr('data-relation').value()
-        partOfSpeech: wordNode.attr('data-part-of-speech').value()
-        person: wordNode.attr('data-person')?.value()
-        number: wordNode.attr('data-number')?.value()
-        tense: wordNode.attr('data-tense')?.value()
-        mood: wordNode.attr('data-mood')?.value()
-        voice: wordNode.attr('data-voice')?.value()
-        gender: wordNode.attr('data-gender')?.value()
-        case: wordNode.attr('data-case')?.value()
-        degree: wordNode.attr('data-degree')?.value()
-        book: 1
-        line: 1
-      word = new DomShim(attributes)
-      id2word[attributes.id] = word
-      tags.word.push(word)
-      if lemma = tags[attributes.lemma]
-        lemma.push(word)
-      else
-        tags[attributes.lemma] = [word]
+        attributes =
+          form: wordNode.text()
+          lemma: wordNode.attr('data-lemma').value()
+          sentenceId: sentenceId
+          id: wordNode.attr('data-id').value()
+          parentId: wordNode.attr('data-parent-id').value()
+          relation: wordNode.attr('data-relation').value()
+          partOfSpeech: wordNode.attr('data-part-of-speech').value()
+          person: wordNode.attr('data-person')?.value()
+          number: wordNode.attr('data-number')?.value()
+          tense: wordNode.attr('data-tense')?.value()
+          mood: wordNode.attr('data-mood')?.value()
+          voice: wordNode.attr('data-voice')?.value()
+          gender: wordNode.attr('data-gender')?.value()
+          case: wordNode.attr('data-case')?.value()
+          degree: wordNode.attr('data-degree')?.value()
+          line: wordNode.parent().parent().find('.//a')[0].text()
+        attributes.book = bookNode.attr('data-number').value() if attributes.parentId == '0'
+
+        word = new DomShim(attributes)
+        id2word[attributes.id] = word
+        tags.word.push(word)
+        if lemma = tags[attributes.lemma]
+          lemma.push(word)
+        else
+          tags[attributes.lemma] = [word]
 
     (query) -> Sizzle(query, new DocumentShim(tags))
 

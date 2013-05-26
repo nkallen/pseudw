@@ -55,16 +55,18 @@
                   <% var result = results[i] %>
                   <section class="sentence attributess card words">
                     <blockquote class="row">
+                      <% var line = Number.MAX_VALUE %>
                       <% for (j in results[i].nodes) { %>
                         <%
                           var word = result.nodes[j];
                           var attributes = word.attributes;
+                          line = Math.min(line, attributes.line)
                         %>
                         <% if (result.matches[word.uuid()]) { print("<b>") } %>
                           <span data-lemma="<%= attributes.lemma %>" data-sentence-id="<%= attributes.sentenceId %>" data-id="<%= attributes.id %>" data-parent-id="<%= attributes.parentId %>" data-part-of-speech="<%= attributes.partOfSpeech %>" data-number="<%= attributes.number %>" data-gender="<%= attributes.gender %>" data-case="<%= attributes.case %>" data-relation="<%= attributes.relation %>" data-person="<%= attributes.person %>" data-tense="<%= attributes.tense %>" data-mood="<%= attributes.mood %>" data-voice="<%= attributes.voice %>"><%= attributes.form %></span>
                         <% if (result.matches[word.uuid()]) print("</b>") %>
                       <% } %>
-                      <small><cite title="Source Title">Iliad x.y <a href="<%= results[i].uri %>"><%= result.text %><%= result.section %></a></cite></small>
+                      <small><cite title="#{results.text}"><a href="/<%= results.text %>/books/<%= result.root.attributes.book %>"><%= results.text %> <%= result.root.attributes.book %>.<%= line %></a></cite></small>
                     </blockquote>
                   </section>
                 <% } %>
