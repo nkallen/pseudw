@@ -7,6 +7,7 @@ unorm = require('unorm')
 An object model for Greek Grammar and some utilities for character encoding.
 ###
 
+PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'participle')
 Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist', 'futurePerfect')
 Gender = Enum('Gender', 'masculine', 'feminine', 'neuter')
 Number = Enum('Number', 'singular', 'dual', 'plural')
@@ -239,6 +240,7 @@ betacode2unicode = do ->
     unorm.nfc(out.replace(/σ(\b|$)/, 'ς'))
 
 module.exports =
+  PartOfSpeech: PartOfSpeech
   Tense: Tense
   Gender: Gender
   Number: Number

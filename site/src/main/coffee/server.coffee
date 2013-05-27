@@ -11,10 +11,11 @@ app = express()
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
-treeXml = fs.readFileSync(__dirname + '/../resources/iliad/books/1/text.html', 'utf8')
 start = new Date
-database = treebank.load(libxml.parseXml(treeXml))
-console.log(new Date - start)
+docs = for book in fs.readdirSync(__dirname + '/../resources/iliad/books/')
+  libxml.parseXml(fs.readFileSync(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8'))
+database = treebank.load(docs)
+console.log("Loaded data in #{new Date - start}ms")
 
 search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->

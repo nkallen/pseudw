@@ -4,7 +4,7 @@ Enum = (typeName, names...) ->
     toJSON: -> @name
     toString: -> @name
     toSymbol: -> @toString()
-    @toSymbol: -> typeName.toLowerCase()
+    @toSymbol: -> typeName[0].toLowerCase() + typeName[1..-1]
     @toString: -> typeName
     @toBitmap: (elements) ->
       elementsSet = {}
