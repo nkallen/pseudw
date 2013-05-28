@@ -28,8 +28,10 @@ app.get('/', (req, res, next) ->
   res.send(200, html))
 
 app.get('/search', (req, res, next) ->
+  search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
   matches = []
   query = req.query.query
+  page = Number(req.query.page) || 0
   error = null
   start = end = null
   try
@@ -39,44 +41,12 @@ app.get('/search', (req, res, next) ->
   catch e
     error = e
 
-  root2result = {}
-  for match in matches
-    root = match
-    while root.parentNode
-      root = root.parentNode
-    nodes = [root]
-    i = 0
-    if result = root2result[root.uuid()]
-      result.matches[match.uuid()] = true
-    else
-      while nodes.length > i
-        nodes = nodes.concat(nodes[i].children)
-        i++
-      root2result[root.uuid()] = do ->
-        lines = [line = []]
-        currentLineNumber = null
-        for node in nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
-          lineNumber = node.attributes.line
-          currentLineNumber = lineNumber unless currentLineNumber
-          if lineNumber != currentLineNumber
-            lines.push(line = [])
-            currentLineNumber = lineNumber
-          line.push(node)
-
-        lines: lines
-        matches: {}
-        root: root
-      root2result[root.uuid()].matches[match.uuid()] = true
-
-  results = (result for root, result of root2result)
-  results.text = 'Iliad'
-
   res.charset = 'utf-8'
   res.type('text/html')
   html = search(
     query: query
-    count: matches.length
-    results: results
+    matches: matches
+    page: page
     error: error
     time: end - start)
   res.send(200, html))

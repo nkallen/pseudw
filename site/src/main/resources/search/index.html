@@ -1,3 +1,53 @@
+<%
+  RESULTS_PER_PAGE = 20
+  MAX_PAGES = 15
+
+  var root2result = {}
+  for (var m in matches) {
+    var match = matches[m]
+    var root = match
+    while (root.parentNode)
+      root = root.parentNode
+    var nodes = [root]
+    var i = 0
+    if (result = root2result[root.uuid()])
+      result.matches[match.uuid()] = true
+    else {
+      while (nodes.length > i)
+        nodes = nodes.concat(nodes[i++].children)
+      nodes = nodes.sort(function (node1, node2) { return node1.attributes.id - node2.attributes.id })
+
+      var line = []
+      var lines = [line]
+      var currentLineNumber = null
+      for (var n in nodes) {
+        var node = nodes[n]
+        var lineNumber = node.attributes.line
+        if (!currentLineNumber)
+          currentLineNumber = lineNumber
+        if (lineNumber != currentLineNumber) {
+          lines.push(line = [])
+          currentLineNumber = lineNumber
+        }
+        line.push(node)
+
+        root2result[root.uuid()] = {
+          lines: lines,
+          matches: {},
+          root: root
+        }
+      }
+      root2result[root.uuid()].matches[match.uuid()] = true
+    }
+  }
+
+  var results = []
+  for (var r in root2result)
+    results.push(root2result[r])
+  results = results.slice(page * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE + RESULTS_PER_PAGE)
+  results.text = 'Iliad'
+  var count = matches.length
+%>
 <html lang="en">
   <head>
     <title>Search</title>
@@ -5,7 +55,7 @@
     <meta name="description" content="" />
     <meta name="author" content="Nick Kallen" />
     <meta charset="utf-8" />
-    <link href='http://fonts.googleapis.com/css?family=Cardo:400,700' rel='stylesheet' type='text/css'>
+    <!-- link href='http://fonts.googleapis.com/css?family=Cardo:400,700' rel='stylesheet' type='text/css' -->
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" type='text/css' href="/iliados.css" />
 
@@ -47,11 +97,13 @@
           <div class="alert alert-error"><%= error %></div>
         <% } %>
         <% if (results.length > 0) { %>
-          <div class="alert alert-success"><%= count %> results in <%= time %>ms.<% if (results.length > 100) { %> Displaying first 100.<% } %></div>
+          <div class="alert alert-success">
+            <%= count %> results in <%= time %>ms.
+          </div>
           <div class="row">
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
-                <% for (var i = 0; i < Math.min(results.length, 100); i++) { %>
+                <% for (var i = 0; i < Math.min(results.length, RESULTS_PER_PAGE); i++) { %>
                   <% var result = results[i] %>
                   <section class="sentence attributes paragraph words">
                     <blockquote class="row">
@@ -75,12 +127,21 @@
               </div>
             </div>
           </div>
+          <div class="pagination">
+            <ul>
+              <li <% if (page == 0) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=0">&laquo;</a></li>
+              <% for (var i = 0; i < Math.min(count / RESULTS_PER_PAGE, MAX_PAGES ); i++) { %>
+                <li <% if (page == i) print('class="active"') %>><a href="/search?query=<%= (query) %>&page=<%= i %>"><%= i + 1 %></a></li>
+              <% } %>
+              <li <% if (page == count / RESULTS_PER_PAGE) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=10" >&raquo;</a></li>
+            </ul>
+          </div>
         <% } else if (query && !error) { %>
           <div class="alert">0 results</div>
         <% } %>
       </div>
     </div>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script src="/iliados.js"></script>
     <div class='info-well span5 prototype'>
