@@ -12,7 +12,9 @@ app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
 start = new Date
-docs = for book in fs.readdirSync(__dirname + '/../resources/iliad/books/')
+books = for book in fs.readdirSync(__dirname + '/../resources/iliad/books/')
+books = books.sort((a, b) -> Number(a) - Number(b))
+docs = book for book in books
   libxml.parseXml(fs.readFileSync(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8'))
 database = treebank.load(docs)
 console.log("Loaded data in #{new Date - start}ms")
