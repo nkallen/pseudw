@@ -218,7 +218,7 @@ Treebank =
               degree: wordNode.attr('data-degree')?.value()
 
             attributes.line = line
-            attributes.book = book if attributes.parentId == '0'
+            attributes.book = book # if attributes.parentId == '0'
 
             word = new DomShim(attributes)
             id2word[attributes.id] = word
