@@ -52,8 +52,18 @@ app.get('/search', (req, res, next) ->
       while nodes.length > i
         nodes = nodes.concat(nodes[i].children)
         i++
-      root2result[root.uuid()] =
-        nodes: nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
+      root2result[root.uuid()] = do ->
+        lines = [line = []]
+        currentLineNumber = null
+        for node in nodes.sort((node1, node2) -> node1.attributes.id - node2.attributes.id)
+          lineNumber = node.attributes.line
+          currentLineNumber = lineNumber unless currentLineNumber
+          if lineNumber != currentLineNumber
+            lines.push(line = [])
+            currentLineNumber = lineNumber
+          line.push(node)
+
+        lines: lines
         matches: {}
         root: root
       root2result[root.uuid()].matches[match.uuid()] = true

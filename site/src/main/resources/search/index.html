@@ -55,18 +55,20 @@
                   <% var result = results[i] %>
                   <section class="sentence attributes paragraph words">
                     <blockquote class="row">
-                      <% var line = Number.MAX_VALUE %>
-                      <% for (j in results[i].nodes) { %>
-                        <%
-                          var word = result.nodes[j];
-                          var attributes = word.attributes;
-                          line = Math.min(line, attributes.line)
-                        %>
-                        <% if (result.matches[word.uuid()]) { print("<b>") } %>
-                          <span data-lemma="<%= attributes.lemma %>" data-sentence-id="<%= attributes.sentenceId %>" data-id="<%= attributes.id %>" data-parent-id="<%= attributes.parentId %>" data-part-of-speech="<%= attributes.partOfSpeech %>" data-number="<%= attributes.number %>" data-gender="<%= attributes.gender %>" data-case="<%= attributes.case %>" data-relation="<%= attributes.relation %>" data-person="<%= attributes.person %>" data-tense="<%= attributes.tense %>" data-mood="<%= attributes.mood %>" data-voice="<%= attributes.voice %>"><%= attributes.form %></span>
-                        <% if (result.matches[word.uuid()]) print("</b>") %>
+                      <% for (j in result.lines) { %>
+                        <% var line = result.lines[j] %>
+                        <% for (k in line) { %>
+                          <%
+                            var word = line[k];
+                            var attributes = word.attributes;
+                          %>
+                          <% if (result.matches[word.uuid()]) { print("<b>") } %>
+                            <span data-lemma="<%= attributes.lemma %>" data-sentence-id="<%= attributes.sentenceId %>" data-id="<%= attributes.id %>" data-parent-id="<%= attributes.parentId %>" data-part-of-speech="<%= attributes.partOfSpeech %>" data-number="<%= attributes.number %>" data-gender="<%= attributes.gender %>" data-case="<%= attributes.case %>" data-relation="<%= attributes.relation %>" data-person="<%= attributes.person %>" data-tense="<%= attributes.tense %>" data-mood="<%= attributes.mood %>" data-voice="<%= attributes.voice %>"><%= attributes.form %></span>
+                          <% if (result.matches[word.uuid()]) print("</b>") %>
+                        <% } %>
+                        <br />
                       <% } %>
-                      <small><cite title="#{results.text}"><a href="/<%= results.text %>/books/<%= result.root.attributes.book %>"><%= results.text %> <%= result.root.attributes.book %>.<%= line %></a></cite></small>
+                      <small><cite title="#{results.text}"><a href="/<%= results.text %>/books/<%= result.root.attributes.book %>"><%= results.text %> <%= result.root.attributes.book %>.<%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a></cite></small>
                     </blockquote>
                   </section>
                 <% } %>
