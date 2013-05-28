@@ -131,7 +131,9 @@ $(function() {
 
       var bfs   = [$word];
       var stack = [$word];
+      var depth = 0;
       while (stack.length > 0) {
+        if (++depth > 2) break;
         var $current  = stack.pop();
         var level = $();
         $current.each(function() {
