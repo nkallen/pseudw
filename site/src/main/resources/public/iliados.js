@@ -120,7 +120,7 @@ $(function() {
       $info.find('.content').html($translation.html());
       $row.after($infoWell);
 
-      var $section  = $word.parents('section.card').first();
+      var $section  = $word.parents('.paragraph').first();
       var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
 
       var $parent     = $word;

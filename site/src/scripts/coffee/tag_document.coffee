@@ -82,6 +82,7 @@ do ->
               section =
                 paras: []
                 type: 'prose'
+              sections.push(section)
             handleLine(child, section.paras)
           when "div2"
             for speech in child.find("./sp")
