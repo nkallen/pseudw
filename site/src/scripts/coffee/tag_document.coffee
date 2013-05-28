@@ -7,7 +7,9 @@ treebank = util.treebank
 libxml = require('libxmljs')
 
 for file in fs.readdirSync(__dirname + '/../../../../treebank/data/')
-  continue unless /0133\.xml$/.test(file)
+  continue unless /\.xml$/.test(file)
+  continue if file in ['1999.01.0131.xml', 'agdt-1.6.xml', 'tlg0059.tlg001.perseus-grc1.tb.xml'] # the former has numerous inconsistencies
+  console.log("Processing #{file}")
 
   tags = fs.readFileSync("../treebank/data/#{file}", 'utf8')
 
@@ -15,10 +17,11 @@ for file in fs.readdirSync(__dirname + '/../../../../treebank/data/')
   doc = fs.readFileSync("/Users/nkallen/Workspace/Perseus/texts/1999.01/#{file}", 'utf8')
 
   divs = []
+  metadata = libxml.parseXml(metadata)
   tags = libxml.parseXml(tags)
   doc = libxml.parseXml(doc)
 
-  title = metadata.find("//datum[@key='dc:Title']").text()
+  title = metadata.find("//datum[@key='dc:Title']")[0].text()
   words = tags.find("//word")
   for divNode in doc.find("//div1")
     type = divNode.attr('type').value()
@@ -31,17 +34,18 @@ for file in fs.readdirSync(__dirname + '/../../../../treebank/data/')
       switch child.name()
         when "milestone"
           throw "Expecting card" unless child.attr("unit").value() == "card"
+          div.paras.push(para = [])
         when "l" # line
           for lineChild in child.childNodes()
             switch lineChild.name()
               when "milestone"
                 throw "Expecting para" unless lineChild.attr("unit").value() == "para"
-                para = []
-                div.paras.push(para)
+                div.paras.push(para = [])
               when "text"
                 l = []
                 para.push(l)
-                line = lineChild.text()
+                line = lineChild.text().trim()
+                line = line.replace(/<|>/, '')
                 originalLine = line
                 while line.length > 0
                   word = words.shift()
@@ -64,9 +68,18 @@ for file in fs.readdirSync(__dirname + '/../../../../treebank/data/')
   for div in divs
     divNumber++
     try
+      fs.mkdirSync(path = "src/main/resources/#{title.toLowerCase()}")
+    catch e
+      throw e unless e.code == 'EEXIST'
+    try
+      fs.mkdirSync(path = "src/main/resources/#{title.toLowerCase()}/books")
+    catch e
+      throw e unless e.code == 'EEXIST'
+    try
       fs.mkdirSync(path = "src/main/resources/#{title.toLowerCase()}/books/#{divNumber}")
     catch e
       throw e unless e.code == 'EEXIST'
+
     fd = fs.openSync(path + "/text.html", 'w')
     lineNumber = 0
     out = "<section class='#{div.type.toLowerCase()}' data-number='#{divNumber}'>\n"
