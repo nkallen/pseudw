@@ -1,6 +1,14 @@
 greek = require('./greek')
 vm = require('vm')
 fs = require('fs')
+Enum = require('./enum')
+
+Relation = Enum('Relation')
+
+# Saves some memory
+internPool = {}
+intern = (string) ->
+  internPool[string] || (internPool[string] = string)
 
 Sizzle = do ->
   script = vm.createScript(fs.readFileSync(__dirname + "/../../../../sizzle/sizzle.js", "utf8"), 'sizzle.js');
@@ -36,7 +44,10 @@ class DomShim
     @nodeName = @attributes.lemma
   nodeType: 1
   getAttribute: (attribute) ->
-    @attributes[attribute]
+    if attribute = @attributes[attribute]
+      attribute.toString()
+    else
+      ''
   compareDocumentPosition: (that) ->
     if this.attributes.id < that.attributes.id
       4
@@ -180,7 +191,7 @@ Treebank =
         for lineNode in bookNode.find(".//div[@class='line']")
           line = lineNode.find('.//a')[0].text()
           for wordNode in lineNode.find(".//span")
-            sentenceId = wordNode.attr('data-sentence-id').value()
+            sentenceId = Number(wordNode.attr('data-sentence-id').value())
 
             unless currentSentenceId
               currentSentenceId = sentenceId
@@ -190,7 +201,7 @@ Treebank =
 
               for id, word of id2word
                 attributes = word.attributes
-                if attributes.parentId == '0'
+                if attributes.parentId == 0
                   root = word
                 else
                   parent = id2word[attributes.parentId]
@@ -201,24 +212,24 @@ Treebank =
               id2word = {}
 
             attributes =
-              form: wordNode.text()
-              lemma: wordNode.attr('data-lemma').value()
+              form: intern(wordNode.text())
+              lemma: intern(wordNode.attr('data-lemma').value())
               sentenceId: sentenceId
-              id: wordNode.attr('data-id').value()
-              parentId: wordNode.attr('data-parent-id').value()
-              relation: wordNode.attr('data-relation').value()
-              partOfSpeech: wordNode.attr('data-part-of-speech').value()
-              person: wordNode.attr('data-person')?.value()
-              number: wordNode.attr('data-number')?.value()
-              tense: wordNode.attr('data-tense')?.value()
-              mood: wordNode.attr('data-mood')?.value()
-              voice: wordNode.attr('data-voice')?.value()
-              gender: wordNode.attr('data-gender')?.value()
-              case: wordNode.attr('data-case')?.value()
-              degree: wordNode.attr('data-degree')?.value()
+              id: Number(wordNode.attr('data-id').value())
+              parentId: Number(wordNode.attr('data-parent-id').value())
+              relation: Relation.getOrCreate(wordNode.attr('data-relation').value())
+              partOfSpeech: greek.PartOfSpeech.get(wordNode.attr('data-part-of-speech')?.value())
+              person: greek.Person.get(wordNode.attr('data-person')?.value())
+              number: greek.Number.get(wordNode.attr('data-number')?.value())
+              tense: greek.Tense.get(wordNode.attr('data-tense')?.value())
+              mood: greek.Mood.get(wordNode.attr('data-mood')?.value())
+              voice: greek.Voice.get(wordNode.attr('data-voice')?.value())
+              gender: greek.Gender.get(wordNode.attr('data-gender')?.value())
+              case: greek.Case.get(wordNode.attr('data-case')?.value())
+              degree: greek.Degree.get(wordNode.attr('data-degree')?.value())
 
-            attributes.line = line
-            attributes.book = book # if attributes.parentId == '0'
+            attributes.line = Number(line)
+            attributes.book = Number(book)
 
             word = new DomShim(attributes)
             id2word[attributes.id] = word
@@ -227,7 +238,6 @@ Treebank =
               lemma.push(word)
             else
               tags[attributes.lemma] = [word]
-
     (query) -> Sizzle(query, new DocumentShim(tags))
 
 module.exports = Treebank

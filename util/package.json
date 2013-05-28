@@ -27,7 +27,7 @@
     "npm": "1.1.x"
   },
   "dependencies" : {
-    "coffee-script"  : "1.3.x",
+    "coffee-script"  : "1.6.x",
     "unorm"          : "1.0.x"
   },
   "analyze": true,
@@ -37,6 +37,6 @@
   "bundleDependencies": [],  
   "license": "MIT",
   "engines": {
-    "node": ">=0.8"
+    "node": "0.10.x"
   }
 }

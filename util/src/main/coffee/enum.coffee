@@ -1,9 +1,22 @@
 Enum = (typeName, names...) ->
+  values = []
+  id = 0
   class anon
     constructor: (@name, @id) ->
     toJSON: -> @name
     toString: -> @name
     toSymbol: -> @toString()
+    @get: (symbol) ->
+      if symbol
+        this[symbol] || throw "Invalid symbol #{symbol} for Enumeration #{this}"
+    @getOrCreate: (symbol) ->
+      if symbol
+        this[symbol] || @create(symbol)
+    @create: (name) ->
+      value = new anon(name, id++)
+      anon[name] = value
+      values.push(value)
+      value
     @toSymbol: -> typeName[0].toLowerCase() + typeName[1..-1]
     @toString: -> typeName
     @toBitmap: (elements) ->
@@ -26,15 +39,9 @@ Enum = (typeName, names...) ->
       result.push(word) if i > 0
       result
 
-  values = []
-  id = 0
-  for name in names
-    value = new anon(name, id++)
-    anon[name] = value
-    values.push(value)
-
   anon.values = -> values
-
+  for name in names
+    anon.create(name)
   anon
 
 module.exports = Enum

@@ -124,7 +124,7 @@ do ->
                 out += "<span data-lemma='#{word.lemma}' data-sentence-id='#{word.sentenceId}' data-id='#{word.id}' data-parent-id='#{word.parentId}' data-part-of-speech='#{word.partOfSpeech}' data-relation='#{word.relation}'>#{word.form}</span>"
               else
                 out += sep + "<span data-lemma='#{word.lemma}' data-sentence-id='#{word.sentenceId}' data-id='#{word.id}' data-parent-id='#{word.parentId}'"
-                out += " data-part-of-speech='#{word.partOfSpeech}'"
+                out += " data-part-of-speech='#{word.partOfSpeech}'" if word.partOfSpeech?
                 out += " data-person='#{word.person}'" if word.person?
                 out += " data-number='#{word.number}'" if word.number?
                 out += " data-tense='#{word.tense}'" if word.tense?

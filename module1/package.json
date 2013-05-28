@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "pseudw-util"  : "0.0.x",
-    "coffee-script"  : "1.3.x"
+    "coffee-script"  : "1.6.x"
   },
   "engines": {
     "npm": "1.1.x"

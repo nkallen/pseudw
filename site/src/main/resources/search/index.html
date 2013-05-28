@@ -55,7 +55,7 @@
     <meta name="description" content="" />
     <meta name="author" content="Nick Kallen" />
     <meta charset="utf-8" />
-    <!-- link href='http://fonts.googleapis.com/css?family=Cardo:400,700' rel='stylesheet' type='text/css' -->
+    <link href='http://fonts.googleapis.com/css?family=Cardo:400,700' rel='stylesheet' type='text/css'>
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" type='text/css' href="/iliados.css" />
 
@@ -133,7 +133,7 @@
               <% for (var i = 0; i < Math.min(count / RESULTS_PER_PAGE, MAX_PAGES ); i++) { %>
                 <li <% if (page == i) print('class="active"') %>><a href="/search?query=<%= (query) %>&page=<%= i %>"><%= i + 1 %></a></li>
               <% } %>
-              <li <% if (page == count / RESULTS_PER_PAGE) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=10" >&raquo;</a></li>
+              <li <% if (page >= count / RESULTS_PER_PAGE - 1) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=<%= page + 1 %>" >&raquo;</a></li>
             </ul>
           </div>
         <% } else if (query && !error) { %>

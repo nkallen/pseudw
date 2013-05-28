@@ -11,12 +11,17 @@ app = express()
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
+database = null
+startMem = process.memoryUsage().heapUsed
 start = new Date
-books = for book in fs.readdirSync(__dirname + '/../resources/iliad/books/')
-books = books.sort((a, b) -> Number(a) - Number(b))
-docs = book for book in books
-  libxml.parseXml(fs.readFileSync(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8'))
-database = treebank.load(docs)
+do ->
+  books = (book for book in fs.readdirSync(__dirname + '/../resources/iliad/books/'))
+  books = books.sort((a, b) -> Number(a) - Number(b))
+  docs = for book in books
+    libxml.parseXml(fs.readFileSync(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8'))
+  database = treebank.load(docs)
+global.gc()
+console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
 
 search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))

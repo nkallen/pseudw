@@ -7,14 +7,23 @@ unorm = require('unorm')
 An object model for Greek Grammar and some utilities for character encoding.
 ###
 
-PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'participle')
+PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'participle', 'punctuation', 'particle', 'preposition', 'article', 'conjunction', 'irregular', 'numeral', 'exclamation')
 Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist', 'futurePerfect')
 Gender = Enum('Gender', 'masculine', 'feminine', 'neuter')
+Person = Enum('Person', 'first', 'second', 'third')
 Number = Enum('Number', 'singular', 'dual', 'plural')
 Case = Enum('Case', 'nominative', 'genitive', 'dative', 'accusative', 'vocative')
 Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
-Mood = Enum('Mood', 'indicative', 'optatitive', 'imperative', 'subjunctive')
+Mood = Enum('Mood', 'indicative', 'optative', 'imperative', 'subjunctive', 'infinitive')
 Dialect = Enum('Dialect', 'aeolic',  'poetic', 'attic', 'doric', 'prose', 'ionic', 'epic', 'parad_form', 'homeric')
+Degree = Enum('Degree', 'comparative', 'superlative')
+
+###
+Synonyms
+###
+
+Voice['middle-passive'] = Voice.middlePassive
+Tense['future perfect'] = Tense.futurePerfect
 
 Feature = Enum('Feature',
   'a_copul',
@@ -242,12 +251,14 @@ betacode2unicode = do ->
 module.exports =
   PartOfSpeech: PartOfSpeech
   Tense: Tense
+  Person: Person
   Gender: Gender
   Number: Number
   Case: Case
   Voice: Voice
   Mood: Mood
   Verb: Verb
+  Degree: Degree
   Inflections: Inflections
   ParticipleDesc: ParticipleDesc
   Participle: Participle
