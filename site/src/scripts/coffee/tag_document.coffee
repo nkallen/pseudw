@@ -92,21 +92,25 @@ do ->
               sections.push(handleSpeech(speech))
           else
             # console.log("skipping #{child.name()}")
-    out = ""
     divNumber = 0
-    fd = null
+    out = fd = null
     for div in divs
       if newBook = (divNumber++ == 0 || div.type == 'book')
+        out = ""
         for path in ["src/main/resources/texts/#{title.toLowerCase()}", "src/main/resources/texts/#{title.toLowerCase()}/books", "src/main/resources/texts/#{title.toLowerCase()}/books/#{divNumber}"]
           try
             fs.mkdirSync(path)
           catch e
             throw e unless e.code == 'EEXIST'
 
+        if fd
+          fs.writeSync(fd, out)
+          fs.closeSync(fd)
+
         fd = fs.openSync(path + "/text.html", 'w')
 
       lineNumber = 0
-      out = "<section class='#{div.type.toLowerCase()}' data-number='#{divNumber}'>\n"
+      out += "<section class='#{div.type.toLowerCase()}' data-number='#{divNumber}'>\n"
       for section in div.sections
         if section.type == 'speech'
           out += "  <div class='speech'>\n"
@@ -139,8 +143,8 @@ do ->
         if section.type == 'speech'
           out += "  </div>\n"
       out += "</section>\n"
-      if newBook
-        fs.writeSync(fd, out)
-        fs.closeSync(fd)
+
+    fs.writeSync(fd, out)
+    fs.closeSync(fd)
 
     fs.writeSync(fs.openSync("../treebank/data/#{file}", 'w'), tags.toString())
