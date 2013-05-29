@@ -25,6 +25,7 @@ do ->
     textName2index[textName] = treebank.load(xmls)
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
+console.log(JSON.stringify(textName2index))
 
 searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->

@@ -15,10 +15,7 @@ $(function() {
     $info.find('.content').text('');
     $infoWell.remove();
     state.each(function() {
-      $this = $(this);
-      $($this.data('original')) // hack
-          .removeAttr('style')
-      $this.remove();
+      $(this).removeClass('highlight').removeClass('label-info').removeClass('label-important').removeAttr('style')
     });
     state = $();
     complete && complete();
@@ -27,20 +24,9 @@ $(function() {
   function highlight($item) {
     var result = $();
     $item.each(function () {
-      var $this = $(this);
-      var position = $this.position();
-      var $highlight = $this.clone();
-      $highlight
-        .css('position', 'absolute')
-        .data('original', $this)
-        .click(function() { $this.click() })
-        .css('top', position.top)
-        .css('left', position.left)
-        .addClass('highlight')
-        .appendTo($this.parent());
-      $this.css('visibility', 'hidden');
-      result = result.add($highlight);
-      state = state.add($highlight);
+      var $this = $(this).addClass('highlight');
+      result = result.add($this);
+      state = state.add($this);
     });
     return result;
   }
@@ -86,10 +72,7 @@ $(function() {
         var $lineNumber = $this.find('.line-number');
         var $note = $lineNumber.data('note');
         if ($note) {
-          highlight($lineNumber).addClass('label').addClass('label-info').click(function() {
-            reset();
-            return false;
-          });
+          highlight($lineNumber).addClass('label-info');
           $info.find('h4')
             .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
           $info.find('.content')
@@ -147,17 +130,13 @@ $(function() {
         }
       };
 
-      highlight($word)
-        .addClass('label').addClass('label-info')
-        .off('click')
-        .click(function() { reset() });
+      highlight($word).addClass('label-info')
       bfs.shift();
       var level = 1; // pretend we skipped one
       bfs.forEach(function(nodes) {
         var opacity = 1.0 - level++ / (bfs.length + 1);
         highlight(nodes)
           .css('opacity', opacity)
-          .addClass('label')
           .addClass('label-info');
       });
       level = 1; // pretend we skipped one
@@ -165,12 +144,11 @@ $(function() {
         var opacity = 1.0 - (level++ / (parents.length + 1));
         highlight(parent)
           .css('opacity', opacity)
-          .addClass('label')
           .addClass('label-important');
       });
 
       setTimeout(function() {
-        highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('label')
+        highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('highlight')
       }, 10)
     })
   });

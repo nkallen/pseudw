@@ -144,7 +144,7 @@ do ->
           out += "  </div>\n"
       out += "</section>\n"
 
-    fs.writeSync(fd, out)
+    fs.writeSync(fd, "<div>#{out}</div>")
     fs.closeSync(fd)
 
     fs.writeSync(fs.openSync("../treebank/data/#{file}", 'w'), tags.toString())

@@ -17,7 +17,7 @@ connection.connect((err) -> throw err if err?)
 dirs = []
 processDir = (dir) ->
   console.log(dir)
-  text = libxml.parseXml("<div>" + fs.readFileSync("#{dir}/text.html", 'utf8') + "</div>")
+  text = libxml.parseXml(fs.readFileSync("#{dir}/text.html", 'utf8'))
   lemmas = {}
   words = text.find("//div[@class='words span5']/span")
   for word in words
