@@ -94,15 +94,17 @@ do ->
             # console.log("skipping #{child.name()}")
     out = ""
     divNumber = 0
+    fd = null
     for div in divs
-      divNumber++
-      for path in ["src/main/resources/texts/#{title.toLowerCase()}", "src/main/resources/texts/#{title.toLowerCase()}/books", "src/main/resources/texts/#{title.toLowerCase()}/books/#{divNumber}"]
-        try
-          fs.mkdirSync(path)
-        catch e
-          throw e unless e.code == 'EEXIST'
+      if newBook = (divNumber++ == 0 || div.type == 'book')
+        for path in ["src/main/resources/texts/#{title.toLowerCase()}", "src/main/resources/texts/#{title.toLowerCase()}/books", "src/main/resources/texts/#{title.toLowerCase()}/books/#{divNumber}"]
+          try
+            fs.mkdirSync(path)
+          catch e
+            throw e unless e.code == 'EEXIST'
 
-      fd = fs.openSync(path + "/text.html", 'w')
+        fd = fs.openSync(path + "/text.html", 'w')
+
       lineNumber = 0
       out = "<section class='#{div.type.toLowerCase()}' data-number='#{divNumber}'>\n"
       for section in div.sections
@@ -137,6 +139,8 @@ do ->
         if section.type == 'speech'
           out += "  </div>\n"
       out += "</section>\n"
-      fs.writeSync(fd, out)
-      fs.closeSync(fd)
-      fs.writeSync(fs.openSync("../treebank/data/#{file}", 'w'), tags.toString())
+      if newBook
+        fs.writeSync(fd, out)
+        fs.closeSync(fd)
+
+    fs.writeSync(fs.openSync("../treebank/data/#{file}", 'w'), tags.toString())
