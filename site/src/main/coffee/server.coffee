@@ -42,7 +42,6 @@ app.get('/', (req, res, next) ->
 app.get('/search', (req, res, next) ->
   searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
   query = req.query.query
-  console.log(req.query)
   selectedTextNames =
     if req.query.texts
       if Array.isArray(req.query.texts)
@@ -77,23 +76,25 @@ app.get('/search', (req, res, next) ->
 
 template = _.template(fs.readFileSync(__dirname + '/../resources/text.html', 'utf8'))
 app.get('/:name/books/:book', (req, res, next) ->
-  return res.status(404).end() unless 1 <= (book = Number(req.params.book)) <= 24
+  book = Number(req.params.book) || 1
   return res.status(404).end() unless /(\w|\s)+/.test(name = req.params.name)
 
-  fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/text.html", 'utf8', (err, text) ->
-    return res.status(404).end() if err?
+  books = fs.readdir(__dirname + "/../resources/texts/#{name}/books/", (err, books) ->
+    fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/text.html", 'utf8', (err, text) ->
+      return res.status(404).end() if err?
 
-    fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
-      fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/notes.html", 'utf8', (err, notes) ->
-        html = template(
-          name: name
-          book: book
-          text: text
-          lexicon: lexicon
-          notes: notes)
+      fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
+        fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/notes.html", 'utf8', (err, notes) ->
+          html = template(
+            name: name
+            books: books
+            book: book
+            text: text
+            lexicon: lexicon
+            notes: notes)
 
-        res.charset = 'utf-8'
-        res.type('text/html')
-        res.send(200, html)))))
+          res.charset = 'utf-8'
+          res.type('text/html')
+          res.send(200, html))))))
 
 app.listen(process.env.PORT)

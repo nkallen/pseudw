@@ -29,16 +29,18 @@
             <a class="brand" href="#"><%= name.toUpperCase() %></a>
             <ul class="nav">
               <li>
-                <div class="btn-group">
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    Book <%= book %> <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <% for (var i = 1; i <= 24; i++) { %>
-                      <li><a href="/<%= name %>/books/<%= i %>">Book <%= i %></a></li>
-                    <% } %>
-                  </ul>
-                </div>
+                <% if (books.length > 1) { %>
+                  <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                      Book <%= book %> <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <% for (var i in books) { %>
+                        <li><a href="/<%= name %>/books/<%= books[i] %>">Book <%= i %></a></li>
+                      <% } %>
+                    </ul>
+                  </div>
+                <% } %>
               </li>
               <li><a class="range"><input type="text" class="start input-mini" value="1" />..<input type="text" class="end input-mini" /></a></li>
               <li><a class="vocabulary">Vocabulary</a></li>
