@@ -11,15 +11,16 @@ app = express()
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
-database = null
+texts = {}
 startMem = process.memoryUsage().heapUsed
 start = new Date
 do ->
-  books = (book for book in fs.readdirSync(__dirname + '/../resources/texts/iliad/books/'))
-  books = books.sort((a, b) -> Number(a) - Number(b))
-  docs = for book in books
-    libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/iliad/books/#{book}/text.html", 'utf8'))
-  database = treebank.load(docs)
+  for text in fs.readdirSync(__dirname + '/../resources/texts/')
+    books = (book for book in fs.readdirSync(__dirname + "/../resources/texts/#{text}/books/"))
+    books = books.sort((a, b) -> Number(a) - Number(b))
+    docs = for book in books
+      libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/iliad/books/#{book}/text.html", 'utf8'))
+    texts[text] = treebank.load(docs)
 global.gc()
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
@@ -43,7 +44,7 @@ app.get('/search', (req, res, next) ->
   start = end = null
   try
     start = new Date
-    matches = database(query)
+    matches = database.iliad(query)
     end = new Date
   catch e
     error = e
@@ -58,7 +59,7 @@ app.get('/search', (req, res, next) ->
     time: end - start)
   res.send(200, html))
 
-template = _.template(fs.readFileSync(__dirname + '/../resources/texts/text.html', 'utf8'))
+template = _.template(fs.readFileSync(__dirname + '/../resources/text.html', 'utf8'))
 app.get('/:name/books/:book', (req, res, next) ->
   return res.status(404).end() unless 1 <= (book = Number(req.params.book)) <= 24
   return res.status(404).end() unless /(\w|\s)+/.test(name = req.params.name)

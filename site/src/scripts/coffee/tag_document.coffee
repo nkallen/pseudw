@@ -96,18 +96,11 @@ do ->
     divNumber = 0
     for div in divs
       divNumber++
-      try
-        fs.mkdirSync(path = "src/main/resources/#{title.toLowerCase()}")
-      catch e
-        throw e unless e.code == 'EEXIST'
-      try
-        fs.mkdirSync(path = "src/main/resources/#{title.toLowerCase()}/books")
-      catch e
-        throw e unless e.code == 'EEXIST'
-      try
-        fs.mkdirSync(path = "src/main/resources/#{title.toLowerCase()}/books/#{divNumber}")
-      catch e
-        throw e unless e.code == 'EEXIST'
+      for path in ["src/main/resources/texts/#{title.toLowerCase()}", "src/main/resources/texts/#{title.toLowerCase()}/books", "src/main/resources/texts/#{title.toLowerCase()}/books/#{divNumber}"]
+        try
+          fs.mkdirSync(path)
+        catch e
+          throw e unless e.code == 'EEXIST'
 
       fd = fs.openSync(path + "/text.html", 'w')
       lineNumber = 0
