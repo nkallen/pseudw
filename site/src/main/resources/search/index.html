@@ -1,5 +1,5 @@
 <%
-  RESULTS_PER_PAGE = 20
+  RESULTS_PER_PAGE = 40
   MAX_PAGES = 15
 
   var root2result = {}
@@ -12,6 +12,7 @@
     count += matches.length
     for (var m in matches) {
       var match = matches[m]
+      console.log(match.attributes.form)
       var root = match
       while (root.parentNode)
         root = root.parentNode
@@ -54,6 +55,7 @@
   for (var r in root2result)
     results.push(root2result[r])
   var items = results.length
+  console.log(items)
   results = results.slice(page * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE + RESULTS_PER_PAGE + 1)
 %>
 <html lang="en">

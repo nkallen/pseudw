@@ -20,7 +20,7 @@ do ->
     books = (book for book in fs.readdirSync(__dirname + "/../resources/texts/#{text}/books/"))
     books = books.sort((a, b) -> Number(a) - Number(b))
     docs = for book in books
-      libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/iliad/books/#{book}/text.html", 'utf8'))
+      libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/#{text}/books/#{book}/text.html", 'utf8'))
     databases[text] = treebank.load(docs)
 
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
@@ -72,11 +72,7 @@ app.get('/:name/books/:book', (req, res, next) ->
     return res.status(404).end() if err?
 
     fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
-      return res.status(500).end() if err?
-
       fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/notes.html", 'utf8', (err, notes) ->
-        return res.status(500).end() if err?
-
         html = template(
           book: book,
           text: text,
