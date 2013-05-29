@@ -14,7 +14,7 @@ connection = mysql.createConnection(
 
 connection.connect((err) -> throw err if err?)
 
-dirs = fs.readdirSync(path = 'src/main/resources/iliad/books/')
+dirs = fs.readdirSync(path = 'src/main/resources/texts/iliad/books/')
 processDir = (dir) ->
   text = libxml.parseXml(fs.readFileSync(path + "#{dir}/text.html", 'utf8'))
   lemmas = {}

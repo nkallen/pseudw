@@ -32,7 +32,11 @@ handleLine = (node, paras) ->
             line = line[spaces.length..]
 
           unless token == form
-            console.warn("Warning: token mismatch on line '#{originalLine}'\n '#{token}' <=> '#{word}'")
+            if token in ['—', '†', '）', '（', '“', '”', ';']
+              console.warn("Fixing token mismatch on line '#{line}'\n '#{token}' <=> '#{word}'")
+              word.attr('form').value(token)
+            else
+              throw "Token mismatch on line '#{originalLine}'\n '#{token}' <=> '#{word}'"
 
           word = treebank.wordNode2word(word)
           l.push(word)
@@ -49,10 +53,9 @@ handleSpeech = (node) ->
 do ->
   for file in fs.readdirSync(__dirname + '/../../../../treebank/data/')
     continue unless /\.xml$/.test(file)
-    continue unless file in ['1999.01.0003.xml', '1999.01.0133.xml', '1999.01.0135.xml']
+    continue unless file in ['1999.01.0003.xml', '1999.01.0005.xml', '1999.01.0133.xml', '1999.01.0135.xml', '1999.01.0127.xml', '1999.01.0129.xml', '1999.01.0131.xml']
 
     tags = fs.readFileSync("../treebank/data/#{file}", 'utf8')
-
     metadata = fs.readFileSync("/Users/nkallen/Workspace/Perseus/texts/1999.01/#{file.replace(/xml/, 'metadata.xml')}", 'utf8')
     doc = fs.readFileSync("/Users/nkallen/Workspace/Perseus/texts/1999.01/#{file}", 'utf8')
 
@@ -143,3 +146,4 @@ do ->
       out += "</section>\n"
       fs.writeSync(fd, out)
       fs.closeSync(fd)
+      fs.writeSync(fs.openSync("../treebank/data/#{file}", 'w'), tags.toString())

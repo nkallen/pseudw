@@ -15,10 +15,10 @@ database = null
 startMem = process.memoryUsage().heapUsed
 start = new Date
 do ->
-  books = (book for book in fs.readdirSync(__dirname + '/../resources/iliad/books/'))
+  books = (book for book in fs.readdirSync(__dirname + '/../resources/texts/iliad/books/'))
   books = books.sort((a, b) -> Number(a) - Number(b))
   docs = for book in books
-    libxml.parseXml(fs.readFileSync(__dirname + "/../resources/iliad/books/#{book}/text.html", 'utf8'))
+    libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/iliad/books/#{book}/text.html", 'utf8'))
   database = treebank.load(docs)
 global.gc()
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
@@ -58,23 +58,21 @@ app.get('/search', (req, res, next) ->
     time: end - start)
   res.send(200, html))
 
-iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
+template = _.template(fs.readFileSync(__dirname + '/../resources/texts/text.html', 'utf8'))
 app.get('/:name/books/:book', (req, res, next) ->
   return res.status(404).end() unless 1 <= (book = Number(req.params.book)) <= 24
-  return res.status(404).end() unless /\w+/.test(name = req.params.name)
+  return res.status(404).end() unless /(\w|\s)+/.test(name = req.params.name)
 
-  iliad = _.template(fs.readFileSync(__dirname + '/../resources/iliad/iliad.html', 'utf8'))
-
-  fs.readFile(__dirname + "/../resources/#{name}/books/#{book}/text.html", 'utf8', (err, text) ->
+  fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/text.html", 'utf8', (err, text) ->
     return res.status(404).end() if err?
 
-    fs.readFile(__dirname + "/../resources/#{name}/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
+    fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/lexicon.html", 'utf8', (err, lexicon) ->
       return res.status(500).end() if err?
 
-      fs.readFile(__dirname + "/../resources/#{name}/books/#{book}/notes.html", 'utf8', (err, notes) ->
+      fs.readFile(__dirname + "/../resources/texts/#{name}/books/#{book}/notes.html", 'utf8', (err, notes) ->
         return res.status(500).end() if err?
 
-        html = iliad(
+        html = template(
           book: book,
           text: text,
           lexicon: lexicon,
