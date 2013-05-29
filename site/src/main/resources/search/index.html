@@ -3,50 +3,58 @@
   MAX_PAGES = 15
 
   var root2result = {}
-  for (var m in matches) {
-    var match = matches[m]
-    var root = match
-    while (root.parentNode)
-      root = root.parentNode
-    var nodes = [root]
-    var i = 0
-    if (result = root2result[root.uuid()])
-      result.matches[match.uuid()] = true
-    else {
-      while (nodes.length > i)
-        nodes = nodes.concat(nodes[i++].children)
-      nodes = nodes.sort(function (node1, node2) { return node1.attributes.id - node2.attributes.id })
+  var count = 0
+  for (var r in results) {
+    var result = results[r]
+    var matches = result.matches
+    var text = result.text
 
-      var line = []
-      var lines = [line]
-      var currentLineNumber = null
-      for (var n in nodes) {
-        var node = nodes[n]
-        var lineNumber = node.attributes.line
-        if (!currentLineNumber)
-          currentLineNumber = lineNumber
-        if (lineNumber != currentLineNumber) {
-          lines.push(line = [])
-          currentLineNumber = lineNumber
-        }
-        line.push(node)
+    count += matches.length
+    for (var m in matches) {
+      var match = matches[m]
+      var root = match
+      while (root.parentNode)
+        root = root.parentNode
+      root.text = text
+      var nodes = [root]
+      var i = 0
+      if (result = root2result[root.uuid()])
+        result.matches[match.uuid()] = true
+      else {
+        while (nodes.length > i)
+          nodes = nodes.concat(nodes[i++].children)
+        nodes = nodes.sort(function (node1, node2) { return node1.attributes.id - node2.attributes.id })
 
-        root2result[root.uuid()] = {
-          lines: lines,
-          matches: {},
-          root: root
+        var line = []
+        var lines = [line]
+        var currentLineNumber = null
+        for (var n in nodes) {
+          var node = nodes[n]
+          var lineNumber = node.attributes.line
+          if (!currentLineNumber)
+            currentLineNumber = lineNumber
+          if (lineNumber != currentLineNumber) {
+            lines.push(line = [])
+            currentLineNumber = lineNumber
+          }
+          line.push(node)
+
+          root2result[root.uuid()] = {
+            lines: lines,
+            matches: {},
+            root: root
+          }
         }
+        root2result[root.uuid()].matches[match.uuid()] = true
       }
-      root2result[root.uuid()].matches[match.uuid()] = true
     }
   }
 
   var results = []
   for (var r in root2result)
     results.push(root2result[r])
-  results = results.slice(page * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE + RESULTS_PER_PAGE)
-  results.text = 'Iliad'
-  var count = matches.length
+  var items = results.length
+  results = results.slice(page * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE + RESULTS_PER_PAGE + 1)
 %>
 <html lang="en">
   <head>
@@ -103,7 +111,7 @@
           <div class="row">
             <div class="span5">
               <div class="matches text" style="margin-top: 0">
-                <% for (var i = 0; i < Math.min(results.length, RESULTS_PER_PAGE); i++) { %>
+                <% for (var i = 0; i < results.length; i++) { %>
                   <% var result = results[i] %>
                   <section class="sentence attributes paragraph words">
                     <blockquote class="row">
@@ -120,7 +128,7 @@
                         <% } %>
                         <br />
                       <% } %>
-                      <small><cite title="#{results.text}"><a href="/<%= results.text %>/books/<%= result.root.attributes.book %>"><%= results.text %> <%= result.root.attributes.book %>.<%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a></cite></small>
+                      <small><cite title="#{result.root.text}"><a href="/<%= result.root.text %>/books/<%= result.root.attributes.book %>"><%= result.root.text %> <%= result.root.attributes.book %>.<%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a></cite></small>
                     </blockquote>
                   </section>
                 <% } %>
@@ -130,10 +138,10 @@
           <div class="pagination">
             <ul>
               <li <% if (page == 0) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=0">&laquo;</a></li>
-              <% for (var i = 0; i < Math.min(count / RESULTS_PER_PAGE, MAX_PAGES ); i++) { %>
+              <% for (var i = 0; i < Math.min(items / RESULTS_PER_PAGE, MAX_PAGES ); i++) { %>
                 <li <% if (page == i) print('class="active"') %>><a href="/search?query=<%= (query) %>&page=<%= i %>"><%= i + 1 %></a></li>
               <% } %>
-              <li <% if (page >= count / RESULTS_PER_PAGE - 1) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=<%= page + 1 %>" >&raquo;</a></li>
+              <li <% if (page >= items / RESULTS_PER_PAGE - 1) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=<%= page + 1 %>" >&raquo;</a></li>
             </ul>
           </div>
         <% } else if (query && !error) { %>

@@ -11,17 +11,18 @@ app = express()
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
-texts = {}
+databases = {}
 startMem = process.memoryUsage().heapUsed
 start = new Date
+
 do ->
   for text in fs.readdirSync(__dirname + '/../resources/texts/')
     books = (book for book in fs.readdirSync(__dirname + "/../resources/texts/#{text}/books/"))
     books = books.sort((a, b) -> Number(a) - Number(b))
     docs = for book in books
       libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/iliad/books/#{book}/text.html", 'utf8'))
-    texts[text] = treebank.load(docs)
-global.gc()
+    databases[text] = treebank.load(docs)
+
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
 
@@ -35,16 +36,19 @@ app.get('/', (req, res, next) ->
     error: null)
   res.send(200, html))
 
+all_databases = Object.keys(databases)
 app.get('/search', (req, res, next) ->
   search = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
-  matches = []
   query = req.query.query
+  names = req.query.databases || all_databases
   page = Number(req.query.page) || 0
-  error = null
-  start = end = null
+  start = end = error = results = null
   try
     start = new Date
-    matches = database.iliad(query)
+    results = for name in names
+      matches: databases[name](query)
+      text: name
+
     end = new Date
   catch e
     error = e
@@ -53,7 +57,7 @@ app.get('/search', (req, res, next) ->
   res.type('text/html')
   html = search(
     query: query
-    matches: matches
+    results: results
     page: page
     error: error
     time: end - start)
