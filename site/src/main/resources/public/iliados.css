@@ -182,3 +182,7 @@ thead td.caption {
 .tooltip {
   z-index: 2000 !important;
 }
+.speaker {
+  font-weight: bold;
+  margin-left: 200px;
+}

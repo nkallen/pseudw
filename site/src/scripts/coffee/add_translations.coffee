@@ -14,9 +14,10 @@ connection = mysql.createConnection(
 
 connection.connect((err) -> throw err if err?)
 
-dirs = fs.readdirSync(path = 'src/main/resources/texts/iliad/books/')
+dirs = []
 processDir = (dir) ->
-  text = libxml.parseXml(fs.readFileSync(path + "#{dir}/text.html", 'utf8'))
+  console.log(dir)
+  text = libxml.parseXml("<div>" + fs.readFileSync("#{dir}/text.html", 'utf8') + "</div>")
   lemmas = {}
   words = text.find("//div[@class='words span5']/span")
   for word in words
@@ -41,10 +42,14 @@ processDir = (dir) ->
 
   processLemma(lemmas.pop(), () ->
     out += "</ul>"
-    fs.writeFileSync(path + "#{dir}/lexicon.html", out)
+    fs.writeFileSync("#{dir}/lexicon.html", out)
     if dirs.length > 0
       processDir(dirs.pop())
     else
       connection.end((err) -> throw err if err?))
+
+for text in fs.readdirSync(root = __dirname + '/../../main/resources/texts')
+  for book in fs.readdirSync(part = "#{root}/#{text}/books")
+    dirs.push("#{part}/#{book}")
 
 processDir(dirs.pop())

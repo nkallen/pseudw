@@ -95,8 +95,7 @@ do ->
     divNumber = 0
     out = fd = null
     for div in divs
-      if newBook = (divNumber++ == 0 || div.type == 'book')
-        out = ""
+      if newBook = (divNumber++ == 0 || div.type == 'Book')
         for path in ["src/main/resources/texts/#{title.toLowerCase()}", "src/main/resources/texts/#{title.toLowerCase()}/books", "src/main/resources/texts/#{title.toLowerCase()}/books/#{divNumber}"]
           try
             fs.mkdirSync(path)
@@ -107,9 +106,10 @@ do ->
           fs.writeSync(fd, out)
           fs.closeSync(fd)
 
+        out = ""
         fd = fs.openSync(path + "/text.html", 'w')
+        lineNumber = 0
 
-      lineNumber = 0
       out += "<section class='#{div.type.toLowerCase()}' data-number='#{divNumber}'>\n"
       for section in div.sections
         if section.type == 'speech'
