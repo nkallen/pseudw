@@ -24,7 +24,7 @@
     "ancient"
   ],
   "engines": {
-    "npm": "1.1.x"
+    "npm": "1.2.x"
   },
   "dependencies" : {
     "coffee-script"  : "1.6.x",
