@@ -12,7 +12,7 @@ intern = (string) ->
 
 Sizzle = do ->
   script = vm.createScript(fs.readFileSync(__dirname + "/../javascript/sizzle/sizzle.js", "utf8"), 'sizzle.js');
-  sandbox = { window: {}, document: null, console: console }
+  sandbox = { window: { document: {} }, document: {} }
   script.runInNewContext(sandbox)
   sandbox.window.Sizzle
 
