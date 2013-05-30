@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "libxmljs"       : "0.8.x",
-    "express"        : "3.0.x",
+    "express"        : "3.2.x",
     "unorm"          : "1.0.x",
     "pseudw-module1" : "0.0.x",
     "pseudw-util"    : "0.0.x",
     "parseUri"       : "1.2.x",
     "coffee-script"  : "1.6.x",
-    "pg"             : "0.8.x",
+    "pg"             : "1.1.x",
     "underscore"     : "1.4.x"
   },
   "engines": {
