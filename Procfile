@@ -1,2 +1,2 @@
-web: coffee --nodejs --trace-gc --expose-gc ./site/src/main/coffee/server.coffee
+web: coffee --nodejs --expose-gc ./site/src/main/coffee/server.coffee
 

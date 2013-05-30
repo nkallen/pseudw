@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.coffee",
   "scripts": {
-    "start": "coffee ./src/main/coffee/server.coffee",
+    "start": "coffee --nodejs --expose-gc ./src/main/coffee/server.coffee",
     "test": "",
     "import": "./src/scripts/coffee/import.coffee"
   },

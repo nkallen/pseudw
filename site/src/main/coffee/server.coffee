@@ -17,7 +17,7 @@ startMem = process.memoryUsage().heapUsed
 start = new Date
 do ->
   for textName in fs.readdirSync(__dirname + '/../resources/texts/')
-    global.gc()
+#    global.gc()
     console.log(textName, process.memoryUsage())
     textNames.push(textName)
     books = (book for book in fs.readdirSync(__dirname + "/../resources/texts/#{textName}/books/"))

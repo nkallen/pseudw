@@ -238,6 +238,7 @@ Treebank =
               lemma.push(word)
             else
               tags[attributes.lemma] = [word]
+            console.log(JSON.stringify(tags))
     (query) -> Sizzle(query, new DocumentShim(tags))
 
 module.exports = Treebank
