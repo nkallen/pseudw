@@ -139,7 +139,12 @@
                         <% } %>
                         <br />
                       <% } %>
-                      <small><cite title="#{result.root.name}"><a href="/<%= result.root.text %>/books/<%= result.root.attributes.book %>"><%= result.root.text %> <%= result.root.attributes.book %>.<%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a></cite></small>
+                      <small>
+                        <cite title="#{result.root.name}">
+                          <% var book = result.root.attributes.book %>
+                          <a href="/<%= result.root.text %>/books/<%= book %>"><%= result.root.text %> <%= book ? book + '.' : '' %><%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a>
+                        </cite>
+                      </small>
                     </blockquote>
                   </section>
                 <% } %>
