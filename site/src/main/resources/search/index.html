@@ -148,11 +148,12 @@
           </div>
           <div class="pagination">
             <ul>
-              <li <% if (page == 0) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=0">&laquo;</a></li>
+              <% var url = "search?query=" + query + "&texts=" + selectedTextNames.join("&texts=") %>
+              <li <% if (page == 0) print('class="disabled"') %>><a href="<% url %>&page=0">&laquo;</a></li>
               <% for (var i = 0; i < Math.min(items / RESULTS_PER_PAGE, MAX_PAGES ); i++) { %>
-                <li <% if (page == i) print('class="active"') %>><a href="/search?query=<%= (query) %>&page=<%= i %>"><%= i + 1 %></a></li>
+                <li <% if (page == i) print('class="active"') %>><a href="<%= url %>&page=<%= i %>"><%= i + 1 %></a></li>
               <% } %>
-              <li <% if (page >= items / RESULTS_PER_PAGE - 1) print('class="disabled"') %>><a href="/search?query=<%= (query) %>&page=<%= page + 1 %>" >&raquo;</a></li>
+              <li <% if (page >= items / RESULTS_PER_PAGE - 1) print('class="disabled"') %>><a href="<%= url%>&page=<%= page + 1 %>" >&raquo;</a></li>
             </ul>
           </div>
         <% } else if (query && !error) { %>
