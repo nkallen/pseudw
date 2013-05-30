@@ -186,9 +186,9 @@ Treebank =
 
     id2word = currentSentenceId = null
     for xml in xmls
-      for bookNode in xml.find("//section[@class='book']")
-        book = bookNode.attr('data-number').value()
-        for lineNode in bookNode.find(".//div[@class='line']")
+      for sectionNode in xml.find("/div/section")
+        book = sectionNode.attr('class').value() == 'book' && sectionNode.attr('data-number').value()
+        for lineNode in sectionNode.find(".//div[@class='line']")
           line = lineNode.find('.//a')[0].text()
           for wordNode in lineNode.find(".//span")
             sentenceId = Number(wordNode.attr('data-sentence-id').value())

@@ -103,7 +103,7 @@ do ->
             throw e unless e.code == 'EEXIST'
 
         if fd
-          fs.writeSync(fd, out)
+          fs.writeSync(fd, "<div>#{out}</div>")
           fs.closeSync(fd)
 
         out = ""
