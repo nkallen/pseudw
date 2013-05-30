@@ -103,6 +103,7 @@ $(function() {
       $info.find('.content').html($translation.html());
       $row.after($infoWell);
 
+      var start = new Date();
       var $section  = $word.parents('.paragraph').first();
       var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
 
@@ -111,7 +112,6 @@ $(function() {
       while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
         parents.push($parent);
       }
-
       var bfs   = [$word];
       var stack = [$word];
       var depth = 0;
@@ -149,7 +149,7 @@ $(function() {
 
       setTimeout(function() {
         highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('highlight')
-      }, 10)
+      }, 50)
     })
   });
   $('body')
