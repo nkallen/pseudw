@@ -39,14 +39,14 @@
           if (lineNumber != currentLineNumber) {
             lines.push(line = [])
             var prev = node
-            while (prev.prevNode)
-              line.unshift(prev = prev.prevNode)
+            while (prev.previousSiblingInLine)
+              line.unshift(prev = prev.previousSiblingInLine)
 
             line.push(node)
 
             var nxt = node
-            while (nxt.nextNode)
-              line.push(nxt = nxt.nextNode)
+            while (nxt.nextSiblingInLine)
+              line.push(nxt = nxt.nextSiblingInLine)
             currentLineNumber = lineNumber
           }
         }

@@ -188,13 +188,13 @@ Treebank =
     tags =
       word: []
 
-    id2word = currentSentenceId = null
+    id2word = currentSentenceId = previousWordInSentence = null
     for xml in xmls
       for sectionNode in xml.find("/div/section")
         book = sectionNode.attr('class').value() == 'book' && sectionNode.attr('data-number').value()
         for lineNode in sectionNode.find(".//div[@class='line']")
           line = lineNode.find('.//a')[0].text()
-          lastWord = null
+          previousWordInLine = null
           for wordNode in lineNode.find(".//span")
             sentenceId = Number(wordNode.attr('data-sentence-id').value())
 
@@ -202,7 +202,6 @@ Treebank =
               currentSentenceId = sentenceId
               id2word = {}
             if sentenceId != currentSentenceId
-
               for id, word of id2word
                 attributes = word.attributes
                 if attributes.parentId != 0
@@ -211,6 +210,7 @@ Treebank =
                   word.parentNode = parent
 
               currentSentenceId = sentenceId
+              previousWordInSentence = null
               id2word = {}
 
             attributes =
@@ -234,10 +234,13 @@ Treebank =
             attributes.book = Number(book)
 
             word = new DomShim(attributes)
-            if lastWord
-              word.prevNode = lastWord
-              lastWord.nextNode = word
-            lastWord = word
+            if previousWordInLine
+              word.previousSiblingInLine = previousWordInLine
+              previousWordInLine.nextSiblingInLine = word
+            if previousWordInSentence
+              word.previousSibling = previousWordInSentence
+              previousWordInSentence.nextSibling = word
+            previousWordInLine = previousWordInSentence = word
 
             id2word[attributes.id] = word
             tags.word.push(word)

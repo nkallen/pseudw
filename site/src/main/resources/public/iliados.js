@@ -83,12 +83,12 @@ $(function() {
     });
 
   var $lexicon = $("ul.lexicon > li");
-  $lexicon.remove();
   var lexicon = {};
   $lexicon.each(function() {
     var $this = $(this);
     lexicon[$this.data('lemma')] = $this;
   })
+  $('ul.lexicon').remove();
   $('.words span').click(function() {
     var $word = $(this);
 
