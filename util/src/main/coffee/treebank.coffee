@@ -37,6 +37,10 @@ for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Person, gre
         (elem) ->
           elem.getAttribute(sym) == name)
 
+Sizzle.selectors.pseudos.root = Sizzle.selectors.createPseudo(->
+  (elem) ->
+    elem.getAttribute('parentId') == '0' && elem.getAttribute('relation') != 'AuxK')
+
 class DomShim
   constructor: (@attributes) ->
     @children = []
@@ -44,8 +48,8 @@ class DomShim
     @nodeName = @attributes.lemma
   nodeType: 1
   getAttribute: (attribute) ->
-    if attribute = @attributes[attribute]
-      attribute.toString()
+    if @attributes.hasOwnProperty(attribute) && @attributes[attribute] != undefined
+      @attributes[attribute].toString()
     else
       ''
   compareDocumentPosition: (that) ->
@@ -190,6 +194,7 @@ Treebank =
         book = sectionNode.attr('class').value() == 'book' && sectionNode.attr('data-number').value()
         for lineNode in sectionNode.find(".//div[@class='line']")
           line = lineNode.find('.//a')[0].text()
+          lastWord = null
           for wordNode in lineNode.find(".//span")
             sentenceId = Number(wordNode.attr('data-sentence-id').value())
 
@@ -197,13 +202,10 @@ Treebank =
               currentSentenceId = sentenceId
               id2word = {}
             if sentenceId != currentSentenceId
-              root = null
 
               for id, word of id2word
                 attributes = word.attributes
-                if attributes.parentId == 0
-                  root = word
-                else
+                if attributes.parentId != 0
                   parent = id2word[attributes.parentId]
                   parent.children.push(word)
                   word.parentNode = parent
@@ -232,6 +234,11 @@ Treebank =
             attributes.book = Number(book)
 
             word = new DomShim(attributes)
+            if lastWord
+              word.prevNode = lastWord
+              lastWord.nextNode = word
+            lastWord = word
+
             id2word[attributes.id] = word
             tags.word.push(word)
             if lemma = tags[attributes.lemma]

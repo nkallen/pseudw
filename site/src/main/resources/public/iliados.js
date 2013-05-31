@@ -83,6 +83,7 @@ $(function() {
     });
 
   var $lexicon = $("ul.lexicon > li");
+  $lexicon.remove();
   var lexicon = {};
   $lexicon.each(function() {
     var $this = $(this);

@@ -2,8 +2,14 @@
   RESULTS_PER_PAGE = 40
   MAX_PAGES = 15
 
-  var root2result = {}
+  if (page > MAX_PAGES - 1) throw "Illegal page"
+
+  var sentence2result = {}
   var count = 0
+  var sentenceCount = 0
+  var start = page * RESULTS_PER_PAGE
+  var finish = page * RESULTS_PER_PAGE + RESULTS_PER_PAGE + 1
+
   for (var r in results) {
     var result = results[r]
     var matches = result.matches
@@ -15,46 +21,54 @@
       var root = match
       while (root.parentNode)
         root = root.parentNode
-      root.text = textName
-      var nodes = [root]
-      var i = 0
-      if (result = root2result[root.uuid()])
+      if (result = sentence2result[match.attributes.sentenceId])
         result.matches[match.uuid()] = true
       else {
+        var nodes = [root]
+        var i = 0
         while (nodes.length > i)
           nodes = nodes.concat(nodes[i++].children)
         nodes = nodes.sort(function (node1, node2) { return node1.attributes.id - node2.attributes.id })
 
-        var line = []
-        var lines = [line]
+        var lines = []
         var currentLineNumber = null
         for (var n in nodes) {
           var node = nodes[n]
+
           var lineNumber = node.attributes.line
-          if (!currentLineNumber)
-            currentLineNumber = lineNumber
           if (lineNumber != currentLineNumber) {
             lines.push(line = [])
+            var prev = node
+            while (prev.prevNode)
+              line.unshift(prev = prev.prevNode)
+
+            line.push(node)
+
+            var nxt = node
+            while (nxt.nextNode)
+              line.push(nxt = nxt.nextNode)
             currentLineNumber = lineNumber
           }
-          line.push(node)
-
-          root2result[root.uuid()] = {
-            lines: lines,
-            matches: {},
-            root: root
-          }
         }
-        root2result[root.uuid()].matches[match.uuid()] = true
+        sentence2result[root.attributes.sentenceId] = {
+          lines: lines,
+          matches: {},
+          text: textName,
+          book: root.attributes.book,
+        }
+        sentence2result[root.attributes.sentenceId].matches[match.uuid()] = true
+        sentenceCount++
       }
+      if (sentenceCount > RESULTS_PER_PAGE * MAX_PAGES) break
     }
+    if (sentenceCount > RESULTS_PER_PAGE * MAX_PAGES) break
   }
 
   var results = []
-  for (var r in root2result)
-    results.push(root2result[r])
+  for (var r in sentence2result)
+    results.push(sentence2result[r])
   var items = results.length
-  results = results.slice(page * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE + RESULTS_PER_PAGE + 1)
+  results = results.slice(start, finish)
 %>
 <html lang="en">
   <head>
@@ -140,9 +154,9 @@
                         <br />
                       <% } %>
                       <small>
-                        <cite title="#{result.root.name}">
-                          <% var book = result.root.attributes.book %>
-                          <a href="/<%= result.root.text %>/books/<%= book %>"><%= result.root.text %> <%= book ? book + '.' : '' %><%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a>
+                        <cite title="#{result.text}">
+                          <% var book = result.book %>
+                          <a href="/<%= result.text %>/books/<%= book %>"><%= result.text %> <%= book ? book + '.' : '' %><%= result.lines[0][0].attributes.line %>-<%= result.lines[result.lines.length-1][0].attributes.line %></a>
                         </cite>
                       </small>
                     </blockquote>
