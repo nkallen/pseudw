@@ -12,7 +12,7 @@ intern = (string) ->
 
 Sizzle = do ->
   script = vm.createScript(fs.readFileSync(__dirname + "/../javascript/sizzle/sizzle.js", "utf8"), 'sizzle.js');
-  sandbox = { window: { document: {} }, document: {} }
+  sandbox = { window: { document: {} }, document: {}, console: console }
   script.runInNewContext(sandbox)
   sandbox.window.Sizzle
 
@@ -20,13 +20,13 @@ Sizzle.selectors.pseudos.before = Sizzle.selectors.createPseudo(
   (selector) ->
     (elem) ->
       matches = Sizzle(selector, elem)
-      (match for match in matches when (elem.getAttribute('id') < match.getAttribute('id'))).length)
+      (match for match in matches when (Number(elem.getAttribute('id')) < Number(match.getAttribute('id')))).length)
 
 Sizzle.selectors.pseudos.after = Sizzle.selectors.createPseudo(
   (selector) ->
     (elem) ->
       matches = Sizzle(selector, elem)
-      (match for match in matches when (elem.getAttribute('id') > match.getAttribute('id'))).length)
+      (match for match in matches when (Number(elem.getAttribute('id')) > Number(match.getAttribute('id')))).length)
 
 for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Person, greek.Number, greek.Case, greek.Voice, greek.Mood, greek.Degree]
   for value in feature.values()

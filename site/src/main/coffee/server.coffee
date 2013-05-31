@@ -25,6 +25,7 @@ do ->
     xmls = for book in books
       libxml.parseXml(fs.readFileSync(__dirname + "/../resources/texts/#{textName}/books/#{book}/text.html", 'utf8'))
     textName2index[textName] = treebank.load(xmls)
+
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
 
