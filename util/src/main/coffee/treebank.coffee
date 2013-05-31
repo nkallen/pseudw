@@ -28,7 +28,7 @@ Sizzle.selectors.pseudos.after = Sizzle.selectors.createPseudo(
       matches = Sizzle(selector, elem)
       (match for match in matches when (elem.getAttribute('id') > match.getAttribute('id'))).length)
 
-for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Number, greek.Case, greek.Voice, greek.Mood]
+for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Person, greek.Number, greek.Case, greek.Voice, greek.Mood, greek.Degree]
   for value in feature.values()
     do -> # variable scoping issue
       sym = feature.toSymbol()
