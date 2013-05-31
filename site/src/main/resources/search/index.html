@@ -17,6 +17,7 @@
 
     count += matches.length
     for (var m in matches) {
+      if (sentenceCount > RESULTS_PER_PAGE * MAX_PAGES) break
       var match = matches[m]
       var root = match
       while (root.parentNode)
@@ -59,9 +60,7 @@
         sentence2result[root.attributes.sentenceId].matches[match.uuid()] = true
         sentenceCount++
       }
-      if (sentenceCount > RESULTS_PER_PAGE * MAX_PAGES) break
     }
-    if (sentenceCount > RESULTS_PER_PAGE * MAX_PAGES) break
   }
 
   var results = []
