@@ -4,3 +4,6 @@
 [submodule "util/src/main/javascript/sizzle"]
 	path = util/src/main/javascript/sizzle
 	url = https://github.com/jquery/sizzle.git
+[submodule "perseus-greco-roman"]
+	path = perseus-greco-roman
+	url = git://github.com/nkallen/perseus-greco-roman.git

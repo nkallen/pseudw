@@ -1,8 +1,8 @@
 express = require('express')
-pg = require('pg')
-util = greek = require('pseudw-util')
+util = require('pseudw-util')
 greek = util.greek
 treebank = util.treebank
+index = util.perseus.index
 fs = require('fs')
 libxml = require('libxmljs')
 _ = require('underscore')
@@ -15,6 +15,7 @@ textName2index = {}
 textNames = []
 startMem = process.memoryUsage().heapUsed
 start = new Date
+
 do ->
   for textName in fs.readdirSync(__dirname + '/../resources/texts/')
     global.gc()
@@ -28,6 +29,17 @@ do ->
 
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
+
+index = index.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.xml')))
+app.get('/pid/:pid', (req, res, next) ->
+  unless filename = index.file(req.params.pid)
+    res.send(404)
+    return
+
+  fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
+    res.charset = 'utf-8'
+    res.type('text/xml')
+    res.send(200, xml)))
 
 searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->
@@ -79,6 +91,7 @@ app.get('/search', (req, res, next) ->
 
 template = _.template(fs.readFileSync(__dirname + '/../resources/text.html', 'utf8'))
 app.get('/:name/books/:book', (req, res, next) ->
+  template = _.template(fs.readFileSync(__dirname + '/../resources/text.html', 'utf8'))
   book = Number(req.params.book) || 1
   return res.status(404).end() unless /(\w|\s)+/.test(name = req.params.name)
 

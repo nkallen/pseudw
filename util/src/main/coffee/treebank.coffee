@@ -80,11 +80,9 @@ class DocumentShim
 
 Treebank =
   wordNode2word: (wordNode) ->
-    sentence = wordNode.parent()
     lemma = wordNode.attr('lemma').value().replace(/1$/, '')
-    id = wordNode.attr('id').value()
-    sentenceId = sentence.attr('id').value()
-    parentId = wordNode.attr('head').value()
+    id = Number(wordNode.attr('id').value())
+    parentId = Number(wordNode.attr('head').value())
 
     postag = wordNode.attr('postag').value()
     relation = wordNode.attr('relation').value()
@@ -171,7 +169,6 @@ Treebank =
       form:  if partOfSpeech == "punctuation" then wordNode.attr('form').value() else greek.betacode2unicode(wordNode.attr('form').value()),
       lemma: if partOfSpeech == "punctuation" then lemma else greek.betacode2unicode(lemma),
       id: id,
-      sentenceId: sentenceId,
       parentId: parentId,
       relation: relation
       partOfSpeech: partOfSpeech,

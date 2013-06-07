@@ -3,3 +3,4 @@ module.exports =
   greek: require("./greek")
   treebank: require("./treebank")
   enum: require("./enum")
+  perseus: require("./perseus")
