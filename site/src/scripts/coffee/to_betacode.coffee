@@ -5,6 +5,7 @@ greek = require('pseudw-util').greek
 libxml = require('libxmljs')
 
 file = fs.readFileSync(path = process.argv[2], 'utf8')
+console.log(path)
 xml = libxml.parseXml(file)
 
 primaryLanguage = xml.get('//langUsage/language')?.attr('id').value()
@@ -15,7 +16,7 @@ if primaryLanguage == 'greek'
         if child.name() == 'text'
           child.text(greek.betacode2unicode(child.text()))
 
-for foreign in xml.find('//foreign')
+for foreign in xml.find('//foreign|//lemma')
   if foreign.attr('lang')?.value() == 'greek'
     foreign.text(greek.betacode2unicode(foreign.text()))
 

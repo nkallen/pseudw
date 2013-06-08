@@ -20,7 +20,7 @@ class TreebankAnnotator
       annotation = @treebank[@i++]
       form = annotation.originalForm || annotation.form
       if (original = string[0...form.length]) != form
-        throw "Original '#{original}' not equal to '#{form}'"
+        throw "Original '#{original}' not equal to '#{form}': #{JSON.stringify(annotation)}"
       result.push(annotation)
       string = string[form.length..].trim()
     result

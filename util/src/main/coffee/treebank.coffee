@@ -166,19 +166,20 @@ Treebank =
       else throw "Invalid degree #{postag[7]}"
 
     {
-      form:  if partOfSpeech == "punctuation" then wordNode.attr('form').value() else greek.betacode2unicode(wordNode.attr('form').value()),
-      lemma: if partOfSpeech == "punctuation" then lemma else greek.betacode2unicode(lemma),
-      id: id,
-      parentId: parentId,
+      form:  greek.betacode2unicode(wordNode.attr('form').value())
+      originalForm: if wordNode.attr('original-form') then greek.betacode2unicode(wordNode.attr('original-form').value()) else undefined
+      lemma: if partOfSpeech == "punctuation" then lemma else greek.betacode2unicode(lemma)
+      id: id
+      parentId: parentId
       relation: relation
-      partOfSpeech: partOfSpeech,
-      person: person,
-      number: number,
-      tense: tense,
-      mood: mood,
-      voice: voice,
-      gender: gender,
-      case: kase,
+      partOfSpeech: partOfSpeech
+      person: person
+      number: number
+      tense: tense
+      mood: mood
+      voice: voice
+      gender: gender
+      case: kase
       degree: degree}
 
   load: (xmls) ->

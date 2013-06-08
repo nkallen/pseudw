@@ -246,7 +246,7 @@ betacode2unicode = do ->
           out = out.concat(char)
         traversal = betacode2unicodeTrie.traverse()
     out = out.concat(traversal.value()) if traversal.value()
-    unorm.nfc(out.replace(/σ(\b|$)/g, 'ς'))
+    unorm.nfc(out.replace(/σ(?=[^\u0370-\u03FF]|$)/g, 'ς'))
 
 module.exports =
   PartOfSpeech: PartOfSpeech

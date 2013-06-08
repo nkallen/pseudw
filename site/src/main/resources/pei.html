@@ -42,7 +42,7 @@
                       <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                       <div class='words span5'>
                         <% annotator.annotate(l.text()).forEach(function(annotation) { %>
-                          <span data-annotation="<%- JSON.stringify(annotation) %>"><%= annotation.form %></span>
+                          <span<% for (key in annotation) { %> data-<%- key.replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase() %>="<%- annotation[key] %>" <% } %>><%- annotation.form %></span>
                         <% }) %>
                       </div>
                       <% if (i == 0) { %>

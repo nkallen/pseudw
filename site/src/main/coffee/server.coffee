@@ -43,7 +43,6 @@ app.get('/pid/:pid', (req, res, next) ->
     res.send(404)
     return
   annotations = index.annotations(req.params.pid)
-  console.log(annotations)
 
   fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
     fs.readFile(__dirname + "/../../../../treebank-greek/data/json/#{annotations}", 'utf8', (err, annotations) ->
