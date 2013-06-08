@@ -27,7 +27,9 @@ class Index
     while !current.file && current.ref
       current = current.ref
     current.file?.replace("Classics/", '')
-
+  annotations: (pid) ->
+    parts = pid.split(':')
+    parts[parts.length-1] + '.json'
 
 module.exports =
   index: Index

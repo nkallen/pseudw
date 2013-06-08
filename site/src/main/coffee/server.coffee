@@ -2,6 +2,7 @@ express = require('express')
 util = require('pseudw-util')
 greek = util.greek
 treebank = util.treebank
+TreebankAnnotator = util.annotator.TreebankAnnotator
 index = util.perseus.index
 fs = require('fs')
 libxml = require('libxmljs')
@@ -41,12 +42,17 @@ app.get('/pid/:pid', (req, res, next) ->
   unless filename = index.file(req.params.pid)
     res.send(404)
     return
+  annotations = index.annotations(req.params.pid)
+  console.log(annotations)
 
   fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
-    xml = libxml.parseXml(xml).get('//body')
+    fs.readFile(__dirname + "/../../../../treebank-greek/data/json/#{annotations}", 'utf8', (err, annotations) ->
+      xml = libxml.parseXml(xml).get('//body')
+      annotations = JSON.parse(annotations)
+      annotator = new TreebankAnnotator(annotations)
 
-    res.charset = 'utf-8'
-    res.send(200, htmlTemplate(text: xml, name: req.params.pid))))
+      res.charset = 'utf-8'
+      res.send(200, htmlTemplate(text: xml, name: req.params.pid, annotator: annotator)))))
 
 app.patch('/pid/:pid', (req, res, next) ->
   unless filename = index.file(req.params.pid)

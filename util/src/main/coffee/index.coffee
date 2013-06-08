@@ -4,3 +4,4 @@ module.exports =
   treebank: require("./treebank")
   enum: require("./enum")
   perseus: require("./perseus")
+  annotator: require("./annotator")

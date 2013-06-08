@@ -4,3 +4,5 @@
 . rename all templates .html.underscore
 . consider using express 'render' method, setting the template engine
 . refactor setup into express idiomatic stuff
+. refactor the 'Perseus' index into a Resource object that can load a document, its annotations, and other such nonsense.
+. Index should use pre-compiled JSON and not xml

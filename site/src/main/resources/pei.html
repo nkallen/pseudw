@@ -40,28 +40,15 @@
                   <div class='line'>
                     <div class='row'>
                       <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
-                      <div class='words span5'><%= l.text() %></div>
+                      <div class='words span5'>
+                        <% annotator.annotate(l.text()).forEach(function(annotation) { %>
+                          <span data-annotation="<%- JSON.stringify(annotation) %>"><%= annotation.form %></span>
+                        <% }) %>
+                      </div>
                       <% if (i == 0) { %>
                         <div class="span1"><a class="edit" data-xml="<%- p %>" data-xpath="<%= p.path() %>">[edit]</a></div>
                       <% } %>
                     </div>
-                  </div>
-                <% }) %>
-              </div>
-            <% }) %>
-            <% div.find('./sp').forEach(function(sp) { %>
-              <div class="speech">
-                <div class="speaker"><%= sp.get('./speaker').text() %></div>
-                <% sp.find('./p').forEach(function(p) { %>
-                  <div class="paragraph">
-                    <% p.find('./l').forEach(function(l) { %>
-                      <div class='line'>
-                        <div class='row'>
-                          <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
-                          <div class='words span5'><%= l.text() %></div>
-                        </div>
-                      </div>
-                    <% }) %>
                   </div>
                 <% }) %>
               </div>

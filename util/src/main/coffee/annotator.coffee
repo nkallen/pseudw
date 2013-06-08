@@ -1,16 +1,16 @@
 ###
-class Annotate
+class Annotator
   annotate: (string) -> [tokens]
   reset: () ->
 ###
 
-class SimpleAnnotate
+class SimpleAnnotator
   annotate: (string) ->
     for token in string.split(' ')
       form: token
   reset: () -> # stateless, so no-op
 
-class TreebankAnnotate
+class TreebankAnnotator
   constructor: (@treebank) ->
     @reset()
   annotate: (string) ->
@@ -29,5 +29,5 @@ class TreebankAnnotate
     @i = 0
 
 module.exports =
-  SimpleAnnotate: SimpleAnnotate
-  TreebankAnnotate: TreebankAnnotate
+  SimpleAnnotator: SimpleAnnotator
+  TreebankAnnotator: TreebankAnnotator
