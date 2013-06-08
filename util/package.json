@@ -32,7 +32,7 @@
   },
   "analyze": true,
   "devDependencies": {
-    "jasmine-node"    :  "1.0.x"
+    "jasmine-node"    :  "1.8.x"
   },
   "bundleDependencies": [],  
   "license": "MIT",
