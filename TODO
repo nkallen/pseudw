@@ -1,0 +1,6 @@
+. Serve up any Perseus doc in HTML
+. decorate with json xml metadata, where available.
+. Serve up any section of a perseus doc (using div1/div2 type names in URL)
+. rename all templates .html.underscore
+. consider using express 'render' method, setting the template engine
+. refactor setup into express idiomatic stuff

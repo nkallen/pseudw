@@ -8,6 +8,9 @@ libxml = require('libxmljs')
 _ = require('underscore')
 
 app = express()
+app.use(express.responseTime())
+app.use(express.bodyParser())
+app.use(express.methodOverride())
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
 
@@ -18,6 +21,7 @@ start = new Date
 
 do ->
   for textName in fs.readdirSync(__dirname + '/../resources/texts/')
+    break
     global.gc()
     console.log(textName, process.memoryUsage())
     textNames.push(textName)
@@ -31,15 +35,34 @@ console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
 
 index = index.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.xml')))
+htmlTemplate = _.template(fs.readFileSync(__dirname + '/../resources/pei.html', 'utf8'))
 app.get('/pid/:pid', (req, res, next) ->
+  htmlTemplate = _.template(fs.readFileSync(__dirname + '/../resources/pei.html', 'utf8'))
   unless filename = index.file(req.params.pid)
     res.send(404)
     return
 
   fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
+    xml = libxml.parseXml(xml).get('//body')
+
     res.charset = 'utf-8'
-    res.type('text/xml')
-    res.send(200, xml)))
+    res.send(200, htmlTemplate(text: xml, name: req.params.pid))))
+
+app.put('/pid/:pid/*', (req, res, next) ->
+  unless filename = index.file(req.params.pid)
+    res.send(404)
+    return
+
+  fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
+    doc = libxml.parseXml(xml)
+    xml = doc.get('//body').get('./' + req.params[0])
+    replacement = libxml.parseXml(req.body.content).root()
+    xml.addNextSibling(replacement)
+    console.log("Added")
+    xml.remove()
+
+    res.send(200, doc.toString())))
+
 
 searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->
