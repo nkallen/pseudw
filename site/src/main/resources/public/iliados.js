@@ -63,7 +63,7 @@ $(function() {
           .data('note', $note)
       }
     })
-  $('.line .span1')
+  $('.line .span1:has(.line-number)')
     .click(function() {
       var $this = $(this);
 
@@ -158,8 +158,21 @@ $(function() {
       if (e.which == 27) { // <ESC>
         $(".modal").modal('hide');
         reset();
+      } else if (e.which == 18) {
+        $('a.edit').show();
       }
-    });
+    })
+    .keyup(function(e) {
+      if (e.which == 18) {
+        $('a.edit').hide();
+      }
+    })
+  $('a.edit').click(function() {
+    reset();
+    var $form = $infoPane.find('form')
+    $form.show()
+    $form.find('textarea').text($(this).data('xml')).attr('name', 'path[' + escape($(this).data('xpath')) + ']')
+  })
   $('#thanks').tooltip();
   var params = {};
   window.location.search.slice(1).split('&').forEach(function(param) {

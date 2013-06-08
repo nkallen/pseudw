@@ -161,6 +161,9 @@ div.line .row .words, div.line .row .span1 {
 a.vocabulary {
   cursor: pointer;
 }
+.edit {
+  display: none;
+}
 .navbar {
   margin-left: 0;
   background-color: #e5e0d4;

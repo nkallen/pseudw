@@ -48,20 +48,21 @@ app.get('/pid/:pid', (req, res, next) ->
     res.charset = 'utf-8'
     res.send(200, htmlTemplate(text: xml, name: req.params.pid))))
 
-app.put('/pid/:pid/*', (req, res, next) ->
+app.patch('/pid/:pid', (req, res, next) ->
   unless filename = index.file(req.params.pid)
     res.send(404)
     return
 
-  fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
+  fs.readFile(path = __dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
     doc = libxml.parseXml(xml)
-    xml = doc.get('//body').get('./' + req.params[0])
-    replacement = libxml.parseXml(req.body.content).root()
-    xml.addNextSibling(replacement)
-    console.log("Added")
-    xml.remove()
+    for key, value of req.body.path
+      node = doc.get(unescape(key))
+      replacement = libxml.parseXml(value).root()
+      node.addNextSibling(replacement)
+      node.remove()
 
-    res.send(200, doc.toString())))
+    fs.writeFile(path, doc.toString(), (err) ->
+      res.redirect('/pid/' + req.params.pid))))
 
 
 searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
