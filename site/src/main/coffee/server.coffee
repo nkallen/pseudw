@@ -14,6 +14,8 @@ app.use(express.bodyParser())
 app.use(express.methodOverride())
 app.use(express.compress())
 app.use(express.static(__dirname + '/../resources/public'))
+app.set('view engine', 'ejs')
+app.set('views', __dirname + '/../resources/views')
 
 textName2index = {}
 textNames = []
@@ -36,9 +38,7 @@ console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
 
 index = index.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.xml')))
-htmlTemplate = _.template(fs.readFileSync(__dirname + '/../resources/pei.html', 'utf8'))
 app.get('/pid/:pid', (req, res, next) ->
-  htmlTemplate = _.template(fs.readFileSync(__dirname + '/../resources/pei.html', 'utf8'))
   unless filename = index.file(req.params.pid)
     res.send(404)
     return
@@ -50,8 +50,7 @@ app.get('/pid/:pid', (req, res, next) ->
       annotations = JSON.parse(annotations)
       annotator = new TreebankAnnotator(annotations)
 
-      res.charset = 'utf-8'
-      res.send(200, htmlTemplate(text: xml, name: req.params.pid, annotator: annotator)))))
+      res.render('text', text: xml, name: req.params.pid, annotator: annotator))))
 
 app.patch('/pid/:pid', (req, res, next) ->
   unless filename = index.file(req.params.pid)
@@ -72,7 +71,6 @@ app.patch('/pid/:pid', (req, res, next) ->
 
 searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->
-  res.charset = 'utf-8'
   res.type('text/html')
   html = searchTemplate(
     query: ''
@@ -138,7 +136,6 @@ app.get('/:name/books/:book', (req, res, next) ->
             lexicon: lexicon
             notes: notes)
 
-          res.charset = 'utf-8'
           res.type('text/html')
           res.send(200, html))))))
 

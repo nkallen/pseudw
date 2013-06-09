@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.coffee",
   "scripts": {
-    "start": "coffee --nodejs --expose-gc ./src/main/coffee/server.coffee",
+    "start": "coffee --nodejs --expose-gc --nodejs --prof ./src/main/coffee/server.coffee",
     "test": "",
     "import": "./src/scripts/coffee/import.coffee"
   },
@@ -17,7 +17,8 @@
     "parseUri"       : "1.2.x",
     "coffee-script"  : "1.6.x",
     "pg"             : "1.1.x",
-    "underscore"     : "1.4.x"
+    "underscore"     : "1.4.x",
+    "ejs"            : "0.8.x"
   },
   "engines": {
     "node": "0.10.x",
