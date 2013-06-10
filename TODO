@@ -1,3 +1,6 @@
+. convert all divN to div
+. add n="" to all addressable nodes
+
 . Serve up any Perseus doc in HTML
 . Serve up any section of a perseus doc (using div1/div2 type names in URL)
 . consider using express 'render' method, setting the template engine
