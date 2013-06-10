@@ -18,7 +18,7 @@ Citation2tag =
   poem: ['div', 'type']
 
 class PerseusIndex
-  @load: (xml) ->
+  @load: (xml, root) ->
     resources = {}
     xmlns =
       tufts: "http://www.tufts.edu/"
@@ -34,11 +34,11 @@ class PerseusIndex
       resources[description.attr('about').value()] =
         pid: description.get('./dcterms:identifier', xmlns)?.text()
         isVersionOf: description.get('./dcterms:isVersionOf', xmlns)?.attr('resource').value() 
-        file: description.get('./perseus:text', xmlns)?.text()
+        file: root + '/' + description.get('./perseus:text', xmlns)?.text()
     for resource in resources
       resource.ref = resources[resource.isVersionOf] if resource.isVersionOf
 
-    new Index(resources)
+    new PerseusIndex(resources)
   constructor: (@resources) ->
   resourceSync: (pid) ->
     return unless current = @resources[pid]
@@ -50,6 +50,22 @@ class PerseusIndex
     libxml.parseXml(file)
 
 class CtsIndex
+  @load: (xml, perseusIndex) ->
+    xmlns =
+      cts: 'http://chs.harvard.edu/xmlns/cts3/ti'
+    resources = {}
+    for edition in xml.find('//cts:edition', xmlns)
+      resources[edition.attr('urn').value()] = resource = {}
+      continue unless online = edition.get('./cts:online', xmlns)
+      resource.docname = online.attr('docname').value()
+      citation = online.get('./cts:citationMapping', xmlns)
+      resource.citations = (citations = [])
+      while citation = citation.get('./cts:citation', xmlns)
+        citations.push(
+          label: citation.attr('label').value())
+    new CtsIndex(resources, perseusIndex)
+
+
   constructor: (@resources, @perseusIndex) ->
   resourceSync: (urn) ->
     [protocol, namespace, cts, work, passage] = urn.split(/:/)

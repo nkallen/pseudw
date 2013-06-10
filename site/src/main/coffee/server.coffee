@@ -38,7 +38,7 @@ console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
 
 index = index.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.xml')))
-app.get('/pid/:pid', (req, res, next) ->
+app.get('/:pid', (req, res, next) ->
   unless filename = index.file(req.params.pid)
     res.send(404)
     return
