@@ -1,19 +1,22 @@
 view = (passage, original, parents) ->
-  unless parents
-    parents = new WeakMap
-    node = passage
-    parents.set(node)
-    while node.parent && (node = node.parent())
-      parents.set(node)
   unless original
     original = passage
+    return passage if !passage.parent
+
+  unless parents
+    parents = new Set
+    node = passage
+
+    parents.add(node)
+    while node.parent && (node = node.parent())
+      parents.add(node)
 
   find: (path) ->
     for node in passage.find(path) when parents.has(node)
       if node == original
         node
       else
-        view(node, passage, parents)
+        view(node, original, parents)
   attr: (name) ->
     passage.attr(name)
   text: ->

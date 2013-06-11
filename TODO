@@ -1,9 +1,3 @@
-. Serve up any Perseus doc in HTML by URN
-. Serve up any Perseus doc by path
-. Serve up any section of a perseus doc (using div1/div2 type names in URL)
-
-. refactor out underscore
-. passage range for PATCH method
-
-. async.js to cleanup some codes
-. refactor setup into express idiomatic stuff
+. rename perseus to index
+. support ranges
+. passage rather than xpath for PATCH method

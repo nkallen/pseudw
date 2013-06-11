@@ -69,18 +69,20 @@ class CtsIndex
     for groupNode in xml.find('//cts:textgroup', xmlns)
       group =
         name: groupNode.get('./cts:groupname', xmlns).text()
+        works: {}
       resources.groups[group.name] = group
       for workNode in groupNode.find('./cts:work', xmlns)
         work =
           title: workNode.get('./cts:title', xmlns).text()
-        group[work.title] = work
+          editions: {}
+        group.works[work.title] = work
         for editionNode in workNode.find('./cts:edition', xmlns)
           continue unless resource = parseResource(editionNode)
-          resources.urns[resource.urn] = work[resource.urn] = resource
+          resources.urns[resource.urn] = work.editions[resource.label] = resource
 
         for translation in workNode.find('./cts:translation', xmlns)
           continue unless resource = parseResource(translation)
-          resources.urns[resource.urn] = work[resource.urn] = resource
+          resources.urns[resource.urn] = work.editions[resource.label] = resource
 
     new CtsIndex(resources, perseusIndex)
 
@@ -101,11 +103,11 @@ class CtsIndex
       return next(err) if err
       next(null, selectPassage(resource.citationMapping, urn.passage, xml)))
 
-  pathSync: (path) ->
-    node = resource.groups
-    for part in path
-      node = node[part]
-    node
+  group: (group) ->
+    @resources.groups[group]
+
+  work: (group, work) ->
+    @group(group).works[work]
 
   selectPassage = (citationMapping, passage, xml) ->
     return xml if !passage
@@ -129,8 +131,8 @@ class CtsIndex
   parseResource = (editionOrTranslation) ->
     return unless online = editionOrTranslation.get('./cts:online', xmlns)
     resource =
-      label: editionOrTranslation.get('./cts:label', xmlns)
-      description: editionOrTranslation.get('./cts:description', xmlns)
+      label: editionOrTranslation.get('./cts:label', xmlns).text()
+      description: editionOrTranslation.get('./cts:description', xmlns).text()
       docname: online.attr('docname').value()
       citationMapping: citationMapping = []
       urn: editionOrTranslation.attr('urn').value()

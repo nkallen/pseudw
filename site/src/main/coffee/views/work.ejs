@@ -1,0 +1,11 @@
+<% include head %>
+  <h1><%= work.title %></h1>
+  <h2>Editions</h2>
+  <dl class="dl-horizontal">
+    <% for (var e in work.editions) { %>
+      <% var edition = work.editions[e] %>
+      <dt><a href="/<%= edition.urn %>"><%= edition.label %></a></dt>
+      <dd><%= edition.description %></dd>
+    <% } %>
+  </dl>
+<% include foot %>
