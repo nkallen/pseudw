@@ -5,8 +5,7 @@
   "main": "server.coffee",
   "scripts": {
     "start": "coffee --nodejs --expose-gc --nodejs --prof --nodejs --harmony_collections ./src/main/coffee/server.coffee",
-    "test": "",
-    "import": "./src/scripts/coffee/import.coffee"
+    "test": ""
   },
   "dependencies": {
     "libxmljs"       : "0.8.x",

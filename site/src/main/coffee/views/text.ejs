@@ -1,0 +1,73 @@
+<% include head %>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#"><%= urn.toUpperCase() %></a>
+        </div>
+      </div>
+    </div>
+    <div class='text'>
+    <% text.find('/TEI.2/text/body/div').forEach(function(div) {  %>
+      <% var lineNumber = 1 %>
+      <section class="<%= div.attr('type').value() %>">
+        <% div.find('./p').forEach(function(p) { %>
+          <div class="paragraph">
+            <% p.find('./l').forEach(function(l, i) { %>
+              <div class='line'>
+                <div class='row'>
+                  <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
+                  <div class='words span5'>
+                    <% annotator.annotate(l.text()).forEach(function(annotation) { %>
+                      <span
+                      <% if (annotation.lemma) { %>data-parent-id='<%= annotation.lemma -%>'<% } %>
+                      <% if (annotation.sentenceId) { %>data-parent-id='<%= annotation.sentenceId -%>'<% } %>
+                      <% if (annotation.id) { %>data-parent-id='<%= annotation.id -%>'<% } %>
+                      <% if (annotation.parentId) { %>data-parent-id='<%= annotation.parentId -%>'<% } %>
+                      <% if (annotation.partOfSpeech) { %>data-part-of-speech='<%= annotation.partOfSpeech -%>'<% } %>
+                      <% if (annotation.person) { %>data-person='<%= annotation.person -%>'<% } %>
+                      <% if (annotation.number) { %>data-number='<%= annotation.number -%>'<% } %>
+                      <% if (annotation.tense) { %>data-tense='<%= annotation.tense -%>'<% } %>
+                      <% if (annotation.mood) { %>data-mood='<%= annotation.mood -%>'<% } %>
+                      <% if (annotation.voice) { %>data-voice='<%= annotation.voice -%>'<% } %>
+                      <% if (annotation.gender) { %>data-gender='<%= annotation.gender -%>'<% } %>
+                      <% if (annotation.case) { %>data-case='<%= annotation.case -%>'<% } %>
+                      <% if (annotation.degree) { %>data-degree='<%= annotation.degree -%>'<% } %>
+                      <% if (annotation.relation) { %>data-relation='<%= annotation.relation -%>'><% } %>
+                      >
+                        <%= annotation.form %>
+                      </span>
+                    <% }) %>
+                  </div>
+                  <% if (i == 0) { %>
+                    <div class="span1"><a class="edit" data-xml="<%= p %>" data-xpath="<%= p.path() %>">[edit]</a></div>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% }) %>
+      </section>
+    <% }) %>
+  </div>
+  <div class='info-pane'>
+    <div class="container span5">
+      <h4></h4>
+      <h5></h5>
+      <div class="content">
+      </div>
+      <form class="edit" method="POST" action="/<%= urn %>">
+        <input type="hidden" name="_method" value="patch" />
+        <textarea class="input-block-level" rows=20></textarea>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class='well info-well prototype'>
+    <h4></h4>
+    <h5></h5>
+    <div class='content'></div>
+  </div>
+<% include foot %>
