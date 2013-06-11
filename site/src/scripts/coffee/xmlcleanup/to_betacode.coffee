@@ -11,7 +11,7 @@ xml = libxml.parseXml(file)
 primaryLanguage = xml.get('//langUsage/language')?.attr('id').value()
 if primaryLanguage == 'greek'
   for tag in ['l', 'speaker', 'p', 'head']
-    for element in xml.find("//#{tag}")
+    for element in xml.find("TEI.2/text//#{tag}")
       for child in element.childNodes()
         if child.name() == 'text'
           child.text(greek.betacode2unicode(child.text()))

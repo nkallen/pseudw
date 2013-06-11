@@ -4,7 +4,7 @@ class Preconditions
       throw new TypeError("#{instance} must be a #{type}")
     instance
   @assertDefined: (object) ->
-    throw new TypeError("#{object} must be defined") unless object?
+    throw new TypeError("#{object} must be defined") unless object
     object
   @assertKeys: (object, validKeys...) ->
   	validKeysHash = {}

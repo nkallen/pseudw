@@ -1,6 +1,6 @@
 <% include head %>
 <div class='text'>
-  <% text.find('./div1').forEach(function(div) { %>
+  <% text.find('/TEI.2/text/body/div').forEach(function(div) {  %>
     <% var lineNumber = 1 %>
     <section class="<%= div.attr('type').value() %>">
       <% div.find('./p').forEach(function(p) { %>
@@ -11,19 +11,24 @@
                 <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                 <div class='words span5'>
                   <% annotator.annotate(l.text()).forEach(function(annotation) { %>
-                    <span data-lemma='<%= annotation.lemma %>' data-sentence-id='<%= annotation.sentenceId %>' data-id='<%= annotation.id %>' data-parent-id='<%= annotation.parentId %>'
-                    data-part-of-speech='<%= annotation.partOfSpeech %>'
-                    data-person='<%= annotation.person %>'
-                    data-number='<%= annotation.number %>'
-                    data-tense='<%= annotation.tense %>'
-                    data-mood='<%= annotation.mood %>'
-                    data-voice='<%= annotation.voice %>'
-                    data-gender='<%= annotation.gender %>'
-                    data-case='<%= annotation.case %>'
-                    data-degree='<%= annotation.degree %>'
-                    data-relation='<%= annotation.relation %>'>
-                    <%= annotation.form %>
-                  </span>
+                    <span
+                    <% if (annotation.lemma) { %>data-parent-id='<%= annotation.lemma -%>'<% } %>
+                    <% if (annotation.sentenceId) { %>data-parent-id='<%= annotation.sentenceId -%>'<% } %>
+                    <% if (annotation.id) { %>data-parent-id='<%= annotation.id -%>'<% } %>
+                    <% if (annotation.parentId) { %>data-parent-id='<%= annotation.parentId -%>'<% } %>
+                    <% if (annotation.partOfSpeech) { %>data-part-of-speech='<%= annotation.partOfSpeech -%>'<% } %>
+                    <% if (annotation.person) { %>data-person='<%= annotation.person -%>'<% } %>
+                    <% if (annotation.number) { %>data-number='<%= annotation.number -%>'<% } %>
+                    <% if (annotation.tense) { %>data-tense='<%= annotation.tense -%>'<% } %>
+                    <% if (annotation.mood) { %>data-mood='<%= annotation.mood -%>'<% } %>
+                    <% if (annotation.voice) { %>data-voice='<%= annotation.voice -%>'<% } %>
+                    <% if (annotation.gender) { %>data-gender='<%= annotation.gender -%>'<% } %>
+                    <% if (annotation.case) { %>data-case='<%= annotation.case -%>'<% } %>
+                    <% if (annotation.degree) { %>data-degree='<%= annotation.degree -%>'<% } %>
+                    <% if (annotation.relation) { %>data-relation='<%= annotation.relation -%>'><% } %>
+                    >
+                      <%= annotation.form %>
+                    </span>
                   <% }) %>
                 </div>
                 <% if (i == 0) { %>
@@ -43,7 +48,7 @@
     <h5></h5>
     <div class="content">
     </div>
-    <form class="edit" method="POST" action="/pid/<%= name %>">
+    <form class="edit" method="POST" action="/<%= urn %>">
       <input type="hidden" name="_method" value="patch" />
       <textarea class="input-block-level" rows=20></textarea>
       <div class="form-actions">

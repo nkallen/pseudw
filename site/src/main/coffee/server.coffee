@@ -3,9 +3,11 @@ util = require('pseudw-util')
 greek = util.greek
 treebank = util.treebank
 TreebankAnnotator = util.annotator.TreebankAnnotator
-index = util.perseus.index
+SimpleAnnotator = util.annotator.SimpleAnnotator
+perseus = util.perseus
 fs = require('fs')
 libxml = require('libxmljs')
+helpers = require('./helpers')
 _ = require('underscore')
 
 app = express()
@@ -36,38 +38,6 @@ do ->
 
 console.log("Memory delta: #{process.memoryUsage().heapUsed - startMem}b")
 console.log("Loaded data in #{new Date - start}ms")
-
-index = index.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.xml')))
-app.get('/:pid', (req, res, next) ->
-  unless filename = index.file(req.params.pid)
-    res.send(404)
-    return
-  annotations = index.annotations(req.params.pid)
-
-  fs.readFile(__dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
-    fs.readFile(__dirname + "/../../../../treebank-greek/data/json/#{annotations}", 'utf8', (err, annotations) ->
-      xml = libxml.parseXml(xml).get('//body')
-      annotations = JSON.parse(annotations)
-      annotator = new TreebankAnnotator(annotations)
-
-      res.render('text', text: xml, name: req.params.pid, annotator: annotator))))
-
-app.patch('/pid/:pid', (req, res, next) ->
-  unless filename = index.file(req.params.pid)
-    res.send(404)
-    return
-
-  fs.readFile(path = __dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
-    doc = libxml.parseXml(xml)
-    for key, value of req.body.path
-      node = doc.get(unescape(key))
-      replacement = libxml.parseXml(value).root()
-      node.addNextSibling(replacement)
-      node.remove()
-
-    fs.writeFile(path, doc.toString(), (err) ->
-      res.redirect('/pid/' + req.params.pid))))
-
 
 searchTemplate = _.template(fs.readFileSync(__dirname + '/../resources/search/index.html', 'utf8'))
 app.get('/', (req, res, next) ->
@@ -138,5 +108,30 @@ app.get('/:name/books/:book', (req, res, next) ->
 
           res.type('text/html')
           res.send(200, html))))))
+
+perseusIndex = perseus.PerseusIndex.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.perseus.xml')), __dirname + '/../../../../perseus-greco-roman')
+ctsIndex = perseus.CtsIndex.load(libxml.parseXml(fs.readFileSync(__dirname + '/../../../../perseus-greco-roman/index.cts.xml')), perseusIndex)
+app.get('/:urn', (req, res, next) ->
+  ctsIndex.urn(req.params.urn, (err, text) ->
+    return res.send(404) if err
+
+    annotator = new SimpleAnnotator
+    res.render('text', text: helpers.view(text), urn: req.params.urn, annotator: annotator)))
+
+app.patch('/:pid', (req, res, next) ->
+  unless filename = index.file(req.params.pid)
+    res.send(404)
+    return
+
+  fs.readFile(path = __dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
+    doc = libxml.parseXml(xml)
+    for key, value of req.body.path
+      node = doc.get(unescape(key))
+      replacement = libxml.parseXml(value).root()
+      node.addNextSibling(replacement)
+      node.remove()
+
+    fs.writeFile(path, doc.toString(), (err) ->
+      res.redirect('/pid/' + req.params.pid))))
 
 app.listen(process.env.PORT)

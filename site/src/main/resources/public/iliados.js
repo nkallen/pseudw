@@ -106,48 +106,49 @@ $(function() {
 
       var start = new Date();
       var $section  = $word.parents('.paragraph').first();
-      var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
+      if ($word.data('sentence-id')) {
+        var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
 
-      var $parent     = $word;
-      var parents     = [];
-      while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
-        parents.push($parent);
-      }
-      var bfs   = [$word];
-      var stack = [$word];
-      var depth = 0;
-      while (stack.length > 0) {
-        if (++depth > 2) break;
-        var $current  = stack.pop();
-        var level = $();
-        $current.each(function() {
-          $this = $(this);
-          var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
-          level = level.add($children);
-        });
-        if (level.length > 0) {
-          stack.push(level);
-          bfs.push(level);
+        var $parent     = $word;
+        var parents     = [];
+        while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
+          parents.push($parent);
         }
-      };
+        var bfs   = [$word];
+        var stack = [$word];
+        var depth = 0;
+        while (stack.length > 0) {
+          if (++depth > 2) break;
+          var $current  = stack.pop();
+          var level = $();
+          $current.each(function() {
+            $this = $(this);
+            var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
+            level = level.add($children);
+          });
+          if (level.length > 0) {
+            stack.push(level);
+            bfs.push(level);
+          }
+        };
 
-      highlight($word).addClass('label-info')
-      bfs.shift();
-      var level = 1; // pretend we skipped one
-      bfs.forEach(function(nodes) {
-        var opacity = 1.0 - level++ / (bfs.length + 1);
-        highlight(nodes)
-          .css('opacity', opacity)
-          .addClass('label-info');
-      });
-      level = 1; // pretend we skipped one
-      parents.forEach(function(parent) {
-        var opacity = 1.0 - (level++ / (parents.length + 1));
-        highlight(parent)
-          .css('opacity', opacity)
-          .addClass('label-important');
-      });
-
+        highlight($word).addClass('label-info')
+        bfs.shift();
+        var level = 1; // pretend we skipped one
+        bfs.forEach(function(nodes) {
+          var opacity = 1.0 - level++ / (bfs.length + 1);
+          highlight(nodes)
+            .css('opacity', opacity)
+            .addClass('label-info');
+        });
+        level = 1; // pretend we skipped one
+        parents.forEach(function(parent) {
+          var opacity = 1.0 - (level++ / (parents.length + 1));
+          highlight(parent)
+            .css('opacity', opacity)
+            .addClass('label-important');
+        });
+      }
       setTimeout(function() {
         highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('highlight')
       }, 50)

@@ -40,58 +40,111 @@ class PerseusIndex
 
     new PerseusIndex(resources)
   constructor: (@resources) ->
+
   resourceSync: (pid) ->
+    return unless fileName = @fileNameFor(pid)
+    file = fs.readFileSync(fileName)
+    libxml.parseXml(file)
+
+  resource: (pid, next) ->
+    return next("resource not found") unless fileName = @fileNameFor(pid)
+
+    file = fs.readFile(fileName, (err, file) ->
+      return next(err) if err
+      next(null, libxml.parseXml(file)))
+
+  fileNameFor: (pid) ->
     return unless current = @resources[pid]
 
     while !current.file && current.ref
-      current = current.ref
+      current = current.ref  
 
-    file = fs.readFileSync(current.file)
-    libxml.parseXml(file)
+    current.file
 
 class CtsIndex
+  xmlns = cts: 'http://chs.harvard.edu/xmlns/cts3/ti'
+
   @load: (xml, perseusIndex) ->
-    xmlns =
-      cts: 'http://chs.harvard.edu/xmlns/cts3/ti'
-    resources = {}
-    for edition in xml.find('//cts:edition', xmlns)
-      resources[edition.attr('urn').value()] = resource = {}
-      continue unless online = edition.get('./cts:online', xmlns)
-      resource.docname = online.attr('docname').value()
-      citation = online.get('./cts:citationMapping', xmlns)
-      resource.citations = (citations = [])
-      while citation = citation.get('./cts:citation', xmlns)
-        citations.push(
-          label: citation.attr('label').value())
+    resources = urns: {}, groups: {}
+    for groupNode in xml.find('//cts:textgroup', xmlns)
+      group =
+        name: groupNode.get('./cts:groupname', xmlns).text()
+      resources.groups[group.name] = group
+      for workNode in groupNode.find('./cts:work', xmlns)
+        work =
+          title: workNode.get('./cts:title', xmlns).text()
+        group[work.title] = work
+        for editionNode in workNode.find('./cts:edition', xmlns)
+          continue unless resource = parseResource(editionNode)
+          resources.urns[resource.urn] = work[resource.urn] = resource
+
+        for translation in workNode.find('./cts:translation', xmlns)
+          continue unless resource = parseResource(translation)
+          resources.urns[resource.urn] = work[resource.urn] = resource
+
     new CtsIndex(resources, perseusIndex)
 
-
   constructor: (@resources, @perseusIndex) ->
-  resourceSync: (urn) ->
-    [protocol, namespace, cts, work, passage] = urn.split(/:/)
-    workUrn = "#{protocol}:#{namespace}:#{cts}:#{work}"
-    return unless resource = @resources[workUrn]
+
+  urnSync: (urn) ->
+    urn = parseUrn(urn)
+    return unless resource = @resources.urns[urn.work]
 
     xml = @perseusIndex.resourceSync(docname2pid(resource.docname))
+    selectPassage(resource.citationMapping, urn.passage, xml)
+
+  urn: (urn, next) ->
+    urn = parseUrn(urn)
+    return next("resource not found") unless resource = @resources.urns[urn.work]
+
+    @perseusIndex.resource(docname2pid(resource.docname), (err, xml) ->
+      return next(err) if err
+      next(null, selectPassage(resource.citationMapping, urn.passage, xml)))
+
+  pathSync: (path) ->
+    node = resource.groups
+    for part in path
+      node = node[part]
+    node
+
+  selectPassage = (citationMapping, passage, xml) ->
     return xml if !passage
     return unless text = xml.get('/TEI.2/text')
-
     passageParts = passage.split('.')
     passage = text
-    for citation, i in resource.citationMapping
+    for citation, i in citationMapping
       break if i > passageParts.length - 1
 
       [tag, attr] = Citation2tag[label = citation.label]
       xpath = ".//#{tag}"
-      xpath += "[" + (if attr then "@#{attr}='#{label}' and " else '') + "@n='#{passageParts[i]}']" if attr
+      xpath += "[" + (if attr then "@#{attr}='#{label}' and " else '') + "@n='#{passageParts[i]}']"
       node = text.get(xpath)
       return unless node
     node
 
-  docname2pid = (online) ->
-    basename = online.replace('.xml', '')
+  docname2pid = (docname) ->
+    basename = docname.replace('.xml', '')
     "Perseus:text:#{basename}"
 
+  parseResource = (editionOrTranslation) ->
+    return unless online = editionOrTranslation.get('./cts:online', xmlns)
+    resource =
+      label: editionOrTranslation.get('./cts:label', xmlns)
+      description: editionOrTranslation.get('./cts:description', xmlns)
+      docname: online.attr('docname').value()
+      citationMapping: citationMapping = []
+      urn: editionOrTranslation.attr('urn').value()
+    citation = online.get('./cts:citationMapping', xmlns)
+    while citation = citation.get('./cts:citation', xmlns)
+      citationMapping.push(
+        label: citation.attr('label').value())
+    resource
+
+  parseUrn = (urn) ->
+    [protocol, namespace, service, work, passage] = urn.split(/:/)
+    service: service
+    work: "#{protocol}:#{namespace}:#{service}:#{work}"
+    passage: passage
 
 module.exports =
   PerseusIndex: PerseusIndex

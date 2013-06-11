@@ -1,12 +1,9 @@
-. convert all divN to div
-. add n="" to all addressable nodes
-
-. Serve up any Perseus doc in HTML
+. Serve up any Perseus doc in HTML by URN
+. Serve up any Perseus doc by path
 . Serve up any section of a perseus doc (using div1/div2 type names in URL)
-. consider using express 'render' method, setting the template engine
+
+. refactor out underscore
+. passage range for PATCH method
 
 . async.js to cleanup some codes
-. css selectors for patch method?
 . refactor setup into express idiomatic stuff
-. refactor the 'Perseus' index into a Resource object that can load a document, its annotations, and other such nonsense.
-. Index should use pre-compiled JSON and not xml

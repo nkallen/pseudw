@@ -10,8 +10,9 @@ describe 'Index', ->
     file: file
   
   urn = 'urn:cts:greekLit:tlg0012.tlg001.perseus-grc1'
-  ctsResources = {}
-  ctsResources[urn] =
+  ctsResources =
+    urns: {}
+  ctsResources.urns[urn] =
     docname: '1999.01.0133.xml'
     citationMapping: [{label: 'book'}, {label: 'line'}]
 
@@ -43,7 +44,7 @@ describe 'Index', ->
     describe 'load', ->
       it 'parses a text inventory', ->
         ctsIndex = perseus.CtsIndex.load(libxml.parseXml(fs.readFileSync(__dirname + '/../resources/index.cts.xml')), perseusIndex)
-        resource = ctsIndex.resourceSync(urn)
+        resource = ctsIndex.urnSync(urn)
         expect(resource.get('//title').text()).toEqual(document.get('//title').text())
 
     describe 'resource', ->
@@ -51,13 +52,13 @@ describe 'Index', ->
         ctsIndex = new perseus.CtsIndex(ctsResources, perseusIndex)
 
       it 'loads a work urn', ->
-        resource = ctsIndex.resourceSync(urn)
+        resource = ctsIndex.urnSync(urn)
         expect(resource.get('//title').text()).toEqual(document.get('//title').text())
 
       it 'loads a coarse passage urn', ->
-        resource = ctsIndex.resourceSync(urn + ':1')
+        resource = ctsIndex.urnSync(urn + ':1')
         expect(resource.text()).toEqual(document.get(".//div[@type='book' and @n='1']").text())
 
       it 'loads a fine passage urn', ->
-        resource = ctsIndex.resourceSync(urn + ':1.1')
-        expect(resource.text()).toEqual(document.get(".//div[@type='book' and @n='1']//l[@n = '1']").text())
+        resource = ctsIndex.urnSync(urn + ':1.2')
+        expect(resource.text()).toEqual(document.get(".//div[@type='book' and @n='1']//l[@n = '2']").text())
