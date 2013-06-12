@@ -1,4 +1,4 @@
-perseus = require('../../main/coffee/perseus.coffee')
+textIndex = require('../../main/coffee/text_index.coffee')
 libxml = require('libxmljs')
 fs = require('fs')
 

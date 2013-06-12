@@ -41,12 +41,12 @@ class PerseusIndex
     new PerseusIndex(resources)
   constructor: (@resources) ->
 
-  resourceSync: (pid) ->
+  pidSync: (pid) ->
     return unless fileName = @fileNameFor(pid)
     file = fs.readFileSync(fileName)
     libxml.parseXml(file)
 
-  resource: (pid, next) ->
+  pid: (pid, next) ->
     return next("resource not found") unless fileName = @fileNameFor(pid)
 
     file = fs.readFile(fileName, (err, file) ->
@@ -92,16 +92,16 @@ class CtsIndex
     urn = parseUrn(urn)
     return unless resource = @resources.urns[urn.work]
 
-    xml = @perseusIndex.resourceSync(docname2pid(resource.docname))
-    selectPassage(resource.citationMapping, urn.passage, xml)
+    xml = @perseusIndex.pidSync(resource.pid)
+    metadata: resource, passage: selectPassage(resource.citationMapping, urn.passage)
 
   urn: (urn, next) ->
     urn = parseUrn(urn)
     return next("resource not found") unless resource = @resources.urns[urn.work]
 
-    @perseusIndex.resource(docname2pid(resource.docname), (err, xml) ->
+    @perseusIndex.pid(resource.pid, (err, xml) ->
       return next(err) if err
-      next(null, selectPassage(resource.citationMapping, urn.passage, xml)))
+      next(null, metadata: resource, passage: selectPassage(resource.citationMapping, urn.passage, xml)))
 
   group: (group) ->
     @resources.groups[group]
@@ -133,7 +133,8 @@ class CtsIndex
     resource =
       label: editionOrTranslation.get('./cts:label', xmlns).text()
       description: editionOrTranslation.get('./cts:description', xmlns).text()
-      docname: online.attr('docname').value()
+      docname: docname = online.attr('docname').value()
+      pid: docname2pid(docname)
       citationMapping: citationMapping = []
       urn: editionOrTranslation.attr('urn').value()
     citation = online.get('./cts:citationMapping', xmlns)

@@ -1,7 +1,9 @@
+fs = require('fs')
+
 ###
-class Annotator
-  annotate: (string) -> [tokens]
-  reset: () ->
+  class Annotator
+    annotate: (string) -> [tokens]
+    reset: () ->
 ###
 
 class SimpleAnnotator
@@ -28,6 +30,25 @@ class TreebankAnnotator
   reset: () ->
     @i = 0
 
+class TreebankAnnotatorIndex
+  @load: (dir) ->
+    resources = {}
+    for file in fs.readdirSync(dir)
+      pid = 'Perseus:text:' + file.replace('.json', '')
+      resources[pid] = dir + '/' + file
+
+    new TreebankAnnotatorIndex(resources)
+
+  constructor: (@resources) ->
+
+  pid: (pid, next) ->
+    return next("resource not found") unless resource = @resources[pid]
+    fs.readFile(resource, (err, file) ->
+      return next(err) if err
+
+      next(null, new TreebankAnnotator(JSON.parse(file))))
+
 module.exports =
   SimpleAnnotator: SimpleAnnotator
   TreebankAnnotator: TreebankAnnotator
+  TreebankAnnotatorIndex: TreebankAnnotatorIndex

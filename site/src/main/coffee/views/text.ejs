@@ -19,9 +19,9 @@
                   <div class='words span5'>
                     <% annotator.annotate(l.text()).forEach(function(annotation) { %>
                       <span
-                      <% if (annotation.lemma) { %>data-parent-id='<%= annotation.lemma -%>'<% } %>
-                      <% if (annotation.sentenceId) { %>data-parent-id='<%= annotation.sentenceId -%>'<% } %>
-                      <% if (annotation.id) { %>data-parent-id='<%= annotation.id -%>'<% } %>
+                      <% if (annotation.lemma) { %>data-lemma='<%= annotation.lemma -%>'<% } %>
+                      <% if (annotation.sentenceId) { %>data-sentence-id='<%= annotation.sentenceId -%>'<% } %>
+                      <% if (annotation.id) { %>data-id='<%= annotation.id -%>'<% } %>
                       <% if (annotation.parentId) { %>data-parent-id='<%= annotation.parentId -%>'<% } %>
                       <% if (annotation.partOfSpeech) { %>data-part-of-speech='<%= annotation.partOfSpeech -%>'<% } %>
                       <% if (annotation.person) { %>data-person='<%= annotation.person -%>'<% } %>
@@ -32,7 +32,7 @@
                       <% if (annotation.gender) { %>data-gender='<%= annotation.gender -%>'<% } %>
                       <% if (annotation.case) { %>data-case='<%= annotation.case -%>'<% } %>
                       <% if (annotation.degree) { %>data-degree='<%= annotation.degree -%>'<% } %>
-                      <% if (annotation.relation) { %>data-relation='<%= annotation.relation -%>'><% } %>
+                      <% if (annotation.relation) { %>data-relation='<%= annotation.relation -%>'<% } %>
                       >
                         <%= annotation.form %>
                       </span>
