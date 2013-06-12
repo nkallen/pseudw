@@ -1,22 +1,6 @@
 libxml = require('libxmljs')
 fs = require('fs')
 
-Citation2tag =
-  article: ['div', 'type']
-  section: ['milestone', 'unit']
-  chapter: ['milestone', 'unit']
-  page: ['milestone', 'unit']
-  book: ['div', 'type']
-  text: ['text']
-  line: ['l']
-  scene: ['div', 'type']
-  act: ['div', 'type']
-  entry: ['div', 'type']
-  card: ['milestone', 'unit']
-  speech: ['div', 'type']
-  root: ['div', 'type']
-  poem: ['div', 'type']
-
 class PerseusIndex
   @load: (xml, root) ->
     resources = {}
@@ -93,7 +77,7 @@ class CtsIndex
     return unless resource = @resources.urns[urn.work]
 
     xml = @perseusIndex.pidSync(resource.pid)
-    metadata: resource, passage: selectPassage(resource.citationMapping, urn.passage)
+    metadata: resource, document: xml, passageSelector: urn.passage
 
   urn: (urn, next) ->
     urn = parseUrn(urn)
@@ -101,28 +85,13 @@ class CtsIndex
 
     @perseusIndex.pid(resource.pid, (err, xml) ->
       return next(err) if err
-      next(null, metadata: resource, passage: selectPassage(resource.citationMapping, urn.passage, xml)))
+      next(null, metadata: resource, document: xml, passageSelector: urn.passage))
 
   group: (group) ->
     @resources.groups[group]
 
   work: (group, work) ->
     @group(group).works[work]
-
-  selectPassage = (citationMapping, passage, xml) ->
-    return xml if !passage
-    return unless text = xml.get('/TEI.2/text')
-    passageParts = passage.split('.')
-    passage = text
-    for citation, i in citationMapping
-      break if i > passageParts.length - 1
-
-      [tag, attr] = Citation2tag[label = citation.label]
-      xpath = ".//#{tag}"
-      xpath += "[" + (if attr then "@#{attr}='#{label}' and " else '') + "@n='#{passageParts[i]}']"
-      node = text.get(xpath)
-      return unless node
-    node
 
   docname2pid = (docname) ->
     basename = docname.replace('.xml', '')

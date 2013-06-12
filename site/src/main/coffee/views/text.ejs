@@ -17,24 +17,24 @@
                 <div class='row'>
                   <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                   <div class='words span5'>
-                    <% annotator.annotate(l.text()).forEach(function(annotation) { %>
+                    <% l.find('./annotation').forEach(function(annotation) { %>
                       <span
-                      <% if (annotation.lemma) { %>data-lemma='<%= annotation.lemma -%>'<% } %>
-                      <% if (annotation.sentenceId) { %>data-sentence-id='<%= annotation.sentenceId -%>'<% } %>
-                      <% if (annotation.id) { %>data-id='<%= annotation.id -%>'<% } %>
-                      <% if (annotation.parentId) { %>data-parent-id='<%= annotation.parentId -%>'<% } %>
-                      <% if (annotation.partOfSpeech) { %>data-part-of-speech='<%= annotation.partOfSpeech -%>'<% } %>
-                      <% if (annotation.person) { %>data-person='<%= annotation.person -%>'<% } %>
-                      <% if (annotation.number) { %>data-number='<%= annotation.number -%>'<% } %>
-                      <% if (annotation.tense) { %>data-tense='<%= annotation.tense -%>'<% } %>
-                      <% if (annotation.mood) { %>data-mood='<%= annotation.mood -%>'<% } %>
-                      <% if (annotation.voice) { %>data-voice='<%= annotation.voice -%>'<% } %>
-                      <% if (annotation.gender) { %>data-gender='<%= annotation.gender -%>'<% } %>
-                      <% if (annotation.case) { %>data-case='<%= annotation.case -%>'<% } %>
-                      <% if (annotation.degree) { %>data-degree='<%= annotation.degree -%>'<% } %>
-                      <% if (annotation.relation) { %>data-relation='<%= annotation.relation -%>'<% } %>
+                      <% if (annotation.lemma) { %>data-lemma='<%= annotation.attr('lemma').value() -%>'<% } -%>
+                      <% if (annotation.sentenceId) { %>data-sentence-id='<%= annotation.attr('sentenceId').value() -%>'<% } -%>
+                      <% if (annotation.id) { %>data-id='<%= annotation.attr('id').value() -%>'<% } -%>
+                      <% if (annotation.parentId) { %>data-parent-id='<%= annotation.attr('parentId').value() -%>'<% } -%>
+                      <% if (annotation.partOfSpeech) { %>data-part-of-speech='<%= annotation.attr('partOfSpeech').value() -%>'<% } -%>
+                      <% if (annotation.person) { %>data-person='<%= annotation.attr('person').value() -%>'<% } -%>
+                      <% if (annotation.number) { %>data-number='<%= annotation.attr('number').value() -%>'<% } -%>
+                      <% if (annotation.tense) { %>data-tense='<%= annotation.attr('tense').value() -%>'<% } -%>
+                      <% if (annotation.mood) { %>data-mood='<%= annotation.attr('mood').value() -%>'<% } -%>
+                      <% if (annotation.voice) { %>data-voice='<%= annotation.attr('voice').value() -%>'<% } -%>
+                      <% if (annotation.gender) { %>data-gender='<%= annotation.attr('gender').value() -%>'<% } -%>
+                      <% if (annotation.case) { %>data-case='<%= annotation.attr('case').value() -%>'<% } -%>
+                      <% if (annotation.degree) { %>data-degree='<%= annotation.attr('degree').value() -%>'<% } -%>
+                      <% if (annotation.relation) { %>data-relation='<%= annotation.attr('relation').value() -%>'<% } -%>
                       >
-                        <%= annotation.form %>
+                        <%= annotation.attr('form').value() %>
                       </span>
                     <% }) %>
                   </div>
