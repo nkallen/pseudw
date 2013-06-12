@@ -16,8 +16,9 @@ Citation2tag =
 
 class Edition
   constructor: (@citationScheme, @passageSelector, @annotator, @text) ->
+    @text = @text.get('/TEI.2/text')
     annotate(@text, @annotator)
-    @passage = selectPassage(@text, @citationScheme, @passageSelector)
+    @passage = selectPassage(@citationScheme, @passageSelector, @text)
     @parents = parents(@passage)
 
   find: (path) ->
@@ -38,28 +39,27 @@ class Edition
           stack.push(childNode)
 
   selectPassage = (citationScheme, passageSelector, text) ->
-    return xml if !passageSelector
-    return unless text = xml.get('/TEI.2/text')
+    return text if !passageSelector
     passageSelectorParts = passageSelector.split('.')
     passage = text
-    for citation, i in citationMapping
+    for citation, i in citationScheme
       break if i > passageSelectorParts.length - 1
 
       [tag, attr] = Citation2tag[label = citation.label]
       xpath = ".//#{tag}"
       xpath += "[" + (if attr then "@#{attr}='#{label}' and " else '') + "@n='#{passageSelectorParts[i]}']"
-      node = text.get(xpath)
-      return unless node
-    node
+      passage = passage.get(xpath)
+      return unless passage
+    passage
 
   parents = (passage) ->
-    parents = new Set
+    result = new Set
     node = passage
 
-    parents.add(node)
+    result.add(node)
     while node.parent && (node = node.parent())
-      parents.add(node)
-    parents
+      result.add(node)
+    result
 
   wrap = (node, passage, parents) ->
     find: (path) ->
@@ -75,5 +75,4 @@ class Edition
     path: ->
       node.path()
 
-module.exports =
-  Edition: Edition
+module.exports = Edition
