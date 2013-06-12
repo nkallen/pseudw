@@ -5,7 +5,7 @@ util = require('pseudw-util')
 textIndex = util.textIndex
 annotator = util.annotator
 text = require('./routes/text')
-search = require('./routes/search')
+# search = require('./routes/search')
 
 ###
   Global configuration
@@ -39,7 +39,7 @@ text = text.configure(
   ctsIndex:       CTS_INDEX
   annotatorIndex: ANNOTATOR_INDEX)
 
-app.get('/search', search.index)
+# app.get('/search', search.index)
 app.get('/:group/:work', text.work)
 app.get('/:group/:work/:edition', text.load, text.show)
 app.patch('/:group/:work/:edition', text.load, text.update)

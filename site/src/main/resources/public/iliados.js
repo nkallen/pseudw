@@ -150,7 +150,7 @@ $(function() {
         });
       }
       setTimeout(function() {
-        highlight($('div.text span[data-lemma="' + lemma + '"]').not($word)).addClass('highlight')
+        highlight($('span[data-lemma="' + lemma + '"]').not($word)).addClass('highlight')
       }, 50)
     })
   });

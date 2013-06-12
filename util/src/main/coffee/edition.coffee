@@ -15,28 +15,28 @@ Citation2tag =
   poem: ['div', 'type']
 
 class Edition
-  constructor: (@citationScheme, @passageSelector, @annotator, @text) ->
-    @text = @text.get('/TEI.2/text')
-    annotate(@text, @annotator)
+  constructor: (@citationScheme, @passageSelector, @annotator, @document) ->
+    start = new Date
+    @text = @document.get('/TEI.2/text')
+    annotate(@text, @annotator, @document)
     @passage = selectPassage(@citationScheme, @passageSelector, @text)
     @parents = parents(@passage)
 
   find: (path) ->
     wrap(@text, @passage, @parents).find(path)
 
-  annotate = (text, annotator) ->
-    stack = [@text]
-    while node = stack.pop()
-      for childNode in node.childNodes
+  annotate = (node, annotator, document) ->
+    for childNode in node.childNodes()
+      if childNode.name() == 'text'
         cursor = childNode
-        if childNode.name() == 'text'
-          for annotation in annotator.annotate(childNode.text())
-            annotationNode = childNode.node('annotation', annotation.form)
-            annotationNode.attr(annotation)
-            cursor.addNextSibling(annotationNode)
-          childNode.remove()
-        else
-          stack.push(childNode)
+        for annotation in annotator.annotate(childNode.text())
+          annotationNode = node.node('annotation', annotation.form)
+          annotationNode._attr('annotation', JSON.stringify(annotation))
+          cursor.addNextSibling(annotationNode)
+          cursor = annotationNode
+        childNode.remove()
+      else
+        annotate(childNode, annotator, document)
 
   selectPassage = (citationScheme, passageSelector, text) ->
     return text if !passageSelector
@@ -63,11 +63,10 @@ class Edition
 
   wrap = (node, passage, parents) ->
     find: (path) ->
-      for found in passage.find(path) when parents.has(found)
-        if found == passage
-          passage
-        else
-          wrap(found, passage, parents)
+      return passage.find(path) if node == passage
+
+      for found in node.find(path) when parents.has(found)
+        wrap(found, passage, parents)
     attr: (name) ->
       node.attr(name)
     text: ->

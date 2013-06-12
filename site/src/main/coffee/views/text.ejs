@@ -1,13 +1,13 @@
 <% include head %>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="#"><%= urn.toUpperCase() %></a>
-        </div>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="#"><%= urn.toUpperCase() %></a>
       </div>
     </div>
-    <div class='text'>
-    <% text.find('/TEI.2/text/body/div').forEach(function(div) {  %>
+  </div>
+  <div class='text'>
+    <% edition.find('/TEI.2/text/body/div').forEach(function(div) {  %>
       <% var lineNumber = 1 %>
       <section class="<%= div.attr('type').value() %>">
         <% div.find('./p').forEach(function(p) { %>
@@ -18,24 +18,7 @@
                   <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                   <div class='words span5'>
                     <% l.find('./annotation').forEach(function(annotation) { %>
-                      <span
-                      <% if (annotation.lemma) { %>data-lemma='<%= annotation.attr('lemma').value() -%>'<% } -%>
-                      <% if (annotation.sentenceId) { %>data-sentence-id='<%= annotation.attr('sentenceId').value() -%>'<% } -%>
-                      <% if (annotation.id) { %>data-id='<%= annotation.attr('id').value() -%>'<% } -%>
-                      <% if (annotation.parentId) { %>data-parent-id='<%= annotation.attr('parentId').value() -%>'<% } -%>
-                      <% if (annotation.partOfSpeech) { %>data-part-of-speech='<%= annotation.attr('partOfSpeech').value() -%>'<% } -%>
-                      <% if (annotation.person) { %>data-person='<%= annotation.attr('person').value() -%>'<% } -%>
-                      <% if (annotation.number) { %>data-number='<%= annotation.attr('number').value() -%>'<% } -%>
-                      <% if (annotation.tense) { %>data-tense='<%= annotation.attr('tense').value() -%>'<% } -%>
-                      <% if (annotation.mood) { %>data-mood='<%= annotation.attr('mood').value() -%>'<% } -%>
-                      <% if (annotation.voice) { %>data-voice='<%= annotation.attr('voice').value() -%>'<% } -%>
-                      <% if (annotation.gender) { %>data-gender='<%= annotation.attr('gender').value() -%>'<% } -%>
-                      <% if (annotation.case) { %>data-case='<%= annotation.attr('case').value() -%>'<% } -%>
-                      <% if (annotation.degree) { %>data-degree='<%= annotation.attr('degree').value() -%>'<% } -%>
-                      <% if (annotation.relation) { %>data-relation='<%= annotation.attr('relation').value() -%>'<% } -%>
-                      >
-                        <%= annotation.attr('form').value() %>
-                      </span>
+                      <span data-annotation="<%= annotation.attr('annotation').value() %>"><%= annotation.text() %></span>
                     <% }) %>
                   </div>
                   <% if (i == 0) { %>

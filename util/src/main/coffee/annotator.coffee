@@ -18,13 +18,13 @@ class TreebankAnnotator
   annotate: (string) ->
     result = []
 
-    while string.length
+    while (string = string.trim()).length
       annotation = @treebank[@i++]
       form = annotation.originalForm || annotation.form
       if (original = string[0...form.length]) != form
         throw "Original '#{original}' not equal to '#{form}': #{JSON.stringify(annotation)}"
       result.push(annotation)
-      string = string[form.length..].trim()
+      string = string[form.length..]
     result
 
   reset: () ->

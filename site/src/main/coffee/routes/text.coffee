@@ -3,7 +3,7 @@ fs = require('fs')
 libxml = require('libxmljs')
 TreebankAnnotator = util.annotator.TreebankAnnotator
 SimpleAnnotator = util.annotator.SimpleAnnotator
-helpers = require('../helpers')
+Edition = util.Edition
 
 configure = (configuration) ->
   perseusIndex  = configuration.perseusIndex
@@ -38,7 +38,8 @@ configure = (configuration) ->
         next()))
 
   show: (req, res) ->
-    res.render('text', text: helpers.view(req.text.passage), annotator: req.annotator, urn: req.text.metadata.urn)
+    text = req.text
+    res.render('text', edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document), urn: text.metadata.urn)
 
   update: (req, res) ->
     unless filename = index.file(req.params.pid)
