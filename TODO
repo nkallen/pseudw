@@ -1,4 +1,6 @@
-. move submodules to resources/ dir
-. figure out where to put views (.ejs extension works weirdly with maven layout)
 . support ranges
 . passage rather than xpath for PATCH method
+
+. remove index on lemma by putting things in the .class attribute
+. move submodules to resources/ dir
+. figure out where to put views (.ejs extension works weirdly with maven layout)

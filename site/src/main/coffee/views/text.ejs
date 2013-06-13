@@ -17,9 +17,9 @@
                 <div class='row'>
                   <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                   <div class='words span5'>
-                    <% l.find('./annotation').forEach(function(annotation) { %>
+                    <% l.find('./annotation').forEach(function(annotation) { -%>
                       <span data-annotation="<%= annotation.attr('annotation').value() %>"><%= annotation.text() %></span>
-                    <% }) %>
+                    <% }) -%>
                   </div>
                   <% if (i == 0) { %>
                     <div class="span1"><a class="edit" data-xml="<%= p %>" data-xpath="<%= p.path() %>">[edit]</a></div>

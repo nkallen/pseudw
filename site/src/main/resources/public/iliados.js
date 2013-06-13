@@ -9,7 +9,7 @@ $(function() {
   var $infoPane = $('.info-pane');
   var $infoWell = $('.info-well').removeClass('prototype').remove();
   var $info = $infoPane.add($infoWell);
-  function reset(complete) {
+  function reset() {
     $info.find('h4').text('');
     $info.find('h5').text('');
     $info.find('.content').text('');
@@ -18,11 +18,10 @@ $(function() {
       $(this).removeClass('highlight').removeClass('label-info').removeClass('label-important').removeAttr('style')
     });
     state = $();
-    complete && complete();
   }
   reset();
   function highlight($item) {
-    var result = $();
+      var result = $();
     $item.each(function () {
       var $this = $(this).addClass('highlight');
       result = result.add($this);
@@ -67,20 +66,31 @@ $(function() {
     .click(function() {
       var $this = $(this);
 
-      reset(function() {
-        var $row = $this.parents(".row").first();
-        var $lineNumber = $this.find('.line-number');
-        var $note = $lineNumber.data('note');
-        if ($note) {
-          highlight($lineNumber).addClass('label-info');
-          $info.find('h4')
-            .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
-          $info.find('.content')
-            .html($note.html());
-          $row.after($infoWell);
-        }
-      })
+      reset()
+
+      var $row = $this.parents(".row").first();
+      var $lineNumber = $this.find('.line-number');
+      var $note = $lineNumber.data('note');
+      if ($note) {
+        highlight($lineNumber).addClass('label-info');
+        $info.find('h4')
+          .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
+        $info.find('.content')
+          .html($note.html());
+        $row.after($infoWell);
+      }
     });
+
+  lemma2word = {}
+  $('.words span')
+    .each(function() {
+      var annotations = $(this).data('annotation')
+
+      if (!lemma2word[annotations.lemma])
+        lemma2word[annotations.lemma] = []
+
+      lemma2word[annotations.lemma].push(this)
+    })
 
   var $lexicon = $("ul.lexicon > li");
   var lexicon = {};
@@ -88,72 +98,78 @@ $(function() {
     var $this = $(this);
     lexicon[$this.data('lemma')] = $this;
   })
-  $('ul.lexicon').remove();
-  $('.words span').click(function() {
+  $('ul.lexicon').remove();   var start = new Date();
+  var start = new Date();
+  $('.words > span').click(function() {
     var $word = $(this);
 
-    reset(function() {
-      var $row = $word.parents(".row").first();
-      var lemma = $word.data('lemma');
+    reset()
 
-      var $translation = $(lexicon[lemma]);
-      $info.find('h4').text(lemma);
-      $info.find('h5')
-        .html("<span class='label'>" + $word.text() + "</span> ")
-        .append(inflections($word));
-      $info.find('.content').html($translation.html());
-      $row.after($infoWell);
+    var annotation = $word.data('annotation');
+    var $row = $word.parents(".row").first();
+    var lemma = annotation.lemma;
 
-      var start = new Date();
-      var $section  = $word.parents('.paragraph').first();
-      if ($word.data('sentence-id')) {
-        var $sentence = $section.find('span[data-sentence-id="' + $word.data('sentence-id') + '"]');
+    var $translation = $(lexicon[lemma]);
+    $info.find('h4').text(lemma);
+    $info.find('h5')
+      .html("<span class='label'>" + $word.text() + "</span> ")
+      .append(inflections($word));
+    $info.find('.content').html($translation.html());
+    $row.after($infoWell);
 
-        var $parent     = $word;
-        var parents     = [];
-        while (($parent = $sentence.filter('span[data-id="' + $parent.data('parent-id') + '"]')) && $parent.length > 0) {
-          parents.push($parent);
-        }
-        var bfs   = [$word];
-        var stack = [$word];
-        var depth = 0;
-        while (stack.length > 0) {
-          if (++depth > 2) break;
-          var $current  = stack.pop();
-          var level = $();
-          $current.each(function() {
-            $this = $(this);
-            var $children = $sentence.filter('span[data-parent-id="' + $this.data('id') + '"]');
-            level = level.add($children);
-          });
-          if (level.length > 0) {
-            stack.push(level);
-            bfs.push(level);
-          }
-        };
+    var start = new Date();
+    var $p = $word.parents('.paragraph').first();
 
-        highlight($word).addClass('label-info')
-        bfs.shift();
-        var level = 1; // pretend we skipped one
-        bfs.forEach(function(nodes) {
-          var opacity = 1.0 - level++ / (bfs.length + 1);
-          highlight(nodes)
-            .css('opacity', opacity)
-            .addClass('label-info');
-        });
-        level = 1; // pretend we skipped one
-        parents.forEach(function(parent) {
-          var opacity = 1.0 - (level++ / (parents.length + 1));
-          highlight(parent)
-            .css('opacity', opacity)
-            .addClass('label-important');
-        });
+    if (annotation.sentenceId) {
+      var $sentence = $p.find('.words > span').filter(function() { return $(this).data('annotation').sentenceId == annotation.sentenceId })
+
+      var $parent     = $word;
+      var parents     = [];
+
+      while (($parent = $sentence.filter(function() { return $(this).data('annotation').id == $parent.data('annotation').parentId })) && $parent.length) {
+        parents.push($parent);
       }
-      setTimeout(function() {
-        highlight($('span[data-lemma="' + lemma + '"]').not($word)).addClass('highlight')
-      }, 50)
-    })
+
+      var bfs   = [$word];
+      var stack = [$word];
+      var depth = 0;
+      while (stack.length > 0) {
+        if (++depth > 2) break;
+        var $current  = stack.pop();
+        var level = $();
+        $current.each(function() {
+          $this = $(this);
+          var $children = $sentence.filter(function() { return $(this).data('annotation').parentId == $this.data('annotation').id });
+          level = level.add($children);
+        });
+        if (level.length > 0) {
+          stack.push(level);
+          bfs.push(level);
+        }
+      };
+
+      highlight($word).addClass('label-info')
+      bfs.shift();
+      var level = 1; // pretend we skipped one
+      bfs.forEach(function(nodes) {
+        var opacity = 1.0 - level++ / (bfs.length + 1);
+        highlight(nodes)
+          .css('opacity', opacity)
+          .addClass('label-info');
+      });
+      level = 1; // pretend we skipped one
+      parents.forEach(function(parent) {
+        var opacity = 1.0 - (level++ / (parents.length + 1));
+        highlight(parent)
+          .css('opacity', opacity)
+          .addClass('label-important');
+      });
+    }
+    setTimeout(function() {
+      highlight($(lemma2word[lemma]).not($word)).addClass('highlight')
+    }, 50)
   });
+
   $('body')
     .keydown(function(e) {
       if (e.which == 27) { // <ESC>
@@ -174,7 +190,6 @@ $(function() {
     $form.show()
     $form.find('textarea').text($(this).data('xml')).attr('name', 'path[' + escape($(this).data('xpath')) + ']')
   })
-  $('#thanks').tooltip();
   var params = {};
   window.location.search.slice(1).split('&').forEach(function(param) {
     var pair = param.split('=');
@@ -197,86 +212,6 @@ $(function() {
     }
   })
 
-  var $tableProto = $("#vocabulary table");
-  var $carouselPrototype = $("#vocabulary #vocabulary-practice");
-  var $theadProto = $("<thead><tr><td colspan='4' class='caption'></td></tr><tr><th>Lemma</th><th>Freq.</th><th>Common</th><th>Definition</th></tr></thead>");
-  var $modalBody = $modalBody = $('#vocabulary .modal-body');
-  var $lastLine = $(".line-number:last");
-  $("a.vocabulary").click(function() {
-    $modalBody.empty();
-    $table = $tableProto.clone().appendTo($modalBody).removeClass("prototype");
-    var vocabulary = {};
-    var start = Number($start.val()) || 1;
-    var end = Number($end.val() || $lastLine.text());
-    $("#vocabulary .start").text(start);
-    $("#vocabulary .end").text(end);
-    $range = $("div.line").slice(start ? start - 1 : 0, end || undefined);
-    $range.find('.words > span').each(function() {
-      var self = $(this), wordsByPartOfSpeech;
-      if (self.data('lemma')[0] == self.data('lemma')[0].toLowerCase()) { // skip proper nouns
-        var partOfSpeech = self.data('part-of-speech');
-        if (!vocabulary[partOfSpeech])
-          vocabulary[partOfSpeech] = {};
-        wordsByPartOfSpeech = vocabulary[partOfSpeech];
-        var lemma = self.data('lemma');
-        var text = self.text();
-
-        if (wordsByPartOfSpeech[lemma] === undefined) {
-          wordsByPartOfSpeech[lemma] = {count: 1, words: {}};
-          wordsByPartOfSpeech[lemma].words[text] = {count: 1, word: self};
-        } else {
-          wordsByPartOfSpeech[lemma].count++;
-          if (wordsByPartOfSpeech[lemma].words[text] == undefined) {
-            wordsByPartOfSpeech[lemma].words[text] = {count: 1, word: self};
-          } else {
-            wordsByPartOfSpeech[lemma].words[text].count++;
-          }
-        }
-      }
-    });
-
-    var $carousel = $carouselPrototype.clone().appendTo($modalBody);
-    ['noun', 'adjective', 'verb', 'participle', 'adverb'].forEach(function(key) {
-      var partOfSpeech = vocabulary[key];
-      if (!partOfSpeech) return;
-
-      var $thead = $theadProto.clone().appendTo($table);
-      var $tbody = $("<tbody></tbody>").appendTo($table);
-      var $caption = $thead.find(".caption");
-
-      var lemmas = Object.keys(partOfSpeech).sort(function(a, b) { return partOfSpeech[b].count - partOfSpeech[a].count });
-      $caption.text(key + " frequency");
-      for (var i = 0; i < lemmas.length; i++) {
-        if (i == (Number(params.limit || 30))) break;
-        var lemma = lemmas[i];
-        var words = partOfSpeech[lemma].words;
-        var forms = Object.keys(words).sort(function(a, b) { return words[b].count - words[a].count });
-        var $definition = $(lexicon[lemma]);
-        $carousel.find(".carousel-inner")
-          .append("<div class='item'><p>" + lemma + "</p><div class='carousel-caption'><p>" + forms.join(", ") + "</p></div></div>")
-          .append("<div class='item'><p>" + $definition.html() + "</p></div>");
-        $("<tr><td>" + lemma + "</td><td>" + partOfSpeech[lemma].count + "</td></tr>")
-          .append((function() {
-            var cell = $("<td></td>");
-            for (var i = 0; i < forms.length; i++) {
-              if (i == 3) break;
-
-              var span = words[forms[i]].word;
-              $("<span data-toggle='tooltip' title='" + inflections(span) + "'>" + span.text() + "</span>")
-                .appendTo(cell);
-              if (i < 2 && i < forms.length - 1) cell.append(", ")
-            }
-            return cell;
-          })())
-          .append($("<td>" + $definition.find(".translation:first").text() + "</td>"))
-          .appendTo($tbody);
-      }
-    });
-    $carousel.find(".item").first().addClass('active');
-    $table.find("span[data-toggle]").tooltip();
-    $('#vocabulary').modal();
-    return false;
-  });
   $(".range input.start")
     .keypress(function(e) {
       if (e.which == 13) {

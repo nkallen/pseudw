@@ -43,10 +43,14 @@ class TreebankAnnotatorIndex
 
   pid: (pid, next) ->
     return next("resource not found") unless resource = @resources[pid]
+
     fs.readFile(resource, (err, file) ->
       return next(err) if err
 
-      next(null, new TreebankAnnotator(JSON.parse(file))))
+      start = new Date
+      json = JSON.parse(file)
+      console.log(new Date - start)
+      next(null, new TreebankAnnotator(json)))
 
 module.exports =
   SimpleAnnotator: SimpleAnnotator

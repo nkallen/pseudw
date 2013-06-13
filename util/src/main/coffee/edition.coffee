@@ -21,6 +21,7 @@ class Edition
     annotate(@text, @annotator, @document)
     @passage = selectPassage(@citationScheme, @passageSelector, @text)
     @parents = parents(@passage)
+    console.log("edition", new Date - start)
 
   find: (path) ->
     wrap(@text, @passage, @parents).find(path)
@@ -54,17 +55,17 @@ class Edition
 
   parents = (passage) ->
     result = new Set
-    node = passage
-
-    result.add(node)
+    result.add(node = passage)
     while node.parent && (node = node.parent())
       result.add(node)
     result
 
+  DESCENDENT_OF_PASSAGE = has: (item) -> true
   wrap = (node, passage, parents) ->
-    find: (path) ->
-      return passage.find(path) if node == passage
+    if node == passage
+      parents = DESCENDENT_OF_PASSAGE
 
+    find: (path) ->
       for found in node.find(path) when parents.has(found)
         wrap(found, passage, parents)
     attr: (name) ->
