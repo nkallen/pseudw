@@ -1,3 +1,6 @@
+dom = require('./dom')
+Sizzle = require('./sizzle')
+
 Citation2tag =
   article: ['div', 'type']
   section: ['milestone', 'unit']
@@ -14,49 +17,59 @@ Citation2tag =
   root: ['div', 'type']
   poem: ['div', 'type']
 
+sizzle = Sizzle()
+
 class Edition
   constructor: (@citationScheme, @passageSelector, @annotator, @document) ->
     start = new Date
-    @text = @document.get('/TEI.2/text')
-    annotate(@text, @annotator, @document)
-    @passage = selectPassage(@citationScheme, @passageSelector, @text)
+    @dom = new dom.DocumentShim({})
+    dfs(@document.get('/TEI.2/text'), domify(@annotator, @dom))
+    @passage = selectPassage(@citationScheme, @passageSelector, @dom)
     @parents = parents(@passage)
     console.log("edition", new Date - start)
 
-  find: (path) ->
-    wrap(@text, @passage, @parents).find(path)
+  find: (selector) ->
+    wrap(@dom, @passage, @parents).find(selector)
 
-  annotate = (node, annotator, document) ->
+  dfs = (node, fn, acc) ->
+    acc = fn(acc, node)
     for childNode in node.childNodes()
-      if childNode.name() == 'text'
-        cursor = childNode
-        for annotation in annotator.annotate(childNode.text())
-          annotationNode = node.node('annotation', annotation.form)
-          annotationNode._attr('annotation', JSON.stringify(annotation))
-          cursor.addNextSibling(annotationNode)
-          cursor = annotationNode
-        childNode.remove()
-      else
-        annotate(childNode, annotator, document)
+      dfs(childNode, fn, acc)
+    acc
+
+  domify = (annotator, document) -> (parent, child) ->
+    if child.type() == 'text'
+      for annotation in annotator.annotate(child.text())
+        element = document.createElement('annotation', annotation.form)
+        element.annotation = annotation
+        parent.children.push(element) if parent
+      null # no accumulator, as text nodes have no children
+    else
+      attributes = {}
+      for attr in child.attrs()
+        attributes[attr.name()] = attr.value()
+      element = document.createElement(name = child.name(), '', attributes)
+      if parent
+        element.parentNode = parent
+        element.parentNode.children.push(element)
+      element
 
   selectPassage = (citationScheme, passageSelector, text) ->
     return text if !passageSelector
     passageSelectorParts = passageSelector.split('.')
     passage = text
+    cssSelectorTokens = []
     for citation, i in citationScheme
       break if i > passageSelectorParts.length - 1
 
       [tag, attr] = Citation2tag[label = citation.label]
-      xpath = ".//#{tag}"
-      xpath += "[" + (if attr then "@#{attr}='#{label}' and " else '') + "@n='#{passageSelectorParts[i]}']"
-      passage = passage.get(xpath)
-      return unless passage
-    passage
+      cssSelectorTokens.push(tag + (if attr then "[#{attr}=#{label}]" else '') + "[n=#{passageSelectorParts[i]}]")
+    sizzle(cssSelectorTokens.join(" "), passage)[0]
 
   parents = (passage) ->
     result = new Set
     result.add(node = passage)
-    while node.parent && (node = node.parent())
+    while node = node.parentNode
       result.add(node)
     result
 
@@ -65,13 +78,15 @@ class Edition
     if node == passage
       parents = DESCENDENT_OF_PASSAGE
 
-    find: (path) ->
-      for found in node.find(path) when parents.has(found)
+    find: (selector) ->
+      for found in sizzle(selector, node) when parents.has(found)
         wrap(found, passage, parents)
     attr: (name) ->
-      node.attr(name)
+      node.getAttribute(name)
     text: ->
-      node.text()
+      node.text
+    annotation: ->
+      node.annotation
     path: ->
       node.path()
 

@@ -1,7 +1,8 @@
 greek = require('./greek')
-vm = require('vm')
 fs = require('fs')
 Enum = require('./enum')
+dom = require('./dom')
+Sizzle = require('./sizzle')
 
 Relation = Enum('Relation')
 
@@ -10,22 +11,18 @@ internPool = {}
 intern = (string) ->
   internPool[string] || (internPool[string] = string)
 
-Sizzle = do ->
-  script = vm.createScript(fs.readFileSync(__dirname + "/../javascript/sizzle/sizzle.js", "utf8"), 'sizzle.js');
-  sandbox = { window: { document: {} }, document: {}, console: console }
-  script.runInNewContext(sandbox)
-  sandbox.window.Sizzle
+sizzle = Sizzle()
 
-Sizzle.selectors.pseudos.before = Sizzle.selectors.createPseudo(
+sizzle.selectors.pseudos.before = sizzle.selectors.createPseudo(
   (selector) ->
     (elem) ->
-      matches = Sizzle(selector, elem)
+      matches = sizzle(selector, elem)
       (match for match in matches when (Number(elem.getAttribute('id')) < Number(match.getAttribute('id')))).length)
 
-Sizzle.selectors.pseudos.after = Sizzle.selectors.createPseudo(
+sizzle.selectors.pseudos.after = sizzle.selectors.createPseudo(
   (selector) ->
     (elem) ->
-      matches = Sizzle(selector, elem)
+      matches = sizzle(selector, elem)
       (match for match in matches when (Number(elem.getAttribute('id')) > Number(match.getAttribute('id')))).length)
 
 for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Person, greek.Number, greek.Case, greek.Voice, greek.Mood, greek.Degree]
@@ -33,50 +30,13 @@ for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Person, gre
     do -> # variable scoping issue
       sym = feature.toSymbol()
       name = value.name
-      Sizzle.selectors.pseudos[name] = Sizzle.selectors.createPseudo(->
+      sizzle.selectors.pseudos[name] = sizzle.selectors.createPseudo(->
         (elem) ->
           elem.getAttribute(sym) == name)
 
-Sizzle.selectors.pseudos.root = Sizzle.selectors.createPseudo(->
+sizzle.selectors.pseudos.root = sizzle.selectors.createPseudo(->
   (elem) ->
     elem.getAttribute('parentId') == '0' && elem.getAttribute('relation') != 'AuxK')
-
-class DomShim
-  constructor: (@attributes) ->
-    @children = []
-    @parentNode = null
-    @nodeName = @attributes.lemma
-  nodeType: 1
-  getAttribute: (attribute) ->
-    if @attributes.hasOwnProperty(attribute) && @attributes[attribute] != undefined
-      @attributes[attribute].toString()
-    else
-      ''
-  compareDocumentPosition: (that) ->
-    if this.attributes.id < that.attributes.id
-      4
-    else
-      2
-  getElementsByTagName: (name) ->
-    if name == "*"
-      @children
-    else
-      child for child in @children when child.nodeName == name
-  uuid: () -> [@attributes.id, @attributes.sentenceId].toString()
-
-class DocumentShim
-  constructor: (@tags) ->
-  nodeType: 9
-  getElementsByTagName: (name) ->
-    if name == "*"
-      @tags.word
-    else
-      @tags[name] || []
-  documentElement:
-    removeChild: () ->
-  createComment : () -> {}
-  createElement : () -> {}
-  getElementById : () -> []
 
 Treebank =
   wordNode2word: (wordNode) ->
@@ -184,7 +144,7 @@ Treebank =
 
   load: (xmls) ->
     tags =
-      word: []
+      all: []
 
     id2word = currentSentenceId = previousWordInSentence = null
     for xml in xmls
@@ -231,7 +191,7 @@ Treebank =
             attributes.line = Number(line)
             attributes.book = Number(book)
 
-            word = new DomShim(attributes)
+            word = new dom.ElementShim(attributes.lemma, null, attributes)
             if previousWordInLine
               word.previousSiblingInLine = previousWordInLine
               previousWordInLine.nextSiblingInLine = word
@@ -241,12 +201,12 @@ Treebank =
             previousWordInLine = previousWordInSentence = word
 
             id2word[attributes.id] = word
-            tags.word.push(word)
+            tags.all.push(word)
             if lemma = tags[attributes.lemma]
               lemma.push(word)
             else
               tags[attributes.lemma] = [word]
 
-    (query) -> Sizzle(query, new DocumentShim(tags))
+    (query) -> sizzle(query, new dom.DocumentShim(tags))
 
 module.exports = Treebank

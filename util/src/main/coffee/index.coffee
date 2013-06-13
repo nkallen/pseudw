@@ -5,4 +5,6 @@ module.exports =
   enum: require('./enum')
   textIndex: require('./text_index')
   annotator: require('./annotator')
+  dom: require('./dom')
   Edition: require('./edition')
+  Sizzle: require('./sizzle')

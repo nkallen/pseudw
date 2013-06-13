@@ -49,7 +49,7 @@ class TreebankAnnotatorIndex
 
       start = new Date
       json = JSON.parse(file)
-      console.log(new Date - start)
+      console.log("Treebank load", new Date - start)
       next(null, new TreebankAnnotator(json)))
 
 module.exports =

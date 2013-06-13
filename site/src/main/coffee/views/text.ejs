@@ -7,22 +7,22 @@
     </div>
   </div>
   <div class='text'>
-    <% edition.find('/TEI.2/text/body/div').forEach(function(div) {  %>
+    <% edition.find('body > div').forEach(function(div) {  %>
       <% var lineNumber = 1 %>
-      <section class="<%= div.attr('type').value() %>">
-        <% div.find('./p').forEach(function(p) { %>
+      <section class="<%= div.attr('type') %>">
+        <% div.find('p').forEach(function(p) { %>
           <div class="paragraph">
-            <% p.find('./l').forEach(function(l, i) { %>
+            <% p.find('l').forEach(function(l, i) { %>
               <div class='line'>
                 <div class='row'>
                   <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                   <div class='words span5'>
-                    <% l.find('./annotation').forEach(function(annotation) { -%>
-                      <span data-annotation="<%= annotation.attr('annotation').value() %>"><%= annotation.text() %></span>
+                    <% l.find('annotation').forEach(function(annotation) { -%>
+                      <span data-annotation="<%= JSON.stringify(annotation.annotation()) %>"><%= annotation.text() %></span>
                     <% }) -%>
                   </div>
                   <% if (i == 0) { %>
-                    <div class="span1"><a class="edit" data-xml="<%= p %>" data-xpath="<%= p.path() %>">[edit]</a></div>
+                    <div class="span1"><a class="edit" data-xml="<%= 'p' %>" data-xpath="<%= 'p.path()' %>">[edit]</a></div>
                   <% } %>
                 </div>
               </div>
