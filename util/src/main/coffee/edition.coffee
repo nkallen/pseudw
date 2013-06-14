@@ -86,12 +86,13 @@ class Edition
     attr: (name) ->
       node.getAttribute(name)
     text: ->
-      node.text
+      node.text()
     annotation: ->
       node.annotation
     xml: ->
       node.xmlNode.toString()
     path: ->
       node.xpath
+    node: node
 
 module.exports = Edition
