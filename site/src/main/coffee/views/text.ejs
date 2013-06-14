@@ -22,7 +22,7 @@
                     <% }) -%>
                   </div>
                   <% if (i == 0) { %>
-                    <div class="span1"><a class="edit" data-xml="<%= p.xml() %>" data-xpath="<%= p.path() %>">[edit]</a></div>
+                    <div class="span1"><a class="edit" data-xml="<%= p.xml() %>" data-path="<%= p.path() %>">[edit]</a></div>
                   <% } %>
                 </div>
               </div>
@@ -34,23 +34,22 @@
   </div>
   <div class='info-pane'>
     <div class="container span5">
-      <h4></h4>
-      <h5></h5>
-      <div class="content">
-      </div>
-      <form class="edit" method="POST" action="/<%= urn %>">
-        <input type="hidden" name="_method" value="patch" />
-        <textarea class="input-block-level" rows=20></textarea>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Save changes</button>
-          <button type="button" class="btn">Cancel</button>
+      <div class="word hide">
+        <h4></h4>
+        <h5><span class="label"></span> <span class="data"></span></h5>
+        <div class="content">
         </div>
-      </form>
+      </div>
+      <div class="paragraph hide">
+        <form method="POST" action="/<%= urn %>">
+          <input type="hidden" name="_method" value="patch" />
+          <textarea class="input-block-level" rows=20></textarea>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
-  <div class='well info-well prototype'>
-    <h4></h4>
-    <h5></h5>
-    <div class='content'></div>
   </div>
 <% include foot %>

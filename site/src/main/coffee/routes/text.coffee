@@ -32,6 +32,7 @@ configure = (configuration) ->
       return res.send(404) if err
 
       req.text = text
+      req.urn = req.params.urn || text.metadata.urn
       annotatorIndex.pid(text.metadata.pid, (err, annotator) ->
         console.warn(err) if err
 
@@ -42,7 +43,7 @@ configure = (configuration) ->
     text = req.text
     res.render('text',
       edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
-      urn: text.metadata.urn)
+      urn: req.urn)
 
   update: (req, res) ->
     self = this
@@ -50,7 +51,6 @@ configure = (configuration) ->
 
     for key, value of req.body.path
       node = text.document.get(unescape(key))
-      console.log(value)
       replacement = libxml.parseXml(value).root()
       node.addNextSibling(replacement)
       node.remove()
@@ -60,7 +60,7 @@ configure = (configuration) ->
 
       res.render('text',
         edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
-        urn: text.metadata.urn))
+        urn: req.urn))
 
 module.exports =
   configure: configure

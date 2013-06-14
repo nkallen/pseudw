@@ -44,7 +44,6 @@ class PerseusIndex
         return next(err) if err
         next(null, libxml.parseXml(file)))
     else
-      console.log("writePath")
       newValue = arguments[1]
       next = arguments[2]
       fs.writeFile(fileName, newValue.toString(), (err, file) ->
@@ -105,7 +104,6 @@ class CtsIndex
         return next(err) if err
         next(null, metadata: resource, document: xml, passageSelector: urn.passage))
     else
-      console.log("write path")
       newValue = arguments[1]
       @perseusIndex.pid(resource.pid, newValue.document, next)
 

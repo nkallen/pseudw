@@ -45,7 +45,7 @@ $(function() {
         }
         level = 0
         var bfs = [[annotation]]
-        while ((nodes = bfs.pop()) && level++ <= MAX_LEVEL) {
+        while ((nodes = bfs.pop()) && level++ <= MAX_LEVEL - 1) {
           var nextLevel = []
           for (n in nodes) {
             var node = nodes[n]
@@ -91,6 +91,7 @@ $(function() {
       $('.highlight, .child, .parent, .pivot')
         .removeClass('highlight child parent pivot')
         .attr('style', '')
+      $('info-pane .word, .info-pane .paragraph').hide()
     }
   }
 
@@ -99,22 +100,54 @@ $(function() {
       if (e.which == 27) {
         $('body').trigger('reset')
       } else if (e.which == 18) {
-        $('body').trigger('edit.' + e.type == 'keydown' ? 'enter' : 'exit')
+        $('body').trigger('edit.' + (e.type == 'keydown' ? 'enter' : 'exit'))
       }
     }
   }
 
   var info = {
-    show: function() {
+    word: function() {
+      var $this = $(this)
+      var annotation = $this.data('annotation')
+      $('.info-pane')
+        .find('.word').show()
+          .find('h4').text(annotation.lemma).end()
+          .find('h5 .label').text(annotation.form).end()
+          .find('h5 .data').text(
+            [
+              annotation.partOfSpeech,
+              annotation.person,
+              annotation.number,
+              annotation.tense,
+              annotation.mood,
+              annotation.voice,
+              annotation.case,
+              annotation.gender
+            ].filter(function(item) {return item}).join(', '))
+    },
+
+    paragraph: function() {
+      var $this = $(this)
+      var xml = $this.data('xml')
+      var path = $this.data('path')
+      console.log($('.info-pane').find('.paragraph'))
+      $('.info-pane')
+        .find('.paragraph').show()
+          .find('textarea')
+            .text(xml)
+            .attr('name', 'path[' + escape(path) + ']')
 
     }
   }
 
   $('.words > span')
     .click(state.reset)
-    .click(info.show)
+    .click(info.word)
     .click(sentence.show)
     .click(lemma.highlight)
+  $('a.edit')
+    .click(state.reset)
+    .click(info.paragraph)
   $('body').on('keydown', key.filter)
   $('body').on('keyup', key.filter)
   $('body').on('reset', state.reset)
