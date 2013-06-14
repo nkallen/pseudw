@@ -1,6 +1,24 @@
-. support ranges
-. passage rather than xpath for PATCH method
+. form-like editor for key/value pairs
+  select fields for known types and options
+  parent_id field can be a drop down with the words themselves as a list
 
+. all data loaded from, and saved to, github
+
+. two blank fields at the bottom for arbitrary annotations
+  hitting <enter> creates a new row, delete deletes the row
+
+. type-ahead for lemma
+  should show brief definition in preview
+
+
+. morphology service: [morpheme] -> [[anotation]]
+
+. translation service: [lemma] -> [translation]
+
+. rename index repository
 . remove index on lemma by putting things in the .class attribute
+
 . move submodules to resources/ dir
 . figure out where to put views (.ejs extension works weirdly with maven layout)
+
+. support ranges

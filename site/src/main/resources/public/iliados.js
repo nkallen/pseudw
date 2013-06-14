@@ -9,6 +9,8 @@ $(function() {
   var $infoPane = $('.info-pane');
   var $infoWell = $('.info-well').removeClass('prototype').remove();
   var $info = $infoPane.add($infoWell);
+  var $form = $infoPane.find('form')
+  var editMode = false;
   function reset() {
     $info.find('h4').text('');
     $info.find('h5').text('');
@@ -21,7 +23,7 @@ $(function() {
   }
   reset();
   function highlight($item) {
-      var result = $();
+    var result = $();
     $item.each(function () {
       var $this = $(this).addClass('highlight');
       result = result.add($this);
@@ -30,26 +32,18 @@ $(function() {
     return result;
   }
   function inflections($word) {
+    var annotation = $word.data('annotation')
     return [
-      $word.data('part-of-speech'),
-      $word.data('person'),
-      $word.data('number'),
-      $word.data('tense'),
-      $word.data('mood'),
-      $word.data('voice'),
-      $word.data('case'),
-      $word.data('gender')
+      annotation.partOfSpeech,
+      annotation.person,
+      annotation.number,
+      annotation.tense,
+      annotation.mood,
+      annotation.voice,
+      annotation.case,
+      annotation.gender
     ].filter(function(item) {return item}).join(', ')
   }
-  var fudge = 5; // for descenders;
-  var offset = Number($('.text').css('margin-top').slice(0, -2)) - fudge;
-  function scrollTo(line) {
-    $('html, body')
-      .animate({
-        scrollTop: $("div.line:eq(" + (line - 1) + ")").offset().top - offset
-       }, 500);
-  }
-
   $('a.line-number')
     .each(function() {
       var $this = $(this);
@@ -68,16 +62,16 @@ $(function() {
 
       reset()
 
-      var $row = $this.parents(".row").first();
-      var $lineNumber = $this.find('.line-number');
-      var $note = $lineNumber.data('note');
+      var $row = $this.parents(".row").first()
+      var $lineNumber = $this.find('.line-number')
+      var $note = $lineNumber.data('note')
       if ($note) {
-        highlight($lineNumber).addClass('label-info');
+        highlight($lineNumber).addClass('label-info')
         $info.find('h4')
-          .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text());
+          .text('Book ' + $this.parents('section.book').data('number') + ", line " + $this.text())
         $info.find('.content')
-          .html($note.html());
-        $row.after($infoWell);
+          .html($note.html())
+        $row.after($infoWell)
       }
     });
 
@@ -165,6 +159,10 @@ $(function() {
           .addClass('label-important');
       });
     }
+    if (editMode) {
+      $form.show()
+      $form.find('textarea').text(JSON.stringify(annotation, null, "\t")).attr('name', 'annotation')
+    }
     setTimeout(function() {
       highlight($(lemma2word[lemma]).not($word)).addClass('highlight')
     }, 50)
@@ -176,56 +174,19 @@ $(function() {
         $(".modal").modal('hide');
         reset();
       } else if (e.which == 18) {
+        editMode = true;
         $('a.edit').show();
       }
     })
     .keyup(function(e) {
       if (e.which == 18) {
+        editMode = false;
         $('a.edit').hide();
       }
     })
   $('a.edit').click(function() {
     reset();
-    var $form = $infoPane.find('form')
     $form.show()
     $form.find('textarea').text($(this).data('xml')).attr('name', 'path[' + escape($(this).data('xpath')) + ']')
   })
-  var params = {};
-  window.location.search.slice(1).split('&').forEach(function(param) {
-    var pair = param.split('=');
-    params[pair[0]] = pair[1];
-  });
-  var start, end = params.end || "";
-  $(".range .end").val(end);
-  if (start = Number(params.start)) {
-    scrollTo(start);
-  }
-  var $start = $('.range input.start'), $end = $('.range input.end');
-  $(window).scroll(function(e) {
-    var leftOffset = $(".text").offset().left;
-    var $line = $(document.elementFromPoint(leftOffset, offset + fudge)).not("section").find('a.line-number').first();
-    if ($line.length > 0) {
-      var lineNumber = Number($line.text());
-      $start.val(lineNumber).text(lineNumber);
-      var end = Math.max(lineNumber, Number($end.val()));
-      $end.val(end).text(end);
-    }
-  })
-
-  $(".range input.start")
-    .keypress(function(e) {
-      if (e.which == 13) {
-        var line = Number($(this).val());
-        if (line) scrollTo(line);
-      }
-    })
-    .blur(function(e) {
-      var line = Number($(this).val());
-    });
-  $("#vocabulary .btn-primary").click(function() {
-    $("#vocabulary .modal-body table").hide();
-    $("#vocabulary-practice").show();
-    return false;
-  });
-  if (params.hasOwnProperty('vocabulary')) $("a.vocabulary").click();
 });

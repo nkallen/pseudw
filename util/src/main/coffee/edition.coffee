@@ -49,6 +49,8 @@ class Edition
       for attr in child.attrs()
         attributes[attr.name()] = attr.value()
       element = document.createElement(name = child.name(), '', attributes)
+      element.xmlNode = child
+      element.xpath = child.path()
       if parent
         element.parentNode = parent
         element.parentNode.children.push(element)
@@ -87,7 +89,9 @@ class Edition
       node.text
     annotation: ->
       node.annotation
+    xml: ->
+      node.xmlNode.toString()
     path: ->
-      node.path()
+      node.xpath
 
 module.exports = Edition

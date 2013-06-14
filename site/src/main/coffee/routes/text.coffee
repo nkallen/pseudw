@@ -30,6 +30,7 @@ configure = (configuration) ->
 
     loadText((err, text) ->
       return res.send(404) if err
+
       req.text = text
       annotatorIndex.pid(text.metadata.pid, (err, annotator) ->
         console.warn(err) if err
@@ -39,24 +40,27 @@ configure = (configuration) ->
 
   show: (req, res) ->
     text = req.text
-    res.render('text', edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document), urn: text.metadata.urn)
+    res.render('text',
+      edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
+      urn: text.metadata.urn)
 
   update: (req, res) ->
-    unless filename = index.file(req.params.pid)
-      res.send(404)
-      return
+    self = this
+    text = req.text
 
-    # XXX FIXME refactor to index.update (implies index should be renamed repository)
-    fs.readFile(path = __dirname + "/../../../../perseus-greco-roman/#{filename}", 'utf8', (err, xml) ->
-      doc = libxml.parseXml(xml)
-      for key, value of req.body.path
-        node = doc.get(unescape(key))
-        replacement = libxml.parseXml(value).root()
-        node.addNextSibling(replacement)
-        node.remove()
+    for key, value of req.body.path
+      node = text.document.get(unescape(key))
+      console.log(value)
+      replacement = libxml.parseXml(value).root()
+      node.addNextSibling(replacement)
+      node.remove()
 
-      fs.writeFile(path, doc.toString(), (err) ->
-        res.redirect('/pid/' + req.params.pid)))
+    ctsIndex.urn(text.metadata.urn, text, (err) ->
+      return res.send(500) if err
+
+      res.render('text',
+        edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
+        urn: text.metadata.urn))
 
 module.exports =
   configure: configure

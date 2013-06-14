@@ -25,17 +25,30 @@ class PerseusIndex
     new PerseusIndex(resources)
   constructor: (@resources) ->
 
-  pidSync: (pid) ->
+  pidSync: (pid, newValue) ->
     return unless fileName = @fileNameFor(pid)
-    file = fs.readFileSync(fileName)
-    libxml.parseXml(file)
 
-  pid: (pid, next) ->
+    if newValue
+      fs.writeFileSync(filename, newValue.toString())
+    else
+      file = fs.readFileSync(fileName)
+      libxml.parseXml(file)
+
+  pid: () ->
+    pid = arguments[0]
     return next("resource not found") unless fileName = @fileNameFor(pid)
 
-    file = fs.readFile(fileName, (err, file) ->
-      return next(err) if err
-      next(null, libxml.parseXml(file)))
+    if arguments.length == 2
+      next = arguments[1]
+      file = fs.readFile(fileName, (err, file) ->
+        return next(err) if err
+        next(null, libxml.parseXml(file)))
+    else
+      console.log("writePath")
+      newValue = arguments[1]
+      next = arguments[2]
+      fs.writeFile(fileName, newValue.toString(), (err, file) ->
+        next(err))
 
   fileNameFor: (pid) ->
     return unless current = @resources[pid]
@@ -72,20 +85,29 @@ class CtsIndex
 
   constructor: (@resources, @perseusIndex) ->
 
-  urnSync: (urn) ->
+  urnSync: (urn, newValue) ->
     urn = parseUrn(urn)
     return unless resource = @resources.urns[urn.work]
 
-    xml = @perseusIndex.pidSync(resource.pid)
-    metadata: resource, document: xml, passageSelector: urn.passage
+    if newValue
+      @perseusIndex.pidSync(resource.pid, newValue.document)
+    else
+      xml = @perseusIndex.pidSync(resource.pid)
+      metadata: resource, document: xml, passageSelector: urn.passage
 
-  urn: (urn, next) ->
-    urn = parseUrn(urn)
+  urn: () ->
+    urn = parseUrn(arguments[0])
+    next = arguments[arguments.length - 1]
     return next("resource not found") unless resource = @resources.urns[urn.work]
 
-    @perseusIndex.pid(resource.pid, (err, xml) ->
-      return next(err) if err
-      next(null, metadata: resource, document: xml, passageSelector: urn.passage))
+    if arguments.length == 2
+      @perseusIndex.pid(resource.pid, (err, xml) ->
+        return next(err) if err
+        next(null, metadata: resource, document: xml, passageSelector: urn.passage))
+    else
+      console.log("write path")
+      newValue = arguments[1]
+      @perseusIndex.pid(resource.pid, newValue.document, next)
 
   group: (group) ->
     @resources.groups[group]
