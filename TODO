@@ -4,16 +4,19 @@
 
 . all data loaded from, and saved to, github
 
-. two blank fields at the bottom for arbitrary annotations
-  hitting <enter> creates a new row, delete deletes the row
+. morphology service: [morpheme] -> [[anotation]]
+. drop down on lemma, > heirarchical menu, listing options from morphology service
+
+. translation service: [lemma] -> [translation]
+
 
 . type-ahead for lemma
   should show brief definition in preview
 
+. two blank fields at the bottom for arbitrary annotations
+  hitting <enter> creates a new row, delete deletes the row
 
-. morphology service: [morpheme] -> [[anotation]]
 
-. translation service: [lemma] -> [translation]
 
 . rename index repository
 . remove index on lemma by putting things in the .class attribute

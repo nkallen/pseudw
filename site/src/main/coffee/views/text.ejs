@@ -18,7 +18,7 @@
                   <div class='span1'><a class='line-number'><%= lineNumber++ %></a></div>
                   <div class='words span5'>
                     <% l.find('annotation').forEach(function(annotation) { -%>
-                      <span data-annotation="<%= JSON.stringify(annotation.annotation()) %>"><%= annotation.text() %></span>
+                      <span class="lemma-<%= annotation.annotation().lemma %>" id="<%= annotation.annotation().sentenceId + '-' + annotation.annotation().id %>" data-annotation="<%= JSON.stringify(annotation.annotation()) %>"><%= annotation.text() %></span>
                     <% }) -%>
                   </div>
                   <% if (i == 0) { %>
