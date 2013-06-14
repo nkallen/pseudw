@@ -53,7 +53,7 @@ $(function() {
             $('#' + node.sentenceId + '-' + node.id)
               .addClass('highlight')
               .addClass('child')
-              .css('opacity', 1.0 - ((level-1) / (MAX_LEVEL)))
+              .css('opacity', 1.0 - ((level-1) / (MAX_LEVEL-1)))
           }
           bfs.push(nextLevel)
         }
