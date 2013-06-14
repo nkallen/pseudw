@@ -34,13 +34,44 @@
   </div>
   <div class='info-pane'>
     <div class="container span5">
-      <div class="word hide">
+      <div class="show-word hide">
         <h4></h4>
         <h5><span class="label"></span> <span class="data"></span></h5>
         <div class="content">
         </div>
       </div>
-      <div class="paragraph hide">
+      <div class="edit-word hide">
+        <form method="POST" data-action-template="/<%= urn %>/annotations/{position}">
+          <input type="hidden" name="_method" value="patch" />
+          <div class="row">
+            <label class="span2">Lemma</label>
+            <input class="span3" type="text" name="lemma" />
+          </div>
+          <div class="row">
+            <label class="span2">Form</label>
+            <input class="span3" type="text" name="form" />
+          </div class="row">
+          <% for (f in features) { %>
+            <div class="row">            
+              <% var feature = features[f] %>
+              <label class="span2"><%- feature.toString() %></label>
+              <select class="span3" name="<%- feature.toSymbol() %>">
+                <option value=""></option>
+                <% var values = feature.values() %>
+                <% for (v in values) { %>
+                  <% var value = values[v] %>
+                  <option value="<%- value.toSymbol() %>"><%- value.toString() %></option>
+                <% } %>
+              </select>
+            </div>
+          <% } %>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+      <div class="edit-paragraph hide">
         <form method="POST" action="/<%= urn %>">
           <input type="hidden" name="_method" value="patch" />
           <textarea class="input-block-level" rows=20></textarea>

@@ -1,13 +1,13 @@
-. form-like editor for key/value pairs
-  select fields for known types and options
-  parent_id field can be a drop down with the words themselves as a list
-
+. handle annotating errors better
 . all data loaded from, and saved to, github
+. translation service: [lemma] -> [translation]
+ 
+. handle XML errors better
+
 
 . morphology service: [morpheme] -> [[anotation]]
 . drop down on lemma, > heirarchical menu, listing options from morphology service
 
-. translation service: [lemma] -> [translation]
 
 
 . type-ahead for lemma

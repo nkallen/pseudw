@@ -108,7 +108,7 @@ table td, table th {
   overflow-y: scroll;
 }
 .info-pane .container {
-  padding: 0px 25px 10px 25px;
+  padding: 10px 25px 10px 25px;
   margin-left: 0;
   border-left: 1px solid lightgray;
 }

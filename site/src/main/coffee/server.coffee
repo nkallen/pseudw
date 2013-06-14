@@ -24,7 +24,7 @@ app.set('views', __dirname + '/views')
   Route configuration
 ###
 
-CTS_URN = /^(urn:cts:.*)$/
+CTS_URN = /^(urn:cts:[^\/]+)/
 
 RESOURCES_DIR = __dirname + '/../resources' 
 TEXTS_DIR = __dirname + '/../../../../perseus-greco-roman'
@@ -40,18 +40,24 @@ text = text.configure(
   annotatorIndex: ANNOTATOR_INDEX)
 
 # app.get('/search', search.index)
-app.get('/:group/:work', text.work)
-app.get('/:group/:work/:edition', text.load, text.show)
-app.patch('/:group/:work/:edition', text.load, text.update)
+
 app.param('urn', (req, res, next, urn) ->
   if CTS_URN.test(urn)
     req.params.urn = urn
     next()
   else
     next('route'))
+
 app.get('/:urn', text.load, text.show)
 app.patch('/:urn', text.load, text.update)
-app.get('/:group', text.group)
 
+app.get('/:urn/annotations', text.load, text.annotations.show)
+app.patch('/:urn/annotations/:id', text.load, text.annotations.update)
+
+app.get('/:group/:work', text.work)
+app.get('/:group/:work/:edition', text.load, text.show)
+app.patch('/:group/:work/:edition', text.load, text.update)
+
+app.get('/:group', text.group)
 
 app.listen(process.env.PORT)

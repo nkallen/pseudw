@@ -53,7 +53,7 @@ $(function() {
             $('#' + node.sentenceId + '-' + node.id)
               .addClass('highlight')
               .addClass('child')
-              .css('opacity', 1.0 - ((level-1) / (MAX_LEVEL-1)))
+              .css('opacity', 1.0 - ((level-1) / MAX_LEVEL))
           }
           bfs.push(nextLevel)
         }
@@ -77,13 +77,13 @@ $(function() {
     edit: {
       enter: function() {
         $('a.edit').show()
-        $('.words > span').off('click', info.show)
-        $('.words > span').on('click', info.edit)
+        $('.words > span').off('click', info.showWord)
+        $('.words > span').on('click', info.editWord)
       },
       exit: function() {
         $('a.edit').hide()
-        $('.words > span').off('click', info.edit)
-        $('.words > span').on('click', info.show)
+        $('.words > span').off('click', info.editWord)
+        $('.words > span').on('click', info.showWord)
       }
     },
 
@@ -91,7 +91,7 @@ $(function() {
       $('.highlight, .child, .parent, .pivot')
         .removeClass('highlight child parent pivot')
         .attr('style', '')
-      $('info-pane .word, .info-pane .paragraph').hide()
+      $('.info-pane .show-word, .info-pane .edit-word, .info-pane .edit-paragraph').hide()
     }
   }
 
@@ -106,11 +106,11 @@ $(function() {
   }
 
   var info = {
-    word: function() {
+    showWord: function() {
       var $this = $(this)
       var annotation = $this.data('annotation')
       $('.info-pane')
-        .find('.word').show()
+        .find('.show-word').show()
           .find('h4').text(annotation.lemma).end()
           .find('h5 .label').text(annotation.form).end()
           .find('h5 .data').text(
@@ -126,13 +126,26 @@ $(function() {
             ].filter(function(item) {return item}).join(', '))
     },
 
-    paragraph: function() {
+    editWord: function() {
+      var $this = $(this)
+      var annotation = $this.data('annotation')
+      var $editWord = $('.info-pane').find('.edit-word').show()
+      var $form = $editWord.find('form')
+      $form.attr('action', $form.data('action-template').replace('{position}', annotation.__position__))
+      $form.find('input[name=form]').val(annotation.form)
+      $form.find('input[name=lemma]').val(annotation.lemma)
+      for (var key in annotation) {
+        var value = annotation[key]
+        $form.find('select[name=' + key + ']').val(value)
+      }
+    },
+
+    editParagraph: function() {
       var $this = $(this)
       var xml = $this.data('xml')
       var path = $this.data('path')
-      console.log($('.info-pane').find('.paragraph'))
       $('.info-pane')
-        .find('.paragraph').show()
+        .find('.edit-paragraph').show()
           .find('textarea')
             .text(xml)
             .attr('name', 'path[' + escape(path) + ']')
@@ -142,12 +155,12 @@ $(function() {
 
   $('.words > span')
     .click(state.reset)
-    .click(info.word)
+    .click(info.showWord)
     .click(sentence.show)
     .click(lemma.highlight)
   $('a.edit')
     .click(state.reset)
-    .click(info.paragraph)
+    .click(info.editParagraph)
   $('body').on('keydown', key.filter)
   $('body').on('keyup', key.filter)
   $('body').on('reset', state.reset)

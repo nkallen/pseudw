@@ -46,7 +46,7 @@ class PerseusIndex
     else
       newValue = arguments[1]
       next = arguments[2]
-      fs.writeFile(fileName, newValue.toString(), (err, file) ->
+      fs.writeFile(fileName, newValue.toString(), (err) ->
         next(err))
 
   fileNameFor: (pid) ->

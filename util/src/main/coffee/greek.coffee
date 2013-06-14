@@ -18,6 +18,8 @@ Mood = Enum('Mood', 'indicative', 'optative', 'imperative', 'subjunctive', 'infi
 Dialect = Enum('Dialect', 'aeolic',  'poetic', 'attic', 'doric', 'prose', 'ionic', 'epic', 'parad_form', 'homeric')
 Degree = Enum('Degree', 'comparative', 'superlative')
 
+Features = [PartOfSpeech, Tense, Gender, Person, Number, Case, Voice, Mood, Degree]
+
 ###
 Synonyms
 ###
@@ -260,6 +262,7 @@ module.exports =
   Verb: Verb
   Degree: Degree
   Inflections: Inflections
+  Features: Features
   ParticipleDesc: ParticipleDesc
   Participle: Participle
   Dialect: Dialect

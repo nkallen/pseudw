@@ -43,7 +43,8 @@ configure = (configuration) ->
     text = req.text
     res.render('text',
       edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
-      urn: req.urn)
+      urn: req.urn
+      features: util.greek.Features)
 
   update: (req, res) ->
     self = this
@@ -60,7 +61,25 @@ configure = (configuration) ->
 
       res.render('text',
         edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
-        urn: req.urn))
+        urn: req.urn
+        features: util.greek.Features))
+
+  annotations:
+    show: (req, res) ->
+      annotator = req.annotator
+      res.json(annotator.toJson())
+
+    update: (req, res) ->
+      text = req.text
+      annotator = req.annotator
+      annotator.update(req.params.id, req.body)
+      annotatorIndex.pid(text.metadata.pid, annotator, (err) ->
+        return res.send(500) if err
+
+        res.render('text',
+          edition: new Edition(text.metadata.citationMapping, text.passageSelector, req.annotator, text.document),
+          urn: req.urn
+          features: util.greek.Features))
 
 module.exports =
   configure: configure
