@@ -1,5 +1,6 @@
-. handle annotating errors better
 . all data loaded from, and saved to, github
+. convert search to use Edition
+
 . translation service: [lemma] -> [translation]
  
 . handle XML errors better
@@ -19,7 +20,6 @@
 
 
 . rename index repository
-. remove index on lemma by putting things in the .class attribute
 
 . move submodules to resources/ dir
 . figure out where to put views (.ejs extension works weirdly with maven layout)

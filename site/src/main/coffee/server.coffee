@@ -32,12 +32,12 @@ TREEBANK_DIR = __dirname + '/../../../../treebank-greek/data/json'
 
 PERSEUS_INDEX = textIndex.PerseusIndex.load(libxml.parseXml(fs.readFileSync(TEXTS_DIR + '/index.perseus.xml')), TEXTS_DIR)
 CTS_INDEX = textIndex.CtsIndex.load(libxml.parseXml(fs.readFileSync(TEXTS_DIR + '/index.cts.xml')), PERSEUS_INDEX)
-ANNOTATOR_INDEX = annotator.TreebankAnnotatorIndex.load(TREEBANK_DIR)
+ANNOTATOR_REPOSITORY = annotator.TreebankAnnotatorRepository.load(TREEBANK_DIR)
 
 text = text.configure(
   perseusIndex:   PERSEUS_INDEX
   ctsIndex:       CTS_INDEX
-  annotatorIndex: ANNOTATOR_INDEX)
+  annotatorRepository: ANNOTATOR_REPOSITORY)
 
 # app.get('/search', search.index)
 

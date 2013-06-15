@@ -2,25 +2,25 @@ fs = require('fs')
 _  = require('underscore')
 
 class Annotator
-  @EOF: {}
   annotate: (string) ->
     remainder = string
     tokens = []
-    while remainder && (remainder = remainder.trim()).length
+    while remainder && (remainder = remainder.trim()).length && !@eof()
       [token, remainder] = @one(remainder)
       break unless token
       tokens.push(token)
     [tokens, remainder]
   one: (string) ->
-  reset: () ->
+  eof: () -> false
+  reset: (pos) ->
   skip: () ->
+  pos: () -> 0
   update: (position, token) ->
   toJson: () ->
 
 
 class SimpleAnnotator extends Annotator
   one: (string) ->
-    string = string.trim()
     split = string.split(' ')
     token = form: split[0]
     remainder = split[1..].join(' ')
@@ -31,6 +31,8 @@ class TreebankAnnotator extends Annotator
   constructor: (@treebank) ->
     @reset()
   one: (string) ->
+    throw "EOF" if @eof()
+
     annotation = @treebank[@i]
     form = annotation.originalForm || annotation.form
     if (original = string[0...form.length]) != form
@@ -38,11 +40,14 @@ class TreebankAnnotator extends Annotator
     annotation.__position__ = @i++
     remainder = string[form.length..]
     [annotation, remainder]
-  reset: () ->
-    @i = 0
 
-  skip: () ->
-    ++@i < @treebank.length
+  reset: (pos) -> @i = pos || 0
+
+  skip: () -> @i++
+
+  eof: () -> @i > @treebank.length - 1
+
+  pos: () -> @i
 
   update: (position, token) ->
     _.extend(@treebank[position], token)
@@ -60,43 +65,64 @@ class SkippingAnnotator extends Annotator
     remainder = null
     loop
       [token, remainder] = @annotator.one(string)
-      break if token || !@annotator.skip()
+      if token
+        @lastPos = @annotator.pos()
+        break
+
+      @annotator.skip()
+
+      if @annotator.eof()
+        @annotator.reset(@lastPos)
+        break
         
     [token, remainder]
-  reset: () ->
-    @annotator.reset()
+  reset: (pos) ->
+    @annotator.reset(pos)
   skip: () ->
     @annotator.skip()
+  eof: () ->
+    @annotator.eof()
+  pos: () ->
+    @annotator.pos()
   update: () ->
-    # XXX FIXME
+    @annotator.update(position, token)
   toJson: () ->
     # XXX FIXME
 
 class FailoverAnnotator extends Annotator
   constructor: (@primaryAnnotator, @secondaryAnnotator) ->
   one: (string) ->
-    [token, remainder] = @primaryAnnotator.one(string)
-    [token, remainder] = @secondaryAnnotator.one(remainder) unless token
+    throw "EOF" if @eof()
+
+    unless @primaryAnnotator.eof()
+      [token, remainder] = @primaryAnnotator.one(string)
+
+    if !token && !@secondaryAnnotator.eof()
+      [token, remainder] = @secondaryAnnotator.one(remainder)
     [token, remainder]
-  reset: () ->
-    @primaryAnnotator.reset()
-    @secondaryAnnotator.reset()
+  reset: (pos) ->
+    @primaryAnnotator.reset(pos)
+    @secondaryAnnotator.reset(pos)
   skip: () ->
     @primaryAnnotator.skip()
     @secondaryAnnotator.skip()
+  eof: () ->
+    @primaryAnnotator.eof() && @secondaryAnnotator.eof()
+  pos: () ->
+    @primaryAnnotator.pos()
   update: () ->
-    # XXX FIXME
+    @primaryAnnotator.update(position, token)
   toJson: () ->
     # XXX FIXME
 
-class TreebankAnnotatorIndex
+class TreebankAnnotatorRepository
   @load: (dir) ->
     resources = {}
     for file in fs.readdirSync(dir)
       pid = 'Perseus:text:' + file.replace('.json', '')
       resources[pid] = dir + '/' + file
 
-    new TreebankAnnotatorIndex(resources)
+    new TreebankAnnotatorRepository(resources)
 
   constructor: (@resources) ->
 
@@ -123,4 +149,4 @@ module.exports =
   TreebankAnnotator: TreebankAnnotator
   SkippingAnnotator: SkippingAnnotator
   FailoverAnnotator: FailoverAnnotator
-  TreebankAnnotatorIndex: TreebankAnnotatorIndex
+  TreebankAnnotatorRepository: TreebankAnnotatorRepository

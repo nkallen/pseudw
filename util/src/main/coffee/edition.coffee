@@ -39,7 +39,9 @@ class Edition
 
   domify = (annotator, document) -> (parent, child) ->
     if child.type() == 'text'
-      for annotation in annotator.annotate(child.text())
+      [annotations, remainder] = annotator.annotate(child.text())
+      console.warn("Text not fully annotated: '#{remainder}'") if remainder
+      for annotation in annotations
         element = document.createElement('annotation', annotation.form)
         element.annotation = annotation
         parent.children.push(element) if parent
@@ -86,7 +88,7 @@ class Edition
     attr: (name) ->
       node.getAttribute(name)
     text: ->
-      node.text()
+      node.text
     annotation: ->
       node.annotation
     xml: ->

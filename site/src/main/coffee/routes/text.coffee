@@ -8,7 +8,7 @@ Edition = util.Edition
 configure = (configuration) ->
   perseusIndex  = configuration.perseusIndex
   ctsIndex      = configuration.ctsIndex
-  annotatorIndex = configuration.annotatorIndex
+  annotatorRepository = configuration.annotatorRepository
 
   group: (req, res) ->
     return res.send(404) unless _group = ctsIndex.group(req.params.group)
@@ -33,7 +33,7 @@ configure = (configuration) ->
 
       req.text = text
       req.urn = req.params.urn || text.metadata.urn
-      annotatorIndex.pid(text.metadata.pid, (err, annotator) ->
+      annotatorRepository.pid(text.metadata.pid, (err, annotator) ->
         console.warn(err) if err
 
         req.annotator = annotator || new SimpleAnnotator
@@ -73,7 +73,7 @@ configure = (configuration) ->
       text = req.text
       annotator = req.annotator
       annotator.update(req.params.id, req.body)
-      annotatorIndex.pid(text.metadata.pid, annotator, (err) ->
+      annotatorRepository.pid(text.metadata.pid, annotator, (err) ->
         return res.send(500) if err
 
         res.render('text',
