@@ -1,50 +1,36 @@
 fs = require('fs')
 _  = require('underscore')
 
-###
-  class Annotator
-    annotate: (string) -> [[tokens], remainder]
-    reset: () -> ()
-    update: (position, token) -> ()
-    toJson: () -> {}
-  
-  Note: update performs PARTIAL updates.
-###
-
-class SimpleAnnotator
+class Annotator
+  @EOF: {}
   annotate: (string) ->
-    tokens = for token in string.split(' ')
-      form: token
-    [tokens, null]
+    remainder = string
+    tokens = []
+    while remainder && (remainder = remainder.trim()).length
+      [token, remainder] = @one(remainder)
+      break unless token
+      tokens.push(token)
+    [tokens, remainder]
+  one: (string) ->
+  reset: () ->
+  skip: () ->
+  update: (position, token) ->
+  toJson: () ->
+
+
+class SimpleAnnotator extends Annotator
   one: (string) ->
     string = string.trim()
     split = string.split(' ')
     token = form: split[0]
     remainder = split[1..].join(' ')
     [token, remainder]
-  reset: () -> # stateless, so no-op
-  skip: (n) -> # stateless, so no-op
-  update: () -> # stateless, so no-op
   toJson: () -> {}
 
-class TreebankAnnotator
+class TreebankAnnotator extends Annotator
   constructor: (@treebank) ->
     @reset()
-  annotate: (string) ->
-    result = []
-
-    while (string = string.trim()).length
-      annotation = @treebank[@i]
-      form = annotation.originalForm || annotation.form
-      if (original = string[0...form.length]) != form
-        return [result, string]
-      annotation.__position__ = @i++
-      result.push(annotation)
-      string = string[form.length..]
-    [result, null]
-
   one: (string) ->
-    string = string.trim()
     annotation = @treebank[@i]
     form = annotation.originalForm || annotation.form
     if (original = string[0...form.length]) != form
@@ -67,16 +53,16 @@ class TreebankAnnotator
   toString: () ->
     JSON.stringify(@treebank)
 
-class SkippingAnnotator
+class SkippingAnnotator extends Annotator
   constructor: (@annotator) ->
-  annotate: (string) ->
-    result = []
-    remainder = string
-    while remainder && remainder.length
-      [tokens, remainder] = @annotator.annotate(string)
-      result = result.concat(tokens)
-      break unless @annotator.skip()
-    [result, null]
+  one: (string) ->
+    token = null
+    remainder = null
+    loop
+      [token, remainder] = @annotator.one(string)
+      break if token || !@annotator.skip()
+        
+    [token, remainder]
   reset: () ->
     @annotator.reset()
   skip: () ->
@@ -86,15 +72,8 @@ class SkippingAnnotator
   toJson: () ->
     # XXX FIXME
 
-class FailoverAnnotator
+class FailoverAnnotator extends Annotator
   constructor: (@primaryAnnotator, @secondaryAnnotator) ->
-  annotate: (string) ->
-    result = []
-    remainder = string
-    while remainder && remainder.length
-      [token, remainder] = @one(remainder)
-      result.push(token)
-    [result, remainder]
   one: (string) ->
     [token, remainder] = @primaryAnnotator.one(string)
     [token, remainder] = @secondaryAnnotator.one(remainder) unless token
