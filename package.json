@@ -1,1 +1,32 @@
-site/package.json
+{
+  "name": "perseus-util",
+  "version": "0.0.1",
+  "author": "Nick Kallen",
+  "description": "",
+  "scripts": {
+    "test": "mocha --recursive --compilers coffee:coffee-script"
+  },
+  "main": "./src/main/coffee/index.coffee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nkallen/pseudw.git"
+  },
+  "engines": {
+    "npm": "1.2.x"
+  },
+  "dependencies" : {
+    "coffee-script"  : "1.6.x",
+    "unorm"          : "1.0.x",
+    "libxmljs"       : "0.8.x",
+    "underscore"     : "1.5.x"
+  },
+  "devDependencies" : {
+    "should"  : "1.2.x"
+  },
+  "analyze": true,
+  "bundleDependencies": [],
+  "license": "MIT",
+  "engines": {
+    "node": "0.10.x"
+  }
+}

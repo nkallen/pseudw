@@ -1,9 +1,7 @@
-[submodule "treebank-greek"]
-	path = treebank-greek
-	url = git://github.com/nkallen/treebank-greek.git
 [submodule "util/src/main/javascript/sizzle"]
 	path = util/src/main/javascript/sizzle
 	url = https://github.com/jquery/sizzle.git
-[submodule "perseus-greco-roman"]
-	path = perseus-greco-roman
-	url = git://github.com/nkallen/perseus-greco-roman.git
+
+[submodule "vendor/sizzle"]
+	path = vendor/sizzle
+	url = https://github.com/jquery/sizzle.git
