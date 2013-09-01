@@ -5,3 +5,12 @@
 [submodule "vendor/sizzle"]
 	path = vendor/sizzle
 	url = https://github.com/jquery/sizzle.git
+[submodule "vendor/catalog_data"]
+	path = vendor/catalog_data
+	url = https://github.com/PerseusDL/catalog_data
+[submodule "vendor/canonical"]
+	path = vendor/canonical
+	url = https://github.com/PerseusDL/canonical
+[submodule "vendor/treebank"]
+	path = vendor/treebank
+	url = https://github.com/nkallen/treebank.git

@@ -1,5 +1,7 @@
 fs = require('fs')
+path = require('path')
 _  = require('underscore')
+urn = require('./urn')
 
 class Annotator
   annotate: (string) ->
@@ -18,12 +20,11 @@ class Annotator
   update: (position, token) ->
   toJson: () ->
 
-
 class SimpleAnnotator extends Annotator
   one: (string) ->
-    split = string.split(' ')
-    token = form: split[0]
-    remainder = split[1..].join(' ')
+    return [form: string, ''] if (i = string.indexOf(' ')) < 0
+    token = form: string[0..i-1]
+    remainder = string[i+1..-1]
     [token, remainder]
   toJson: () -> {}
 
@@ -35,6 +36,7 @@ class TreebankAnnotator extends Annotator
 
     annotation = @treebank[@i]
     form = annotation.originalForm || annotation.form
+    console.log(string[0...form.length], form)
     return [null, string] if (original = string[0...form.length]) != form
     @skip()
     remainder = string[form.length..]
@@ -114,33 +116,16 @@ class FailoverAnnotator extends Annotator
     # XXX FIXME
 
 class TreebankAnnotatorRepository
-  @load: (dir) ->
-    resources = {}
-    for file in fs.readdirSync(dir)
-      pid = 'Perseus:text:' + file.replace('.json', '')
-      resources[pid] = dir + '/' + file
+  constructor: (@fileReader) ->
 
-    new TreebankAnnotatorRepository(resources)
+  urn: (_urn, callback) ->
+    urn = urn.parse(_urn)
+    _path = path.join.apply(null, [urn.service].concat(urn.work.split('.')[0..1]).concat(urn.work)) + '.json'
 
-  constructor: (@resources) ->
+    @fileReader.readFile(_path, (err, file) ->
+      return callback(err) if err
 
-  pid: () ->
-    pid = arguments[0]
-    next = arguments[arguments.length - 1]
-    return next("resource not found") unless resource = @resources[pid]
-
-    if arguments.length == 2
-      fs.readFile(resource, (err, file) ->
-        return next(err) if err
-
-        start = new Date
-        json = JSON.parse(file)
-        console.log("Treebank load", new Date - start)
-        next(null, new TreebankAnnotator(json)))
-    else
-      annotator = arguments[1]
-      fs.writeFile(resource, annotator.toString(), (err) ->
-        next(err))
+      callback(null, new TreebankAnnotator(JSON.parse(file))))
 
 module.exports =
   SimpleAnnotator: SimpleAnnotator

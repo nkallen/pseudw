@@ -6,5 +6,5 @@ module.exports =
   textIndex: require('./text_index')
   annotator: require('./annotator')
   dom: require('./dom')
-  Edition: require('./edition')
+  AnnotatedEdition: require('./annotated_edition')
   Sizzle: require('./sizzle')
