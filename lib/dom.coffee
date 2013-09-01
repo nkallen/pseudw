@@ -3,7 +3,6 @@ class ElementShim
     @nodeName = @tagName
     @attributes ?= {}
     @children = []
-    @parentNode = null
   nodeType: 1
   getAttribute: (attribute) ->
     if @attributes.hasOwnProperty(attribute) && @attributes[attribute] != undefined
@@ -24,6 +23,9 @@ class ElementShim
       for child in @children
         result = result.concat(child.getElementsByTagName(name))
       result
+  appendChild: (child) ->
+    @children.push(child)
+    child.parentNode = this
   uuid: () -> [@attributes.id, @attributes.sentenceId].toString()
 
 class DocumentShim

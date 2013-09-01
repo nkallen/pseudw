@@ -142,6 +142,7 @@ Treebank =
       case: kase
       degree: degree}
 
+  # Note this is coupled to a adeprecated storage format
   load: (xmls) ->
     tags =
       all: []
