@@ -36,6 +36,7 @@ class TreebankAnnotator extends Annotator
 
     annotation = @treebank[@i]
     form = annotation.originalForm || annotation.form
+    console.log(string[0...form.length], form)
     return [null, string] if (original = string[0...form.length]) != form
     @skip()
     remainder = string[form.length..]

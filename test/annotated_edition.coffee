@@ -12,10 +12,20 @@ describe 'AnnotatedEdition', ->
   citationMapping = [{label: 'book'}, {label: 'line'}]
   annotator = new annotator.SimpleAnnotator
 
+<<<<<<< HEAD
   it 'selects a passage with a coarse selector', ->
     annotatedEdition = AnnotatedEdition.make(citationMapping, '2', annotator, document)
     annotatedEdition.find('l')[0].path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[1]")
 
   xit 'selects a passage with a fine selector', -> # doesn't work because <l> tags don't have n='' at the moment.
+=======
+  # These are broken because the new vendorized XML has div1s and milestones!
+
+  xit 'selects a passage with a coarse selector', ->
+    annotatedEdition = AnnotatedEdition.make(citationMapping, '2', annotator, document)
+    annotatedEdition.find('l')[0].path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[1]")
+
+  xit 'selects a passage with a fine selector', ->
+>>>>>>> 03dcaaafb7bad329e876e35d83efa21362b0ff09
     annotatedEdition = AnnotatedEdition.make(citationMapping, '2.2', annotator, document)
     annotatedEdition.path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[2]")
