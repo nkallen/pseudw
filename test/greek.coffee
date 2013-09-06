@@ -5,4 +5,4 @@ describe 'Greek', ->
     it 'catches trailing characters', ->
       greek.betacode2unicode("le/gw").should.eql("λέγω")
     it 'handles sigmas properly', ->
-      greek.betacode2unicode("dasso/s. dasso\\s dassos").should.eql("δασσός. δασσὸς δασσος")
+      greek.betacode2unicode("dasso/s. dasso\\s dassos' dassos").should.eql("δασσός. δασσὸς δασσοσʼ δασσος")

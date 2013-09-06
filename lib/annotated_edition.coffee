@@ -44,7 +44,7 @@ class AnnotatedEdition
         element = document.createElement('annotation', annotation.form)
         element.annotation = annotation
         parent.appendChild(element) if parent
-      null # no accumulator, as text nodes have no children
+      null # no accumulator, since text nodes have no children
     else
       attributes = {}
       for attr in child.attrs()

@@ -31,14 +31,23 @@ for feature in [greek.PartOfSpeech, greek.Tense, greek.Gender, greek.Person, gre
       sym = feature.toSymbol()
       name = value.name
       sizzle.selectors.pseudos[name] = sizzle.selectors.createPseudo(->
-        (elem) ->
-          elem.getAttribute(sym) == name)
+        (elem) -> elem.getAttribute(sym) == name)
 
 sizzle.selectors.pseudos.root = sizzle.selectors.createPseudo(->
   (elem) ->
     elem.getAttribute('parentId') == '0' && elem.getAttribute('relation') != 'AuxK')
 
-Treebank =
+module.exports =
+  xml2json: (xml) ->
+    tokens = []
+    for sentenceNode in xml.find("/treebank/sentence")
+      sentenceId = Number(sentenceNode.attr('id').value())
+      for wordNode in sentenceNode.find("./word")
+        token = @wordNode2word(wordNode)
+        token.sentenceId = sentenceId
+        tokens.push(token)
+    tokens
+
   wordNode2word: (wordNode) ->
     lemma = wordNode.attr('lemma').value().replace(/1$/, '')
     id = Number(wordNode.attr('id').value())
@@ -209,5 +218,3 @@ Treebank =
               tags[attributes.lemma] = [word]
 
     (query) -> sizzle(query, new dom.DocumentShim(tags))
-
-module.exports = Treebank

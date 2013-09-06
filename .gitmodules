@@ -1,7 +1,3 @@
-[submodule "util/src/main/javascript/sizzle"]
-	path = util/src/main/javascript/sizzle
-	url = https://github.com/jquery/sizzle.git
-
 [submodule "vendor/sizzle"]
 	path = vendor/sizzle
 	url = https://github.com/jquery/sizzle.git
@@ -10,7 +6,7 @@
 	url = https://github.com/PerseusDL/catalog_data
 [submodule "vendor/canonical"]
 	path = vendor/canonical
-	url = https://github.com/PerseusDL/canonical
+	url = https://github.com/nkallen/canonical.git
 [submodule "vendor/treebank"]
 	path = vendor/treebank
 	url = https://github.com/nkallen/treebank.git

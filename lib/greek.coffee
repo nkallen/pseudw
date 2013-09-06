@@ -216,6 +216,10 @@ betacode2unicode = do ->
     *(o Ὁ
     *(u Ὑ
     *(w Ὡ
+    *(r Ῥ
+    /+ ̈́
+    \\+ ̈̀
+    =+ ̈͂
     ) ̓
     ( ̔
     / ́
@@ -224,8 +228,9 @@ betacode2unicode = do ->
     + ̈
     | ͅ
     & ̄
-    ' ’
-    : ·"
+    ' ʼ"
+    #: ·
+
   array = raw.split(/\s+/)
   betacode2unicodeTrie = new Trie
   while array.length > 0
@@ -248,7 +253,7 @@ betacode2unicode = do ->
           out = out.concat(char)
         traversal = betacode2unicodeTrie.traverse()
     out = out.concat(traversal.value()) if traversal.value()
-    unorm.nfc(out.replace(/σ(?=[^\u0370-\u03FF]|$)/g, 'ς'))
+    unorm.nfc(out.replace(/σ(?=[\s]|[^ʼ\u0370-\u03FF]|$)/g, 'ς'))
 
 module.exports =
   PartOfSpeech: PartOfSpeech
