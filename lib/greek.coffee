@@ -7,7 +7,7 @@ unorm = require('unorm')
 An object model for Greek Grammar and some utilities for character encoding.
 ###
 
-PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'participle', 'punctuation', 'particle', 'preposition', 'article', 'conjunction', 'irregular', 'numeral', 'exclamation')
+PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'adverbial', 'adverbial', 'participle', 'punctuation', 'particle', 'preposition', 'article', 'conjunction', 'irregular', 'numeral', 'exclamation')
 Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist', 'futurePerfect')
 Gender = Enum('Gender', 'masculine', 'feminine', 'neuter')
 Person = Enum('Person', 'first', 'second', 'third')
@@ -21,11 +21,47 @@ Degree = Enum('Degree', 'comparative', 'superlative')
 Features = [PartOfSpeech, Tense, Gender, Person, Number, Case, Voice, Mood, Degree]
 
 ###
-Synonyms
+Synonyms for dealing with data in legacy formats
 ###
 
-Voice['middle-passive'] = Voice.middlePassive
-Tense['future perfect'] = Tense.futurePerfect
+PartOfSpeech['part'] = PartOfSpeech.participle
+PartOfSpeech['partic'] = PartOfSpeech.particle
+PartOfSpeech['exclam'] = PartOfSpeech.exclamation
+PartOfSpeech['prep'] = PartOfSpeech.preposition
+PartOfSpeech['adj'] = PartOfSpeech.adjective
+PartOfSpeech['adv'] = PartOfSpeech.adverb
+PartOfSpeech['pron'] = PartOfSpeech.pronoun
+PartOfSpeech['conj'] = PartOfSpeech.conjunction
+PartOfSpeech['irreg'] = PartOfSpeech.irregular
+Number['sg'] = Number.singular
+Number['pl'] = Number.plural
+Tense['future perfect'] = Tense['futperf'] = Tense.futurePerfect
+Tense['pres'] = Tense.present
+Tense['imperf'] = Tense.imperfect
+Tense['aor'] = Tense.aorist
+Tense['fut'] = Tense.future
+Tense['perf'] = Tense.perfect
+Tense['plup'] = Tense.pluperfect
+Mood['ind'] = Mood.indicative
+Mood['imperat'] = Mood.imperative
+Mood['subj'] = Mood.subjunctive
+Mood['opt'] = Mood.optative
+Mood['inf'] = Mood.infinitive
+Case['nom'] = Case.nominative
+Case['voc'] = Case.vocative
+Case['gen'] = Case.genitive
+Case['dat'] = Case.dative
+Case['acc'] = Case.accusative
+Gender['masc'] = Gender.masculine
+Gender['fem'] = Gender.feminine
+Gender['neut'] = Gender.neuter
+Person['1st'] = Person.first
+Person['2nd'] = Person.second
+Person['3rd'] = Person.third
+Voice['middle-passive'] = Voice['mp'] = Voice.middlePassive
+Voice['act'] = Voice.active
+Voice['mid'] = Voice.middle
+Voice['pass'] = Voice.passive
 
 Feature = Enum('Feature',
   'a_copul',
@@ -90,23 +126,49 @@ Inflections =
 for inflection in [Tense, Gender, Number, Case, Voice, Mood]
   Inflections[inflection.toSymbol()] = inflection
 
-class Verb
-  constructor: (@lemma, @principleParts, @translation) ->
-
-class ParticipleDesc
-  constructor: (@tense, @voice, @case, @gender, @number) ->
-    Preconditions.assertType(@tense, Tense)
-    Preconditions.assertType(@voice, Voice)
-    Preconditions.assertType(@case, Case)
-    Preconditions.assertType(@gender, Gender)
-    Preconditions.assertType(@number, Number)
-
 class Participle
-  constructor: (@morpheme, @verb, @participleDesc) ->
-    Preconditions.assertType(@verb, Verb)
-    Preconditions.assertType(@participleDesc, ParticipleDesc)
+  class Desc
+    constructor: (@tense, @voice, @case, @gender, @number) ->
+      Preconditions.assertType(@tense, Tense)
+      Preconditions.assertType(@voice, Voice)
+      Preconditions.assertType(@case, Case)
+      Preconditions.assertType(@gender, Gender)
+      Preconditions.assertType(@number, Number)
 
-  @allInflections: [Tense, Voice, Case, Gender, Number]
+  constructor: (@morpheme, @lemma, @desc) ->
+    Preconditions.assertType(@morpheme, String)
+    Preconditions.assertType(@lemma, String)
+    Preconditions.assertType(@desc, Participle.Desc)
+
+class Noun
+  class Desc
+    constructor: (@case, @gender, @number) ->
+      Preconditions.assertType(@case, Case)
+      Preconditions.assertType(@gender, Gender)
+      Preconditions.assertType(@number, Number)
+
+  constructor: (@morpheme, @lemma, @desc) ->
+    Preconditions.assertType(@morpheme, String)
+    Preconditions.assertType(@lemma, String)
+    Preconditions.assertType(@desc, Desc)
+
+class Pronoun < Noun
+class Article < Adjective
+class Adjective < Noun
+
+class Verb
+  class Desc
+    constructor: (@tense, @voice, @mood, @person, @number) ->
+      Preconditions.assertType(@tense, Tense)
+      Preconditions.assertType(@voice, Voice)
+      Preconditions.assertType(@mood, Mood)
+      Preconditions.assertType(@person, Person)
+      Preconditions.assertType(@number, Number)
+
+  constructor: (@morpheme, @lemma, @desc) ->
+    Preconditions.assertType(@morpheme, String)
+    Preconditions.assertType(@lemma, String)
+    Preconditions.assertType(@desc, Desc)
 
 betacode2unicode = do ->
   raw =
@@ -228,8 +290,8 @@ betacode2unicode = do ->
     + ̈
     | ͅ
     & ̄
-    ' ʼ"
-    #: ·
+    ' ʼ
+    : ·"
 
   array = raw.split(/\s+/)
   betacode2unicodeTrie = new Trie
@@ -264,11 +326,14 @@ module.exports =
   Case: Case
   Voice: Voice
   Mood: Mood
-  Verb: Verb
   Degree: Degree
   Inflections: Inflections
   Features: Features
-  ParticipleDesc: ParticipleDesc
+  Verb: Verb
+  Noun: Noun
+  Adjective: Adjective
+  Article: Article
+  Pronoun: Pronoun
   Participle: Participle
   Dialect: Dialect
   Feature: Feature

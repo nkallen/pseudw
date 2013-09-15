@@ -36,7 +36,6 @@ class TreebankAnnotator extends Annotator
 
     annotation = @treebank[@i]
     form = annotation.originalForm || annotation.form
-    console.log(string[0...form.length], form)
     return [null, string] if (original = string[0...form.length]) != form
     @skip()
     remainder = string[form.length..]
@@ -116,8 +115,8 @@ class TreebankAnnotatorRepository
   constructor: (@fileReader) ->
 
   urn: (_urn, callback) ->
-    urn = urn.parse(_urn)
-    _path = path.join.apply(null, [urn.service].concat(urn.work.split('.')[0..1]).concat(urn.work)) + '.json'
+    _urn = urn.parse(_urn)
+    _path = path.join.apply(null, [_urn.service].concat(_urn.work.split('.')[0..1]).concat(_urn.work)) + '.json'
 
     @fileReader.readFile(_path, (err, file) ->
       return callback(err) if err

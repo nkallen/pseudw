@@ -7,4 +7,5 @@ module.exports =
   annotator: require('./annotator')
   dom: require('./dom')
   AnnotatedEdition: require('./annotated_edition')
+  morphologicalAnalyzer: require('./morphological_analyzer')
   Sizzle: require('./sizzle')
