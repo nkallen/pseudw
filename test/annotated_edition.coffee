@@ -12,10 +12,12 @@ describe 'AnnotatedEdition', ->
   citationMapping = [{label: 'book'}, {label: 'line'}]
   annotator = new annotator.SimpleAnnotator
 
-  it 'selects a passage with a coarse selector', ->
-    annotatedEdition = AnnotatedEdition.make(citationMapping, '2', annotator, document)
-    annotatedEdition.find('l')[0].path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[1]")
+  describe 'select', ->
+    it 'works', ->
+      annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
+      annotatedEdition.select('2').find('l')[0].path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[1]")
 
-  xit 'selects a passage with a fine selector', -> # doesn't work because <l> tags don't have n='' at the moment.
-    annotatedEdition = AnnotatedEdition.make(citationMapping, '2.2', annotator, document)
-    annotatedEdition.path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[2]")
+  describe 'selectFirst', ->
+    it 'works', ->
+      annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
+      annotatedEdition.selectFirst().find('l')[0].path().should.eql("/TEI.2/text/body/div[1]/p[1]/l[1]")
