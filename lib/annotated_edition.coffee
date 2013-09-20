@@ -3,10 +3,10 @@ Sizzle = require('./sizzle')
 
 Citation2Tag =
   article: ['div', 'type']
-  section: ['milestone', 'unit']
-  chapter: ['milestone', 'unit']
+  section: ['div3']
+  chapter: ['div2']
   page: ['milestone', 'unit']
-  book: ['div', 'type']
+  book: ['div1', 'type']
   text: ['text']
   line: ['l']
   scene: ['div', 'type']
@@ -38,9 +38,11 @@ class AnnotatedEdition
     wrap(sizzle(cssSelectorTokens.join(" "), @dom)[0])
 
   selectFirst: ->
-    [tag, attr] = Citation2Tag[label = @citationScheme[0].label]
-    selector = tag + (if attr then "[#{attr}=#{label}]" else '') + ":first"
-    wrap(sizzle(selector, @dom)[0])
+    cssSelectorTokens = []
+    for citation, i in @citationScheme[0..-2]
+      [tag, attr] = Citation2Tag[label = citation.label]
+      cssSelectorTokens.push(tag + (if attr then "[#{attr}=#{label}]" else '') + ":first")
+    wrap(sizzle(cssSelectorTokens.join(" "), @dom)[0])
 
   dfs = (node, fn, acc) ->
     acc = fn(acc, node)
