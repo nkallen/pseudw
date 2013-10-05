@@ -17,8 +17,15 @@ Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
 Mood = Enum('Mood', 'indicative', 'optative', 'imperative', 'subjunctive', 'infinitive')
 Dialect = Enum('Dialect', 'aeolic',  'poetic', 'attic', 'doric', 'prose', 'ionic', 'epic', 'parad_form', 'homeric')
 Degree = Enum('Degree', 'comparative', 'superlative')
+Punctuation = Enum('Punctuation', '.', ';', ',', '·', '"')
 
-Features = [PartOfSpeech, Tense, Gender, Person, Number, Case, Voice, Mood, Degree]
+boundaries = []
+for token in Punctuation.values()
+  boundaries.push(token.name)
+
+WordBoundary = new RegExp('[' + boundaries.join('') + ']|\\s')
+
+Features = [PartOfSpeech, Tense, Gender, Person, Number, Case, Voice, Mood, Degree, Punctuation]
 
 ###
 Synonyms for dealing with data in legacy formats
@@ -337,4 +344,6 @@ module.exports =
   Participle: Participle
   Dialect: Dialect
   Feature: Feature
+  Punctuation: Punctuation
+  WordBoundary: WordBoundary
   betacode2unicode: betacode2unicode

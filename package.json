@@ -16,7 +16,7 @@
   },
   "dependencies" : {
     "coffee-script"  : "1.6.x",
-    "unorm"          : "1.0.x",
+    "unorm"          : "1.1.x",
     "libxmljs"       : "0.8.x",
     "underscore"     : "1.5.x"
   },

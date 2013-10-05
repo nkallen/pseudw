@@ -21,10 +21,18 @@ class Annotator
   toJson: () ->
 
 class SimpleAnnotator extends Annotator
+  constructor: (@language) ->
+    @wordBoundary = language?.WordBoundary || /\s/
+    @wordBoundary
+
   one: (string) ->
-    return [form: string, ''] if (i = string.indexOf(' ')) < 0
+    return [form: string, ''] if (i = string.search(@wordBoundary)) < 0
+    # Precondition: string is trimmed, so as not to return a space.
+    # Precondition: boundaries are one character wide, so we don't tokenize e.g., '--' as two tokens.
+    return [form: string[0], string[1..]] if i == 0
+
     token = form: string[0..i-1]
-    remainder = string[i+1..-1]
+    remainder = string[i..-1].trim()
     [token, remainder]
   toJson: () -> {}
 

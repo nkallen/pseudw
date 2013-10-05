@@ -1,11 +1,18 @@
 should = require('should')
 
 annotator = require('../lib/annotator.coffee')
+greek = require('../lib/greek.coffee')
 
 TreebankAnnotator = annotator.TreebankAnnotator
 SkippingAnnotator = annotator.SkippingAnnotator
 SimpleAnnotator = annotator.SimpleAnnotator
 FailoverAnnotator = annotator.FailoverAnnotator
+
+describe 'SimpleAnnotator', ->
+  it 'tokenizes at word boundaries, including punctuation', ->
+    treebank = [{form: 'this'}, {form: 'is'}, {form: ','}, {form: 'a'}, {form: ';'}, {form: 'fairly'}, {form: '.'}]
+    annotator = new SimpleAnnotator(greek)
+    annotator.annotate("this is, a; fairly.")[0].should.eql(treebank)
 
 describe 'TreebankAnnotator', ->
   it 'tokenizes given forms', ->

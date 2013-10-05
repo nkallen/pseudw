@@ -15,9 +15,14 @@ describe 'AnnotatedEdition', ->
   describe 'select', ->
     it 'works', ->
       annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
-      annotatedEdition.select('2').find('l')[0].path().should.eql("/TEI.2/text/body/div[2]/p[1]/l[1]")
+      annotatedEdition.select('2').find('l')[0].annotations()[0].form.should.eql('ἄλλοι')
 
   describe 'selectFirst', ->
     it 'works', ->
       annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
-      annotatedEdition.selectFirst().find('l')[0].path().should.eql("/TEI.2/text/body/div[1]/p[1]/l[1]")
+      annotatedEdition.selectFirst().find('l')[0].annotations()[0].form.should.eql('μῆνιν')
+
+  describe 'toc', ->
+    it 'works', ->
+      annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
+      annotatedEdition.toc()[0].should.eql([ 'book', '1' ])

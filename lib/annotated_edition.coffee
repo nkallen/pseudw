@@ -44,6 +44,11 @@ class AnnotatedEdition
       cssSelectorTokens.push(tag + (if attr then "[#{attr}=#{label}]" else '') + ":first")
     wrap(sizzle(cssSelectorTokens.join(" "), @dom)[0])
 
+  toc: ->
+    [tag, attr] = Citation2Tag[label = @citationScheme[0].label]
+    cssSelector = tag + (if attr then "[#{attr}=#{label}]" else '')
+    [tag.getAttribute(attr), tag.getAttribute('n')] for tag in sizzle(cssSelector, @dom)
+
   dfs = (node, fn, acc) ->
     acc = fn(acc, node)
     for childNode in node.childNodes()
