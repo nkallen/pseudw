@@ -1,4 +1,5 @@
 dom = require('./dom')
+xmlVisitor = require('./xml_visitor')
 Sizzle = require('./sizzle')
 
 Citation2Tag =
@@ -22,7 +23,7 @@ sizzle = Sizzle()
 class AnnotatedEdition
   constructor: (@citationScheme, @annotator, @document) ->
     @dom = new dom.DocumentShim()
-    dfs(@document.get('/TEI.2/text'), domify(@annotator, @dom))
+    xmlVisitor.visitText(@document, processText(@annotator), processNode(@dom))
 
   select: (passageSelector) ->
     return @dom if !passageSelector
@@ -55,19 +56,18 @@ class AnnotatedEdition
       dfs(childNode, fn, acc)
     acc
 
-  domify = (annotator, document) -> (parent, child) ->
-    if child.type() == 'text'
-      [annotations, remainder] = annotator.annotate(child.text())
-      console.warn("Text not fully annotated: '#{remainder}'") if remainder
-      parent.annotations = annotations
-      null # no accumulator, since text nodes have no children
-    else
-      attributes = {}
-      for attr in child.attrs()
-        attributes[attr.name()] = attr.value()
-      element = document.createElement(name = child.name(), '', attributes)
-      parent.appendChild(element) if parent
-      element
+  processText = (annotator) -> (parent, child) ->
+    [annotations, remainder] = annotator.annotate(child.text())
+    console.warn("Text not fully annotated: '#{remainder}'") if remainder
+    parent.annotations = annotations
+
+  processNode = (document) -> (parent, child) ->
+    attributes = {}
+    for attr in child.attrs()
+      attributes[attr.name()] = attr.value()
+    element = document.createElement(name = child.name(), '', attributes)
+    parent.appendChild(element) if parent
+    element
 
   wrap = (node) ->
     find: (selector) ->
