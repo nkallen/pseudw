@@ -6,6 +6,7 @@ module.exports =
   textIndex: require('./text_index')
   annotator: require('./annotator')
   dom: require('./dom')
+  xmlVisitor: require('./xml_visitor')
   AnnotatedEdition: require('./annotated_edition')
   morphologicalAnalyzer: require('./morphological_analyzer')
   Sizzle: require('./sizzle')

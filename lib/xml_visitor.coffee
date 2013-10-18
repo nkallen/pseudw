@@ -10,8 +10,8 @@ module.exports =
 
   visitText: (document, textFn, nodeFn) ->
     @visit(document, (parent, child) ->
-      if child.type() == 'text'
-        textFn(parent, child)
+      if child.type() == 'text' && parent?.name?() != 'note'
+        textFn(parent, child) if child.text().trim() != ''
         null
       else
         nodeFn(parent, child)

@@ -7,7 +7,7 @@ unorm = require('unorm')
 An object model for Greek Grammar and some utilities for character encoding.
 ###
 
-PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'adverbial', 'adverbial', 'participle', 'punctuation', 'particle', 'preposition', 'article', 'conjunction', 'irregular', 'numeral', 'exclamation')
+PartOfSpeech = Enum('PartOfSpeech', 'verb', 'noun', 'adjective', 'pronoun', 'adverb', 'adverbial', 'participle', 'punctuation', 'particle', 'preposition', 'article', 'conjunction', 'irregular', 'numeral', 'exclamation')
 Tense = Enum('Tense', 'present', 'future', 'perfect', 'pluperfect', 'imperfect', 'aorist', 'futurePerfect')
 Gender = Enum('Gender', 'masculine', 'feminine', 'neuter')
 Person = Enum('Person', 'first', 'second', 'third')
@@ -17,7 +17,58 @@ Voice = Enum('Voice', 'active', 'middle', 'passive', 'middlePassive')
 Mood = Enum('Mood', 'indicative', 'optative', 'imperative', 'subjunctive', 'infinitive')
 Dialect = Enum('Dialect', 'aeolic',  'poetic', 'attic', 'doric', 'prose', 'ionic', 'epic', 'parad_form', 'homeric')
 Degree = Enum('Degree', 'comparative', 'superlative')
-Punctuation = Enum('Punctuation', '.', ';', ',', '·', '"')
+Punctuation = Enum('Punctuation', '.', ';', ',', '·', '"', 'ʽ', '“', '”')
+
+postag =
+  # Bitmasks for postags:
+  partOfSpeech: 15 << (3 + 2 + 2 + 2 + 3 + 3 + 3)
+  case        : 7  << (2 + 2 + 2 + 3 + 3 + 3)
+  gender      : 3  << (2 + 2 + 3 + 3 + 3)
+  number      : 3  << (2 + 3 + 3 + 3)
+  person      : 3  << (3 + 3 + 3)
+  tense       : 7  << (3 + 3)
+  voice       : 7  << (3)
+  mood        : 7
+
+  fromHash: (hash) ->
+    result = 0
+    result <<= 4
+    result |= PartOfSpeech.get(hash.partOfSpeech).id + 1 if hash.partOfSpeech
+    result <<= 3
+    result |= Case.get(hash.case).id + 1 if hash.case
+    result <<= 2
+    result |= Gender.get(hash.gender).id + 1 if hash.gender
+    result <<= 2
+    result |= Number.get(hash.number).id + 1 if hash.number
+    result <<= 2
+    result |= Person.get(hash.person).id + 1 if hash.person
+    result <<= 3
+    result |= Tense.get(hash.tense).id + 1 if hash.tense
+    result <<= 3
+    result |= Voice.get(hash.voice).id + 1 if hash.voice
+    result <<= 3
+    result |= Mood.get(hash.mood).id + 1 if hash.mood
+    result
+
+  toHash: (postag) ->
+    result = {}
+    if x = postag & @partOfSpeech
+      result.partOfSpeech = PartOfSpeech.getById((x >> (3 + 2 + 2 + 2 + 3 + 3 + 3)) - 1)
+    if x = postag & @case
+      result.case = Case.getById((x >> (2 + 2 + 2 + 3 + 3 + 3)) - 1)
+    if x = postag & @gender
+      result.gender = Gender.getById((x >> (2 + 2 + 3 + 3 + 3)) - 1)
+    if x = postag & @number
+      result.number = Number.getById((x >> (2 + 3 + 3 + 3)) - 1)
+    if x = postag & @person
+      result.person = Person.getById((x >> (3 + 3 + 3)) - 1)
+    if x = postag & @tense
+      result.tense = Tense.getById((x >> (3 + 3)) - 1)
+    if x = postag & @voice
+      result.voice = Voice.getById((x >> (3)) - 1)
+    if x = postag & @mood
+      result.mood = Mood.getById(x - 1)
+    result
 
 boundaries = []
 for token in Punctuation.values()
@@ -132,50 +183,6 @@ Inflections =
   toSymbol: -> 'inflection'
 for inflection in [Tense, Gender, Number, Case, Voice, Mood]
   Inflections[inflection.toSymbol()] = inflection
-
-class Participle
-  class Desc
-    constructor: (@tense, @voice, @case, @gender, @number) ->
-      Preconditions.assertType(@tense, Tense)
-      Preconditions.assertType(@voice, Voice)
-      Preconditions.assertType(@case, Case)
-      Preconditions.assertType(@gender, Gender)
-      Preconditions.assertType(@number, Number)
-
-  constructor: (@morpheme, @lemma, @desc) ->
-    Preconditions.assertType(@morpheme, String)
-    Preconditions.assertType(@lemma, String)
-    Preconditions.assertType(@desc, Participle.Desc)
-
-class Noun
-  class Desc
-    constructor: (@case, @gender, @number) ->
-      Preconditions.assertType(@case, Case)
-      Preconditions.assertType(@gender, Gender)
-      Preconditions.assertType(@number, Number)
-
-  constructor: (@morpheme, @lemma, @desc) ->
-    Preconditions.assertType(@morpheme, String)
-    Preconditions.assertType(@lemma, String)
-    Preconditions.assertType(@desc, Desc)
-
-class Pronoun < Noun
-class Article < Adjective
-class Adjective < Noun
-
-class Verb
-  class Desc
-    constructor: (@tense, @voice, @mood, @person, @number) ->
-      Preconditions.assertType(@tense, Tense)
-      Preconditions.assertType(@voice, Voice)
-      Preconditions.assertType(@mood, Mood)
-      Preconditions.assertType(@person, Person)
-      Preconditions.assertType(@number, Number)
-
-  constructor: (@morpheme, @lemma, @desc) ->
-    Preconditions.assertType(@morpheme, String)
-    Preconditions.assertType(@lemma, String)
-    Preconditions.assertType(@desc, Desc)
 
 betacode2unicode = do ->
   raw =
@@ -336,14 +343,9 @@ module.exports =
   Degree: Degree
   Inflections: Inflections
   Features: Features
-  Verb: Verb
-  Noun: Noun
-  Adjective: Adjective
-  Article: Article
-  Pronoun: Pronoun
-  Participle: Participle
   Dialect: Dialect
   Feature: Feature
   Punctuation: Punctuation
   WordBoundary: WordBoundary
   betacode2unicode: betacode2unicode
+  postag: postag

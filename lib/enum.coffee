@@ -1,5 +1,6 @@
 Enum = (typeName, names...) ->
   values = []
+  ids = {}
   id = 0
   class anon
     constructor: (@name, @id) ->
@@ -8,14 +9,17 @@ Enum = (typeName, names...) ->
     toSymbol: -> @toString()
     @get: (symbol) ->
       if symbol
-        this[symbol] || throw "Invalid symbol #{symbol} for Enumeration #{this}"
+        this[symbol] || throw new Error("Invalid symbol #{symbol} for Enumeration #{this}")
+    @getById: (id) ->
+      ids[id] || throw new Error("Invalid id #{id} for Enumeration #{this}")
     @getOrCreate: (symbol) ->
       if symbol
         this[symbol] || @create(symbol)
     @create: (name) ->
-      value = new anon(name, id++)
+      value = new anon(name, id)
       anon[name] = value
       values.push(value)
+      ids[id++] = value
       value
     @toSymbol: -> typeName[0].toLowerCase() + typeName[1..-1]
     @toString: -> typeName
@@ -40,6 +44,8 @@ Enum = (typeName, names...) ->
       result
 
   anon.values = -> values
+  anon.ids = -> ids
+
   for name in names
     anon.create(name)
   anon

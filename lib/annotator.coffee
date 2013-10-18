@@ -23,7 +23,6 @@ class Annotator
 class SimpleAnnotator extends Annotator
   constructor: (@language) ->
     @wordBoundary = language?.WordBoundary || /\s/
-    @wordBoundary
 
   one: (string) ->
     return [form: string, ''] if (i = string.search(@wordBoundary)) < 0
