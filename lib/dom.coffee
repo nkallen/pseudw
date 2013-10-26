@@ -4,6 +4,7 @@ class ElementShim
     @attributes ?= {}
     @children = []
   nodeType: 1
+  name: -> @tagName
   getAttribute: (attribute) ->
     if @attributes.hasOwnProperty(attribute) && @attributes[attribute] != undefined
       @attributes[attribute].toString()

@@ -102,6 +102,7 @@ class FailoverAnnotator extends Annotator
 
     if !token && !@secondaryAnnotator.eof()
       [token, remainder] = @secondaryAnnotator.one(remainder)
+
     [token, remainder]
   reset: (pos) ->
     @primaryAnnotator.reset(pos)
