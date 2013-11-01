@@ -13,16 +13,16 @@ describe 'AnnotatedEdition', ->
   annotator = new annotator.SimpleAnnotator
 
   describe 'select', ->
-    it 'works', ->
+    xit 'works', ->
       annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
       annotatedEdition.select('2').find('l')[0].annotations()[0].form.should.eql('ἄλλοι')
 
   describe 'selectFirst', ->
-    it 'works', ->
+    xit 'works', ->
       annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
       annotatedEdition.selectFirst().find('l')[0].annotations()[0].form.should.eql('μῆνιν')
 
   describe 'toc', ->
-    it 'works', ->
+    xit 'works', ->
       annotatedEdition = new AnnotatedEdition(citationMapping, annotator, document)
       annotatedEdition.toc()[0].should.eql([ 'book', '1' ])

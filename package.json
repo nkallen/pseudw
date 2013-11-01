@@ -15,7 +15,7 @@
     "npm": "1.2.x"
   },
   "dependencies" : {
-    "coffee-script"  : "1.6.x",
+    "coffee-script"  : "git://github.com/jashkenas/coffee-script.git#master",
     "unorm"          : "1.1.x",
     "libxmljs"       : "0.8.x",
     "underscore"     : "1.5.x"
